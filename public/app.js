@@ -71,8 +71,9 @@ async function loadSettings() {
     if (settings.monetagDirectLink) {
       state.monetagDirectLink = settings.monetagDirectLink;
     }
-    // Dynamically inject enabled Monetag ad scripts
+    // Dynamically inject enabled Monetag ad scripts & setup popunder trigger
     injectMonetagAdScripts(settings);
+    setupPopunderTrigger(settings);
   } catch (err) {
     console.error('Settings load error:', err);
   }
@@ -1567,39 +1568,97 @@ async function removeAllowedEmail(emailToRemove) {
 }
 
 // ================================================================
-// DYNAMIC AD SCRIPT INJECTION (called on page load from loadSettings)
+// DYNAMIC AD SCRIPT INJECTION & POPUNDER TRIGGER
 // ================================================================
 
 function injectMonetagAdScripts(settings) {
-  if (!settings || !settings.autoInsertAds || state.adScriptsInjected) return;
+  if (!settings || settings.autoInsertAds === false) return;
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   if (settings.mobileOnly  && !isMobile) return;
   if (settings.desktopOnly &&  isMobile) return;
+
   const delay = (Number(settings.adLoadingDelay) || 0) * 1000;
   const doInject = function() {
-    [
+    const formats = [
       { enabled: settings.pushNotifEnabled,  code: settings.pushNotifCode  },
       { enabled: settings.inPagePushEnabled, code: settings.inPagePushCode },
       { enabled: settings.vignetteEnabled,   code: settings.vignetteCode   },
       { enabled: settings.onClickEnabled,    code: settings.onClickCode    },
       { enabled: settings.multitagEnabled,   code: settings.multitagCode   }
-    ].forEach(function(f) { if (f.enabled && f.code) injectScriptTag(f.code); });
+    ];
+
+    formats.forEach(function(f) {
+      if (f.enabled && f.code && f.code.trim()) {
+        executeAdSnippet(f.code);
+      }
+    });
+
+    if (settings.customHeaderCode) executeAdSnippet(settings.customHeaderCode);
+    if (settings.customFooterCode) executeAdSnippet(settings.customFooterCode);
+
     state.adScriptsInjected = true;
   };
+
   if (delay > 0) { setTimeout(doInject, delay); } else { doInject(); }
 }
 
-function injectScriptTag(code) {
-  const srcMatch = code.match(/src=["']([^"']+)["']/);
-  if (!srcMatch) return;
-  const src = srcMatch[1];
-  // Prevent double-injection
-  if (document.querySelector('script[src="' + src + '"]')) return;
-  const script = document.createElement('script');
-  script.src = src;
-  if (/\basync\b/.test(code)) script.async = true;
-  const cfMatch = code.match(/data-cfasync=["']([^"']+)["']/);
-  if (cfMatch) script.setAttribute('data-cfasync', cfMatch[1]);
-  script.setAttribute('data-monetag-injected', 'true');
-  document.body.appendChild(script);
+function executeAdSnippet(codeSnippet) {
+  if (!codeSnippet || !codeSnippet.trim()) return;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = codeSnippet;
+  const scripts = tempDiv.querySelectorAll('script');
+
+  if (scripts.length > 0) {
+    scripts.forEach(s => {
+      const src = s.getAttribute('src');
+      if (src) {
+        if (document.querySelector('script[src="' + src + '"]')) return;
+        const script = document.createElement('script');
+        script.src = src;
+        if (s.async || /\basync\b/.test(s.outerHTML)) script.async = true;
+        if (s.defer) script.defer = true;
+        Array.from(s.attributes).forEach(attr => {
+          if (attr.name !== 'src') script.setAttribute(attr.name, attr.value);
+        });
+        script.setAttribute('data-monetag-injected', 'true');
+        document.head.appendChild(script);
+      } else if (s.textContent && s.textContent.trim()) {
+        const script = document.createElement('script');
+        script.text = s.textContent;
+        script.setAttribute('data-monetag-injected', 'true');
+        document.head.appendChild(script);
+      }
+    });
+  } else {
+    const urlMatch = codeSnippet.match(/https?:\/\/[^\s"'>]+/);
+    if (urlMatch) {
+      const src = urlMatch[0];
+      if (document.querySelector('script[src="' + src + '"]')) return;
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.setAttribute('data-monetag-injected', 'true');
+      document.head.appendChild(script);
+    }
+  }
+}
+
+function setupPopunderTrigger(settings) {
+  if (!settings || !settings.onClickEnabled || !state.monetagDirectLink) return;
+  
+  let popunderTriggered = false;
+  const triggerPopunder = function(e) {
+    if (popunderTriggered) return;
+    if (e.target.closest('input, select, textarea, form, button[type="submit"]')) return;
+    
+    popunderTriggered = true;
+    try {
+      window.open(state.monetagDirectLink, '_blank');
+    } catch(err) {}
+    
+    setTimeout(() => { popunderTriggered = false; }, 30000);
+  };
+
+  document.addEventListener('click', triggerPopunder, { capture: true });
 }

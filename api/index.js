@@ -133,13 +133,43 @@ const seedDefaults = async () => {
     );
   }
 
-  const settingsCount = await Settings.countDocuments();
-  if (settingsCount === 0) {
+  let settings = await Settings.findOne();
+  const defaultDirectLink = 'https://omg10.com/4/11453715';
+  const defaultAdTag = '<script src="https://omg10.com/4/11453715" async data-cfasync="false"></script>';
+
+  if (!settings) {
     await Settings.create({
       siteName: 'EXAM PDF DOWNLOAD LK',
       monetagEnabled: true,
-      monetagDirectLink: 'https://omg10.com/4/11453715'
+      monetagDirectLink: defaultDirectLink,
+      autoInsertAds: true,
+      excludeAdmin: false,
+      pushNotifEnabled: true,
+      pushNotifCode: defaultAdTag,
+      inPagePushEnabled: true,
+      inPagePushCode: defaultAdTag,
+      vignetteEnabled: true,
+      vignetteCode: defaultAdTag,
+      onClickEnabled: true,
+      onClickCode: defaultAdTag,
+      multitagEnabled: true,
+      multitagCode: defaultAdTag
     });
+  } else {
+    let updateFields = {};
+    if (!settings.monetagDirectLink) updateFields.monetagDirectLink = defaultDirectLink;
+    if (settings.autoInsertAds === false) updateFields.autoInsertAds = true;
+    if (settings.excludeAdmin === true) updateFields.excludeAdmin = false;
+    
+    if (!settings.multitagCode) { updateFields.multitagEnabled = true; updateFields.multitagCode = defaultAdTag; }
+    if (!settings.onClickCode) { updateFields.onClickEnabled = true; updateFields.onClickCode = defaultAdTag; }
+    if (!settings.vignetteCode) { updateFields.vignetteEnabled = true; updateFields.vignetteCode = defaultAdTag; }
+    if (!settings.inPagePushCode) { updateFields.inPagePushEnabled = true; updateFields.inPagePushCode = defaultAdTag; }
+    if (!settings.pushNotifCode) { updateFields.pushNotifEnabled = true; updateFields.pushNotifCode = defaultAdTag; }
+
+    if (Object.keys(updateFields).length > 0) {
+      await Settings.updateOne({ _id: settings._id }, { $set: updateFields });
+    }
   }
 
   const pdfCount = await Pdf.countDocuments();
