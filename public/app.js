@@ -1651,19 +1651,25 @@ function executeAdSnippet(codeSnippet) {
 function setupPopunderTrigger(settings) {
   if (!settings || !settings.onClickEnabled || !state.monetagDirectLink) return;
   
-  let popunderTriggered = false;
+  const TEN_MINUTES_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
+
   const triggerPopunder = function(e) {
-    // Absolutely NO popunder on Admin Dashboard page or for logged in admins
+    // 1. Absolutely NO ads or popunders on Admin Dashboard page or for logged in admins
     if (state.currentPage === 'admin' || (settings.excludeAdmin && state.adminToken)) return;
-    if (popunderTriggered) return;
+
+    // 2. Do not trigger when interacting with inputs/forms
     if (e.target.closest('input, select, textarea, form, button[type="submit"]')) return;
     
-    popunderTriggered = true;
-    try {
-      window.open(state.monetagDirectLink, '_blank');
-    } catch(err) {}
-    
-    setTimeout(() => { popunderTriggered = false; }, 30000);
+    const now = Date.now();
+    const lastAdTime = Number(sessionStorage.getItem('last_ad_trigger_time')) || 0;
+
+    // 3. First click ever on site (lastAdTime === 0) OR 10 minutes elapsed since last ad
+    if (lastAdTime === 0 || (now - lastAdTime) >= TEN_MINUTES_MS) {
+      sessionStorage.setItem('last_ad_trigger_time', String(now));
+      try {
+        window.open(state.monetagDirectLink, '_blank');
+      } catch(err) {}
+    }
   };
 
   document.addEventListener('click', triggerPopunder, { capture: true });

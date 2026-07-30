@@ -153,13 +153,15 @@ const seedDefaults = async () => {
       onClickEnabled: true,
       onClickCode: defaultAdTag,
       multitagEnabled: true,
-      multitagCode: defaultAdTag
+      multitagCode: defaultAdTag,
+      frequencyControl: 600
     });
   } else {
     let updateFields = {};
     if (!settings.monetagDirectLink) updateFields.monetagDirectLink = defaultDirectLink;
     if (settings.autoInsertAds === false) updateFields.autoInsertAds = true;
     if (settings.excludeAdmin === false) updateFields.excludeAdmin = true;
+    updateFields.frequencyControl = 600;
     
     if (!settings.multitagCode) { updateFields.multitagEnabled = true; updateFields.multitagCode = defaultAdTag; }
     if (!settings.onClickCode) { updateFields.onClickEnabled = true; updateFields.onClickCode = defaultAdTag; }
