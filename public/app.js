@@ -1105,18 +1105,42 @@ function renderAdvancedSettings(settings) {
 
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
           <label class="block text-xs font-bold mb-1 flex items-center gap-1.5"><i class="fa-regular fa-clock text-slate-400"></i> Loading Delay</label>
-          <p class="text-[10px] text-slate-400 mb-2">Seconds before injecting scripts. 0 = instant.</p>
-          <div class="flex items-center gap-2">
-            <input type="number" id="adv-adLoadingDelay" min="0" max="30" value="${settings.adLoadingDelay || 0}" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
-            <span class="text-xs text-slate-400 font-semibold">sec</span>
+          <p class="text-[10px] text-slate-400 mb-2">Time before injecting scripts. 0 = instant.</p>
+          <div class="flex items-center gap-1.5">
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-adLoadingDelay-h" min="0" max="99" value="${Math.floor((settings.adLoadingDelay||0)/3600)}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">HRS</span>
+            </div>
+            <span class="text-slate-400 font-bold pb-4">:</span>
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-adLoadingDelay-m" min="0" max="59" value="${Math.floor(((settings.adLoadingDelay||0)%3600)/60)}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">MIN</span>
+            </div>
+            <span class="text-slate-400 font-bold pb-4">:</span>
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-adLoadingDelay-s" min="0" max="59" value="${(settings.adLoadingDelay||0)%60}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">SEC</span>
+            </div>
           </div>
         </div>
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
           <label class="block text-xs font-bold mb-1 flex items-center gap-1.5"><i class="fa-solid fa-gauge text-slate-400"></i> Frequency Control</label>
-          <p class="text-[10px] text-slate-400 mb-2">Min hours between same ad. 0 = always show.</p>
-          <div class="flex items-center gap-2">
-            <input type="number" id="adv-frequencyControl" min="0" max="72" value="${settings.frequencyControl || 0}" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
-            <span class="text-xs text-slate-400 font-semibold">hrs</span>
+          <p class="text-[10px] text-slate-400 mb-2">Min time between same ad. 0 = always show.</p>
+          <div class="flex items-center gap-1.5">
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-frequencyControl-h" min="0" max="99" value="${Math.floor((settings.frequencyControl||0)/3600)}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">HRS</span>
+            </div>
+            <span class="text-slate-400 font-bold pb-4">:</span>
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-frequencyControl-m" min="0" max="59" value="${Math.floor(((settings.frequencyControl||0)%3600)/60)}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">MIN</span>
+            </div>
+            <span class="text-slate-400 font-bold pb-4">:</span>
+            <div class="flex flex-col items-center flex-1">
+              <input type="number" id="adv-frequencyControl-s" min="0" max="59" value="${(settings.frequencyControl||0)%60}" class="w-full px-2 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-center font-bold focus:outline-none focus:border-blue-500">
+              <span class="text-[9px] text-slate-400 font-semibold mt-0.5">SEC</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1301,8 +1325,8 @@ async function saveAdvancedSettings() {
   const mobileOnly       = g('adv-mobileOnly')?.checked       ?? false;
   const desktopOnly      = g('adv-desktopOnly')?.checked      ?? false;
   const excludeAdmin     = g('adv-excludeAdmin')?.checked     ?? true;
-  const adLoadingDelay   = parseInt(g('adv-adLoadingDelay')?.value)   || 0;
-  const frequencyControl = parseInt(g('adv-frequencyControl')?.value) || 0;
+  const adLoadingDelay   = (parseInt(g('adv-adLoadingDelay-h')?.value)||0)*3600 + (parseInt(g('adv-adLoadingDelay-m')?.value)||0)*60 + (parseInt(g('adv-adLoadingDelay-s')?.value)||0);
+  const frequencyControl = (parseInt(g('adv-frequencyControl-h')?.value)||0)*3600 + (parseInt(g('adv-frequencyControl-m')?.value)||0)*60 + (parseInt(g('adv-frequencyControl-s')?.value)||0);
   const selectedPages    = [...document.querySelectorAll('input[name="selectedPages"]:checked')].map(el => el.value);
   try {
     const res = await fetch('/api/admin/ads', {
