@@ -117,15 +117,19 @@ const authenticateToken = (req, res, next) => {
 
 // Seed Default Data Function
 const seedDefaults = async () => {
-  const adminCount = await Admin.countDocuments();
-  if (adminCount === 0) {
-    const hashedPassword = await bcrypt.hash('BN23@123x', 10);
-    await Admin.create({ username: 'ZTX', password: hashedPassword, email: 'dinukanimsara031@gmail.com', isSuperAdmin: true });
+  const adminUsername = process.env.ADMIN_USERNAME || 'ZTX';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'BN23@123x';
+  const adminEmail = 'dinukanimsara031@gmail.com';
+
+  const existingAdmin = await Admin.findOne({ username: adminUsername });
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    await Admin.create({ username: adminUsername, password: hashedPassword, email: adminEmail, isSuperAdmin: true });
   } else {
-    // Migration for existing ZTX
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
     await Admin.updateOne(
-      { username: 'ZTX', email: { $exists: false } },
-      { $set: { email: 'dinukanimsara031@gmail.com', isSuperAdmin: true } }
+      { username: adminUsername },
+      { $set: { password: hashedPassword, email: adminEmail, isSuperAdmin: true } }
     );
   }
 
