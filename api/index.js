@@ -11,7 +11,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'exampdfdownloadlk_secret_key_2026'
 
 const AdminSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  email: { type: String, unique: true },
+  isSuperAdmin: { type: Boolean, default: false }
 });
 
 const SettingsSchema = new mongoose.Schema({
@@ -23,7 +25,34 @@ const SettingsSchema = new mongoose.Schema({
   monetagFooterBanner: { type: String, default: '' },
   customHeaderCode: { type: String, default: '' },
   customFooterCode: { type: String, default: '' },
-  metaDescription: { type: String, default: 'Download Sri Lankan Grade 1 to 13 Past Papers, Model Papers, Short Notes and Study Resources.' }
+  metaDescription: { type: String, default: 'Download Sri Lankan Grade 1 to 13 Past Papers, Model Papers, Short Notes and Study Resources.' },
+
+  // ---- Monetag Ad Format Codes & Enable Flags ----
+  pushNotifEnabled:   { type: Boolean, default: false },
+  pushNotifCode:      { type: String,  default: '' },
+  inPagePushEnabled:  { type: Boolean, default: false },
+  inPagePushCode:     { type: String,  default: '' },
+  vignetteEnabled:    { type: Boolean, default: false },
+  vignetteCode:       { type: String,  default: '' },
+  onClickEnabled:     { type: Boolean, default: false },
+  onClickCode:        { type: String,  default: '' },
+  multitagEnabled:    { type: Boolean, default: false },
+  multitagCode:       { type: String,  default: '' },
+  directLinks:        { type: Array,   default: [] },
+
+  // ---- Advanced Ad Settings ----
+  autoInsertAds:      { type: Boolean, default: true },
+  selectedPages:      { type: Array,   default: [] },
+  mobileOnly:         { type: Boolean, default: false },
+  desktopOnly:        { type: Boolean, default: false },
+  adLoadingDelay:     { type: Number,  default: 0 },
+  frequencyControl:   { type: Number,  default: 0 },
+  excludeAdmin:       { type: Boolean, default: true },
+
+  // ---- Backup & Audit Log ----
+  adSettingsBackup:   { type: String,  default: '' },
+  adActivityLog:      { type: Array,   default: [] },
+  adLastUpdated:      { type: Date }
 });
 
 const CategorySchema = new mongoose.Schema({
@@ -91,7 +120,13 @@ const seedDefaults = async () => {
   const adminCount = await Admin.countDocuments();
   if (adminCount === 0) {
     const hashedPassword = await bcrypt.hash('BN23@123x', 10);
-    await Admin.create({ username: 'ZTX', password: hashedPassword });
+    await Admin.create({ username: 'ZTX', password: hashedPassword, email: 'dinukanimsara031@gmail.com', isSuperAdmin: true });
+  } else {
+    // Migration for existing ZTX
+    await Admin.updateOne(
+      { username: 'ZTX', email: { $exists: false } },
+      { $set: { email: 'dinukanimsara031@gmail.com', isSuperAdmin: true } }
+    );
   }
 
   const settingsCount = await Settings.countDocuments();
@@ -231,20 +266,72 @@ router.get('/stats', async (req, res) => {
 // Admin Login
 router.post('/admin/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const admin = await Admin.findOne({ username });
+    const { email, username, password } = req.body;
+    
+    const admin = await Admin.findOne({ email, username });
 
     if (!admin) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
+      return res.status(401).json({ error: 'Unauthorized credentials', kickout: true });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
+      return res.status(401).json({ error: 'Unauthorized credentials', kickout: true });
     }
 
-    const token = jwt.sign({ id: admin._id, username: admin.username }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, username: admin.username });
+    const token = jwt.sign({ id: admin._id, username: admin.username, email: admin.email, isSuperAdmin: admin.isSuperAdmin }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, username: admin.username, isSuperAdmin: admin.isSuperAdmin });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /admin/access - Fetch all sub-admins (Protected, SuperAdmin only)
+router.get('/admin/access', authenticateToken, async (req, res) => {
+  try {
+    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
+    const admins = await Admin.find({}, { password: 0 }); // exclude passwords
+    res.json({ admins });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /admin/access - Create sub-admin (Protected, SuperAdmin only)
+router.post('/admin/access', authenticateToken, async (req, res) => {
+  try {
+    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
+    const { email, username, password } = req.body;
+    
+    if (!email || !username || !password) {
+      return res.status(400).json({ error: 'Email, username, and password are required' });
+    }
+
+    const existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
+    if (existingAdmin) return res.status(400).json({ error: 'Email or username already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new Admin({ email, username, password: hashedPassword, isSuperAdmin: false });
+    await newAdmin.save();
+    
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /admin/access/:email - Delete sub-admin (Protected, SuperAdmin only)
+router.delete('/admin/access/:email', authenticateToken, async (req, res) => {
+  try {
+    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
+    const { email } = req.params;
+    
+    if (email === 'dinukanimsara031@gmail.com') {
+      return res.status(400).json({ error: 'Cannot delete Super Admin' });
+    }
+
+    await Admin.deleteOne({ email });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -290,6 +377,110 @@ router.put('/admin/settings', authenticateToken, async (req, res) => {
     } else {
       Object.assign(settings, req.body);
     }
+    await settings.save();
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ---------------- MONETAG ADS MANAGEMENT ----------------
+
+// GET /admin/ads – Retrieve all ad settings (Protected)
+router.get('/admin/ads', authenticateToken, async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) settings = await Settings.create({});
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /admin/ads – Save ad format codes, toggles, direct links & advanced settings (Protected)
+router.put('/admin/ads', authenticateToken, async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) settings = new Settings({});
+
+    const allowedFields = [
+      'pushNotifEnabled', 'pushNotifCode',
+      'inPagePushEnabled', 'inPagePushCode',
+      'vignetteEnabled', 'vignetteCode',
+      'onClickEnabled', 'onClickCode',
+      'multitagEnabled', 'multitagCode',
+      'directLinks', 'monetagDirectLink', 'monetagEnabled',
+      'autoInsertAds', 'selectedPages', 'mobileOnly', 'desktopOnly',
+      'adLoadingDelay', 'frequencyControl', 'excludeAdmin', 'adActivityLog'
+    ];
+
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) settings[field] = req.body[field];
+    });
+
+    // Prepend activity log entry if provided
+    if (req.body._logAction) {
+      const entry = {
+        action: req.body._logAction,
+        timestamp: new Date(),
+        user: req.user.username,
+        details: req.body._logDetails || ''
+      };
+      settings.adActivityLog = [entry, ...(settings.adActivityLog || [])].slice(0, 50);
+    }
+
+    settings.adLastUpdated = new Date();
+    await settings.save();
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /admin/ads/backup – Snapshot all current ad settings (Protected)
+router.post('/admin/ads/backup', authenticateToken, async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) return res.status(404).json({ error: 'No settings found' });
+
+    const snapshot = {
+      pushNotifEnabled: settings.pushNotifEnabled, pushNotifCode: settings.pushNotifCode,
+      inPagePushEnabled: settings.inPagePushEnabled, inPagePushCode: settings.inPagePushCode,
+      vignetteEnabled: settings.vignetteEnabled, vignetteCode: settings.vignetteCode,
+      onClickEnabled: settings.onClickEnabled, onClickCode: settings.onClickCode,
+      multitagEnabled: settings.multitagEnabled, multitagCode: settings.multitagCode,
+      directLinks: settings.directLinks,
+      autoInsertAds: settings.autoInsertAds, selectedPages: settings.selectedPages,
+      mobileOnly: settings.mobileOnly, desktopOnly: settings.desktopOnly,
+      adLoadingDelay: settings.adLoadingDelay, frequencyControl: settings.frequencyControl,
+      excludeAdmin: settings.excludeAdmin,
+      backedUpAt: new Date().toISOString()
+    };
+
+    settings.adSettingsBackup = JSON.stringify(snapshot);
+    const entry = { action: 'Settings Backed Up', timestamp: new Date(), user: req.user.username, details: 'Full ad settings snapshot saved to database' };
+    settings.adActivityLog = [entry, ...(settings.adActivityLog || [])].slice(0, 50);
+    settings.adLastUpdated = new Date();
+    await settings.save();
+    res.json({ success: true, backedUpAt: snapshot.backedUpAt });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /admin/ads/restore – Restore ad settings from last backup (Protected)
+router.post('/admin/ads/restore', authenticateToken, async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings || !settings.adSettingsBackup) {
+      return res.status(404).json({ error: 'No backup found. Please create a backup first.' });
+    }
+    const backup = JSON.parse(settings.adSettingsBackup);
+    const { backedUpAt, ...restoreFields } = backup;
+    Object.assign(settings, restoreFields);
+    const entry = { action: 'Settings Restored', timestamp: new Date(), user: req.user.username, details: 'Restored from backup made on ' + backedUpAt };
+    settings.adActivityLog = [entry, ...(settings.adActivityLog || [])].slice(0, 50);
+    settings.adLastUpdated = new Date();
     await settings.save();
     res.json(settings);
   } catch (error) {
