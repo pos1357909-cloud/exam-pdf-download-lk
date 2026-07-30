@@ -1468,13 +1468,48 @@ function renderAllowedEmailsList() {
           <p class="text-[10px] text-slate-500 font-bold tracking-wider">Username: @${admin.username}</p>
         </div>
       </div>
-      <button onclick="removeAllowedEmail('${admin.email}')" class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center" title="Revoke Access">
-        <i class="fa-solid fa-trash-can"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="editSubAdmin('${admin.email}', '${admin.username}')" class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 hover:bg-amber-500 hover:text-white transition-colors flex items-center justify-center" title="Edit Username/Password">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+        <button onclick="removeAllowedEmail('${admin.email}')" class="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center" title="Revoke Access">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
     </div>
   `).join('');
 
   container.innerHTML = mainAdminHtml + '<div class="mt-4">' + listHtml + '</div>';
+}
+
+async function editSubAdmin(email, currentUsername) {
+  const newUsername = prompt(`Update Username for ${email}:`, currentUsername);
+  if (newUsername === null) return; // Cancelled
+  const newPassword = prompt(`Enter new Password for ${email} (Leave blank to keep unchanged):`);
+  if (newPassword === null) return; // Cancelled
+
+  if (!newUsername.trim() && !newPassword.trim()) {
+    showToast('No changes made', 'info');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/admin/access/' + encodeURIComponent(email), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.adminToken },
+      body: JSON.stringify({ username: newUsername.trim(), password: newPassword.trim() })
+    });
+
+    if (res.ok) {
+      await loadAccessSettings();
+      showToast('Credentials updated for ' + email, 'success');
+    } else {
+      const data = await res.json();
+      showToast(data.error || 'Failed to update credentials', 'error');
+    }
+  } catch (err) {
+    showToast('Network error', 'error');
+  }
 }
 
 async function addAllowedEmail(e) {
