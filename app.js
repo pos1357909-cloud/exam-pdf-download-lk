@@ -71,8 +71,9 @@ async function loadSettings() {
     if (settings.monetagDirectLink) {
       state.monetagDirectLink = settings.monetagDirectLink;
     }
-    // Dynamically inject enabled Monetag ad scripts
+    // Dynamically inject enabled Monetag ad scripts & setup popunder trigger
     injectMonetagAdScripts(settings);
+    setupPopunderTrigger(settings);
   } catch (err) {
     console.error('Settings load error:', err);
   }
@@ -1468,13 +1469,48 @@ function renderAllowedEmailsList() {
           <p class="text-[10px] text-slate-500 font-bold tracking-wider">Username: @${admin.username}</p>
         </div>
       </div>
-      <button onclick="removeAllowedEmail('${admin.email}')" class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center" title="Revoke Access">
-        <i class="fa-solid fa-trash-can"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="editSubAdmin('${admin.email}', '${admin.username}')" class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 hover:bg-amber-500 hover:text-white transition-colors flex items-center justify-center" title="Edit Username/Password">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+        <button onclick="removeAllowedEmail('${admin.email}')" class="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center" title="Revoke Access">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
     </div>
   `).join('');
 
   container.innerHTML = mainAdminHtml + '<div class="mt-4">' + listHtml + '</div>';
+}
+
+async function editSubAdmin(email, currentUsername) {
+  const newUsername = prompt(`Update Username for ${email}:`, currentUsername);
+  if (newUsername === null) return; // Cancelled
+  const newPassword = prompt(`Enter new Password for ${email} (Leave blank to keep unchanged):`);
+  if (newPassword === null) return; // Cancelled
+
+  if (!newUsername.trim() && !newPassword.trim()) {
+    showToast('No changes made', 'info');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/admin/access/' + encodeURIComponent(email), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.adminToken },
+      body: JSON.stringify({ username: newUsername.trim(), password: newPassword.trim() })
+    });
+
+    if (res.ok) {
+      await loadAccessSettings();
+      showToast('Credentials updated for ' + email, 'success');
+    } else {
+      const data = await res.json();
+      showToast(data.error || 'Failed to update credentials', 'error');
+    }
+  } catch (err) {
+    showToast('Network error', 'error');
+  }
 }
 
 async function addAllowedEmail(e) {
@@ -1532,39 +1568,109 @@ async function removeAllowedEmail(emailToRemove) {
 }
 
 // ================================================================
-// DYNAMIC AD SCRIPT INJECTION (called on page load from loadSettings)
+// DYNAMIC AD SCRIPT INJECTION & POPUNDER TRIGGER
 // ================================================================
 
 function injectMonetagAdScripts(settings) {
-  if (!settings || !settings.autoInsertAds || state.adScriptsInjected) return;
+  if (!settings || settings.autoInsertAds === false) return;
+  // Do NOT run any ads on Admin Dashboard page or for logged in admins
+  if (state.currentPage === 'admin') return;
+  if (settings.excludeAdmin && state.adminToken) return;
+
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   if (settings.mobileOnly  && !isMobile) return;
   if (settings.desktopOnly &&  isMobile) return;
+
   const delay = (Number(settings.adLoadingDelay) || 0) * 1000;
   const doInject = function() {
-    [
+    const formats = [
       { enabled: settings.pushNotifEnabled,  code: settings.pushNotifCode  },
       { enabled: settings.inPagePushEnabled, code: settings.inPagePushCode },
       { enabled: settings.vignetteEnabled,   code: settings.vignetteCode   },
       { enabled: settings.onClickEnabled,    code: settings.onClickCode    },
       { enabled: settings.multitagEnabled,   code: settings.multitagCode   }
-    ].forEach(function(f) { if (f.enabled && f.code) injectScriptTag(f.code); });
+    ];
+
+    formats.forEach(function(f) {
+      if (f.enabled && f.code && f.code.trim()) {
+        executeAdSnippet(f.code);
+      }
+    });
+
+    if (settings.customHeaderCode) executeAdSnippet(settings.customHeaderCode);
+    if (settings.customFooterCode) executeAdSnippet(settings.customFooterCode);
+
     state.adScriptsInjected = true;
   };
+
   if (delay > 0) { setTimeout(doInject, delay); } else { doInject(); }
 }
 
-function injectScriptTag(code) {
-  const srcMatch = code.match(/src=["']([^"']+)["']/);
-  if (!srcMatch) return;
-  const src = srcMatch[1];
-  // Prevent double-injection
-  if (document.querySelector('script[src="' + src + '"]')) return;
-  const script = document.createElement('script');
-  script.src = src;
-  if (/\basync\b/.test(code)) script.async = true;
-  const cfMatch = code.match(/data-cfasync=["']([^"']+)["']/);
-  if (cfMatch) script.setAttribute('data-cfasync', cfMatch[1]);
-  script.setAttribute('data-monetag-injected', 'true');
-  document.body.appendChild(script);
+function executeAdSnippet(codeSnippet) {
+  if (!codeSnippet || !codeSnippet.trim()) return;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = codeSnippet;
+  const scripts = tempDiv.querySelectorAll('script');
+
+  if (scripts.length > 0) {
+    scripts.forEach(s => {
+      const src = s.getAttribute('src');
+      if (src) {
+        if (document.querySelector('script[src="' + src + '"]')) return;
+        const script = document.createElement('script');
+        script.src = src;
+        if (s.async || /\basync\b/.test(s.outerHTML)) script.async = true;
+        if (s.defer) script.defer = true;
+        Array.from(s.attributes).forEach(attr => {
+          if (attr.name !== 'src') script.setAttribute(attr.name, attr.value);
+        });
+        script.setAttribute('data-monetag-injected', 'true');
+        document.head.appendChild(script);
+      } else if (s.textContent && s.textContent.trim()) {
+        const script = document.createElement('script');
+        script.text = s.textContent;
+        script.setAttribute('data-monetag-injected', 'true');
+        document.head.appendChild(script);
+      }
+    });
+  } else {
+    const urlMatch = codeSnippet.match(/https?:\/\/[^\s"'>]+/);
+    if (urlMatch) {
+      const src = urlMatch[0];
+      if (document.querySelector('script[src="' + src + '"]')) return;
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.setAttribute('data-monetag-injected', 'true');
+      document.head.appendChild(script);
+    }
+  }
+}
+
+function setupPopunderTrigger(settings) {
+  if (!settings || !settings.onClickEnabled || !state.monetagDirectLink) return;
+  
+  const TEN_MINUTES_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+  const triggerPopunder = function(e) {
+    // 1. Absolutely NO ads or popunders on Admin Dashboard page or for logged in admins
+    if (state.currentPage === 'admin' || (settings.excludeAdmin && state.adminToken)) return;
+
+    // 2. Do not trigger when interacting with inputs/forms
+    if (e.target.closest('input, select, textarea, form, button[type="submit"]')) return;
+    
+    const now = Date.now();
+    const lastAdTime = Number(sessionStorage.getItem('last_ad_trigger_time')) || 0;
+
+    // 3. First click ever on site (lastAdTime === 0) OR 10 minutes elapsed since last ad
+    if (lastAdTime === 0 || (now - lastAdTime) >= TEN_MINUTES_MS) {
+      sessionStorage.setItem('last_ad_trigger_time', String(now));
+      try {
+        window.open(state.monetagDirectLink, '_blank');
+      } catch(err) {}
+    }
+  };
+
+  document.addEventListener('click', triggerPopunder, { capture: true });
 }

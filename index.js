@@ -117,25 +117,63 @@ const authenticateToken = (req, res, next) => {
 
 // Seed Default Data Function
 const seedDefaults = async () => {
-  const adminCount = await Admin.countDocuments();
-  if (adminCount === 0) {
-    const hashedPassword = await bcrypt.hash('BN23@123x', 10);
-    await Admin.create({ username: 'ZTX', password: hashedPassword, email: 'dinukanimsara031@gmail.com', isSuperAdmin: true });
+  const adminUsername = process.env.ADMIN_USERNAME || 'ZTX';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'BN23@123x';
+  const adminEmail = 'dinukanimsara031@gmail.com';
+
+  const existingAdmin = await Admin.findOne({ email: adminEmail });
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    await Admin.create({ username: adminUsername, password: hashedPassword, email: adminEmail, isSuperAdmin: true });
   } else {
-    // Migration for existing ZTX
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
     await Admin.updateOne(
-      { username: 'ZTX', email: { $exists: false } },
-      { $set: { email: 'dinukanimsara031@gmail.com', isSuperAdmin: true } }
+      { email: adminEmail },
+      { $set: { username: adminUsername, password: hashedPassword, isSuperAdmin: true } }
     );
   }
 
-  const settingsCount = await Settings.countDocuments();
-  if (settingsCount === 0) {
+  let settings = await Settings.findOne();
+  const defaultDirectLink = 'https://omg10.com/4/11453715';
+  const defaultAdTag = '<script src="https://omg10.com/4/11453715" async data-cfasync="false"></script>';
+
+  if (!settings) {
     await Settings.create({
       siteName: 'EXAM PDF DOWNLOAD LK',
       monetagEnabled: true,
-      monetagDirectLink: 'https://omg10.com/4/11453715'
+      monetagDirectLink: defaultDirectLink,
+      autoInsertAds: true,
+      excludeAdmin: true,
+      pushNotifEnabled: true,
+      pushNotifCode: defaultAdTag,
+      inPagePushEnabled: true,
+      inPagePushCode: defaultAdTag,
+      vignetteEnabled: true,
+      vignetteCode: defaultAdTag,
+      onClickEnabled: true,
+      onClickCode: defaultAdTag,
+      multitagEnabled: true,
+      multitagCode: defaultAdTag,
+      frequencyControl: 600,
+      adLoadingDelay: 1.5
     });
+  } else {
+    let updateFields = {};
+    if (!settings.monetagDirectLink) updateFields.monetagDirectLink = defaultDirectLink;
+    if (settings.autoInsertAds === false) updateFields.autoInsertAds = true;
+    if (settings.excludeAdmin === false) updateFields.excludeAdmin = true;
+    updateFields.frequencyControl = 600;
+    updateFields.adLoadingDelay = 1.5;
+    
+    if (!settings.multitagCode) { updateFields.multitagEnabled = true; updateFields.multitagCode = defaultAdTag; }
+    if (!settings.onClickCode) { updateFields.onClickEnabled = true; updateFields.onClickCode = defaultAdTag; }
+    if (!settings.vignetteCode) { updateFields.vignetteEnabled = true; updateFields.vignetteCode = defaultAdTag; }
+    if (!settings.inPagePushCode) { updateFields.inPagePushEnabled = true; updateFields.inPagePushCode = defaultAdTag; }
+    if (!settings.pushNotifCode) { updateFields.pushNotifEnabled = true; updateFields.pushNotifCode = defaultAdTag; }
+
+    if (Object.keys(updateFields).length > 0) {
+      await Settings.updateOne({ _id: settings._id }, { $set: updateFields });
+    }
   }
 
   const pdfCount = await Pdf.countDocuments();
@@ -268,7 +306,14 @@ router.post('/admin/login', async (req, res) => {
   try {
     const { email, username, password } = req.body;
     
-    const admin = await Admin.findOne({ email, username });
+    if (!email || !username || !password) {
+      return res.status(400).json({ error: 'Email, Username, and Password are all required', kickout: true });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim();
+
+    const admin = await Admin.findOne({ email: cleanEmail, username: cleanUsername });
 
     if (!admin) {
       return res.status(401).json({ error: 'Unauthorized credentials', kickout: true });
@@ -279,8 +324,10 @@ router.post('/admin/login', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized credentials', kickout: true });
     }
 
-    const token = jwt.sign({ id: admin._id, username: admin.username, email: admin.email, isSuperAdmin: admin.isSuperAdmin }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, username: admin.username, isSuperAdmin: admin.isSuperAdmin });
+    const isSuperAdmin = (cleanEmail === 'dinukanimsara031@gmail.com');
+
+    const token = jwt.sign({ id: admin._id, username: admin.username, email: admin.email, isSuperAdmin }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, username: admin.username, email: admin.email, isSuperAdmin });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -289,7 +336,9 @@ router.post('/admin/login', async (req, res) => {
 // GET /admin/access - Fetch all sub-admins (Protected, SuperAdmin only)
 router.get('/admin/access', authenticateToken, async (req, res) => {
   try {
-    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
+    if (req.user.email !== 'dinukanimsara031@gmail.com') {
+      return res.status(403).json({ error: 'Super Admin access required (dinukanimsara031@gmail.com only)' });
+    }
     const admins = await Admin.find({}, { password: 0 }); // exclude passwords
     res.json({ admins });
   } catch (error) {
@@ -300,18 +349,23 @@ router.get('/admin/access', authenticateToken, async (req, res) => {
 // POST /admin/access - Create sub-admin (Protected, SuperAdmin only)
 router.post('/admin/access', authenticateToken, async (req, res) => {
   try {
-    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
+    if (req.user.email !== 'dinukanimsara031@gmail.com') {
+      return res.status(403).json({ error: 'Super Admin access required (dinukanimsara031@gmail.com only)' });
+    }
     const { email, username, password } = req.body;
     
     if (!email || !username || !password) {
-      return res.status(400).json({ error: 'Email, username, and password are required' });
+      return res.status(400).json({ error: 'Email, Username, and Password are all required' });
     }
 
-    const existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
-    if (existingAdmin) return res.status(400).json({ error: 'Email or username already exists' });
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim();
+
+    const existingAdmin = await Admin.findOne({ $or: [{ email: cleanEmail }, { username: cleanUsername }] });
+    if (existingAdmin) return res.status(400).json({ error: 'Email or Username already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newAdmin = new Admin({ email, username, password: hashedPassword, isSuperAdmin: false });
+    const newAdmin = new Admin({ email: cleanEmail, username: cleanUsername, password: hashedPassword, isSuperAdmin: false });
     await newAdmin.save();
     
     res.json({ success: true });
@@ -323,14 +377,43 @@ router.post('/admin/access', authenticateToken, async (req, res) => {
 // DELETE /admin/access/:email - Delete sub-admin (Protected, SuperAdmin only)
 router.delete('/admin/access/:email', authenticateToken, async (req, res) => {
   try {
-    if (!req.user.isSuperAdmin) return res.status(403).json({ error: 'Super Admin access required' });
-    const { email } = req.params;
+    if (req.user.email !== 'dinukanimsara031@gmail.com') {
+      return res.status(403).json({ error: 'Super Admin access required (dinukanimsara031@gmail.com only)' });
+    }
+    const email = req.params.email.toLowerCase();
     
     if (email === 'dinukanimsara031@gmail.com') {
       return res.status(400).json({ error: 'Cannot delete Super Admin' });
     }
 
     await Admin.deleteOne({ email });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /admin/access/:email - Edit sub-admin credentials (Protected, SuperAdmin only)
+router.put('/admin/access/:email', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.email !== 'dinukanimsara031@gmail.com') {
+      return res.status(403).json({ error: 'Super Admin access required (dinukanimsara031@gmail.com only)' });
+    }
+    const targetEmail = req.params.email.toLowerCase();
+    const { username, password } = req.body;
+    
+    if (targetEmail === 'dinukanimsara031@gmail.com') {
+      return res.status(400).json({ error: 'Super Admin account cannot be modified via sub-admin update route' });
+    }
+
+    const admin = await Admin.findOne({ email: targetEmail });
+    if (!admin) return res.status(404).json({ error: 'Admin account not found' });
+
+    let updateData = {};
+    if (username && username.trim()) updateData.username = username.trim();
+    if (password && password.trim()) updateData.password = await bcrypt.hash(password.trim(), 10);
+
+    await Admin.updateOne({ email: targetEmail }, { $set: updateData });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
