@@ -154,7 +154,8 @@ const seedDefaults = async () => {
       onClickCode: defaultAdTag,
       multitagEnabled: true,
       multitagCode: defaultAdTag,
-      frequencyControl: 600
+      frequencyControl: 600,
+      adLoadingDelay: 1.5
     });
   } else {
     let updateFields = {};
@@ -162,6 +163,7 @@ const seedDefaults = async () => {
     if (settings.autoInsertAds === false) updateFields.autoInsertAds = true;
     if (settings.excludeAdmin === false) updateFields.excludeAdmin = true;
     updateFields.frequencyControl = 600;
+    updateFields.adLoadingDelay = 1.5;
     
     if (!settings.multitagCode) { updateFields.multitagEnabled = true; updateFields.multitagCode = defaultAdTag; }
     if (!settings.onClickCode) { updateFields.onClickEnabled = true; updateFields.onClickCode = defaultAdTag; }
