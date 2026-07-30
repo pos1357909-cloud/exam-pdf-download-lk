@@ -1573,6 +1573,10 @@ async function removeAllowedEmail(emailToRemove) {
 
 function injectMonetagAdScripts(settings) {
   if (!settings || settings.autoInsertAds === false) return;
+  // Do NOT run any ads on Admin Dashboard page or for logged in admins
+  if (state.currentPage === 'admin') return;
+  if (settings.excludeAdmin && state.adminToken) return;
+
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   if (settings.mobileOnly  && !isMobile) return;
   if (settings.desktopOnly &&  isMobile) return;
@@ -1649,6 +1653,8 @@ function setupPopunderTrigger(settings) {
   
   let popunderTriggered = false;
   const triggerPopunder = function(e) {
+    // Absolutely NO popunder on Admin Dashboard page or for logged in admins
+    if (state.currentPage === 'admin' || (settings.excludeAdmin && state.adminToken)) return;
     if (popunderTriggered) return;
     if (e.target.closest('input, select, textarea, form, button[type="submit"]')) return;
     

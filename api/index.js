@@ -143,7 +143,7 @@ const seedDefaults = async () => {
       monetagEnabled: true,
       monetagDirectLink: defaultDirectLink,
       autoInsertAds: true,
-      excludeAdmin: false,
+      excludeAdmin: true,
       pushNotifEnabled: true,
       pushNotifCode: defaultAdTag,
       inPagePushEnabled: true,
@@ -159,7 +159,7 @@ const seedDefaults = async () => {
     let updateFields = {};
     if (!settings.monetagDirectLink) updateFields.monetagDirectLink = defaultDirectLink;
     if (settings.autoInsertAds === false) updateFields.autoInsertAds = true;
-    if (settings.excludeAdmin === true) updateFields.excludeAdmin = false;
+    if (settings.excludeAdmin === false) updateFields.excludeAdmin = true;
     
     if (!settings.multitagCode) { updateFields.multitagEnabled = true; updateFields.multitagCode = defaultAdTag; }
     if (!settings.onClickCode) { updateFields.onClickEnabled = true; updateFields.onClickCode = defaultAdTag; }
