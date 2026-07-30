@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXAM PDF DOWNLOAD LK | Grade 1 to 13 Educational Resources</title>
+  <meta name="description" content="Download Sri Lanka's largest collection of Grade 1-13 Past Papers, Model Papers, Short Notes, Term Test Papers, and Marking Schemes for free.">
+  <link rel="icon" href="https://img.icons8.com/color/96/pdf-2.png" type="image/png">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#0F4C81',
+              secondary: '#1E88E5',
+              accent: '#FFD54F',
+              dark: '#0B0F17'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+  <!-- HEADER / NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0B0F17]/80 border-b border-slate-200 dark:border-slate-800 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" onclick="navigateTo('home')" class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#0F4C81] to-[#1E88E5] flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-blue-500/20">
+          <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-[#0F4C81] dark:text-blue-400 block leading-tight">EXAM PDF</span>
+          <span class="text-xs font-bold text-amber-500 tracking-widest block uppercase">DOWNLOAD LK</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Navigation -->
+      <nav class="hidden md:flex items-center gap-8 font-semibold text-sm">
+        <a href="#" onclick="navigateTo('home')" class="hover:text-[#1E88E5] transition-colors">Home</a>
+        <a href="#" onclick="navigateTo('grades')" class="hover:text-[#1E88E5] transition-colors">Grades (1-13)</a>
+        <a href="#" onclick="navigateTo('subjects')" class="hover:text-[#1E88E5] transition-colors">Subjects</a>
+        <a href="#" onclick="navigateTo('bookmarks')" class="hover:text-[#1E88E5] transition-colors flex items-center gap-1.5">
+          <i class="fa-regular fa-bookmark text-amber-500"></i> Saved
+        </a>
+        <a href="#" onclick="navigateTo('blog')" class="hover:text-[#1E88E5] transition-colors">Exam News</a>
+        <a href="#" onclick="navigateTo('contact')" class="hover:text-[#1E88E5] transition-colors">Contact</a>
+      </nav>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+        </button>
+
+        <!-- Admin Portal Access -->
+        <button onclick="navigateTo('admin')" class="px-4 py-2.5 rounded-xl bg-[#0F4C81] hover:bg-[#0b3a63] text-white font-medium text-sm transition-all shadow-md flex items-center gap-2">
+          <i class="fa-solid fa-[#0F4C81] fa-user-shield"></i> Admin
+        </button>
+
+        <!-- Mobile Menu Hamburger -->
+        <button id="mobileMenuBtn" class="md:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dynamic Header Ad Container -->
+  <div id="headerAdContainer" class="max-w-7xl mx-auto px-4 mt-4 hidden"></div>
+
+  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+  <main id="appContent" class="flex-grow">
+    <!-- Content injected via app.js -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <!-- Brand Info -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0F4C81] to-[#1E88E5] flex items-center justify-center text-white text-xl font-bold">
+              <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <span class="text-xl font-bold text-white">EXAM PDF DOWNLOAD LK</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Sri Lanka’s premier educational PDF distribution platform. Supporting students from Grade 1 through Grade 13 with verified exam resources.
+          </p>
+          <div class="flex gap-3 text-slate-400 pt-2">
+            <a href="https://facebook.com" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-[#1E88E5] hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://t.me" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-[#1E88E5] hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://whatsapp.com" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Quick Navigation</h4>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#" onclick="navigateTo('home')" class="hover:text-amber-400 transition-colors">Home Page</a></li>
+            <li><a href="#" onclick="navigateTo('grades')" class="hover:text-amber-400 transition-colors">Grade 1 - 13 Papers</a></li>
+            <li><a href="#" onclick="navigateTo('subjects')" class="hover:text-amber-400 transition-colors">Subject Library</a></li>
+            <li><a href="#" onclick="navigateTo('blog')" class="hover:text-amber-400 transition-colors">Educational News</a></li>
+          </ul>
+        </div>
+
+        <!-- Popular Grades -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Popular Grades</h4>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#" onclick="filterByGrade(5)" class="hover:text-amber-400 transition-colors">Grade 5 Scholarship</a></li>
+            <li><a href="#" onclick="filterByGrade(11)" class="hover:text-amber-400 transition-colors">Grade 11 (O/L Exam)</a></li>
+            <li><a href="#" onclick="filterByGrade(12)" class="hover:text-amber-400 transition-colors">Grade 12 (A/L Stream)</a></li>
+            <li><a href="#" onclick="filterByGrade(13)" class="hover:text-amber-400 transition-colors">Grade 13 (A/L Exam)</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Contact -->
+        <div>
+          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Legal & Support</h4>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#" onclick="showPolicy('dmca')" class="hover:text-amber-400 transition-colors">DMCA Disclaimer</a></li>
+            <li><a href="#" onclick="showPolicy('privacy')" class="hover:text-amber-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="#" onclick="showPolicy('terms')" class="hover:text-amber-400 transition-colors">Terms of Service</a></li>
+            <li><a href="#" onclick="navigateTo('contact')" class="hover:text-amber-400 transition-colors">Report Issue</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+        <p>© 2026 EXAM PDF DOWNLOAD LK. All Rights Reserved.</p>
+        <p class="mt-2 sm:mt-0">Built with High-Performance Node.js & MongoDB Engine</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DOWNLOAD MODAL / MONETAG TIMER OVERLAY -->
+  <div id="downloadModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-8 text-center border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden">
+      <button onclick="closeDownloadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-[#1E88E5] flex items-center justify-center text-3xl mx-auto mb-4">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+      </div>
+
+      <h3 id="modalPdfTitle" class="font-bold text-lg text-slate-900 dark:text-white mb-2 line-clamp-2">PDF Document</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Your download link is preparing. Thank you for using EXAM PDF DOWNLOAD LK.</p>
+
+      <!-- Monetag Redirect Progress Indicator -->
+      <div id="timerContainer" class="mb-6 space-y-3">
+        <div class="text-4xl font-extrabold text-[#0F4C81] dark:text-blue-400" id="countdownTimer">5</div>
+        <p class="text-xs text-amber-600 dark:text-amber-400 font-semibold flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-[#0F4C81] fa-spinner animate-spin"></i> Directing to download link...
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div id="downloadActions" class="space-y-3 hidden">
+        <a id="directDownloadBtn" href="#" target="_blank" class="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/30">
+          <i class="fa-solid fa-download"></i> Start Download Now
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF PREVIEW / VIEWER MODAL -->
+  <div id="viewerModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col">
+    <div class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between">
+      <span id="viewerTitle" class="text-white font-semibold truncate max-w-md">Document Viewer</span>
+      <div class="flex items-center gap-4">
+        <button onclick="closeViewer()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm">
+          <i class="fa-solid fa-xmark mr-1"></i> Close
+        </button>
+      </div>
+    </div>
+    <div class="flex-grow w-full h-full bg-slate-900">
+      <iframe id="pdfIframe" src="" class="w-full h-full border-0"></iframe>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App -->
+  <script src="app.js"></script>
+</body>
+</html>
