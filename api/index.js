@@ -304,6 +304,10 @@ app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
+// On Vercel, the full path (e.g. /api/admin/login) is forwarded to this function,
+// so mount at /api. On local dev, server.js already strips the /api prefix,
+// so also mount at / as a fallback.
+app.use('/api', router);
 app.use('/', router);
 
 module.exports = app;
