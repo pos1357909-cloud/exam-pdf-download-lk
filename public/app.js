@@ -10,6 +10,7 @@ const state = {
   isSuperAdmin: localStorage.getItem('isSuperAdmin') === 'true',
   bookmarks: JSON.parse(localStorage.getItem('pdf_bookmarks') || '[]'),
   monetagDirectLink: 'https://omg10.com/4/11459250',
+  directLinks: [],        // Admin-configured target-specific direct links
   adminActiveTab: 'overview',
   adScriptsInjected: false,
   adsSettings: null,
@@ -71,6 +72,10 @@ async function loadSettings() {
     if (settings.monetagDirectLink) {
       state.monetagDirectLink = settings.monetagDirectLink;
     }
+    // Save directLinks array from admin settings
+    if (Array.isArray(settings.directLinks)) {
+      state.directLinks = settings.directLinks.filter(l => l.enabled !== false);
+    }
     // Dynamically inject enabled Monetag ad scripts & setup popunder trigger
     injectMonetagAdScripts(settings);
     setupPopunderTrigger(settings);
@@ -92,6 +97,11 @@ function navigateTo(page, params = {}) {
   else if (page === 'blog') renderBlogPage(app);
   else if (page === 'contact') renderContactPage(app);
   else if (page === 'admin') renderAdminPage(app);
+
+  // Re-apply direct links after every page render (except admin)
+  if (page !== 'admin') {
+    setTimeout(() => applyDirectLinksToButtons(), 300);
+  }
 }
 
 // ---------------- UI RENDERERS ----------------
@@ -206,6 +216,8 @@ async function loadPdfs(params = {}) {
     }
 
     grid.innerHTML = state.pdfs.map(pdf => renderPdfCard(pdf)).join('');
+    // Apply admin-configured direct links to newly rendered buttons
+    setTimeout(() => applyDirectLinksToButtons(), 100);
   } catch (err) {
     grid.innerHTML = `<div class="col-span-full text-center py-12 text-red-500 font-bold">Failed to load resources. Please try again.</div>`;
   }
@@ -529,11 +541,69 @@ function initiateDownload(pdfId, pdfTitle) {
       timerContainer.classList.add('hidden');
       actionsElem.classList.remove('hidden');
 
-      // Trigger Monetag direct link
-      window.open(state.monetagDirectLink, '_blank');
+      // Resolve the best Direct Link: check admin directLinks first (download / pdfDownload targets)
+      const adLink = getDirectLinkForTarget('pdfDownload') ||
+                     getDirectLinkForTarget('download') ||
+                     getDirectLinkForTarget('custom') ||
+                     state.monetagDirectLink;
+
+      // Trigger Monetag direct link in new tab
+      try { window.open(adLink, '_blank'); } catch(e) {}
       directBtn.href = `/api/pdfs/${pdfId}`;
     }
   }, 1000);
+}
+
+// ----------------------------------------------------------------
+// Direct Link Helpers
+// ----------------------------------------------------------------
+
+/**
+ * Returns the URL of the first enabled direct link matching the given target,
+ * or null if none found.
+ */
+function getDirectLinkForTarget(target) {
+  if (!state.directLinks || !state.directLinks.length) return null;
+  const match = state.directLinks.find(l => l.enabled !== false && l.target === target && l.url);
+  return match ? match.url : null;
+}
+
+/**
+ * Applies admin-configured direct links to matching DOM elements.
+ * Targets:
+ *   'download'         – all [data-dl-target="download"] elements
+ *   'pdfDownload'      – PDF download buttons (those calling initiateDownload)
+ *   'externalDownload' – external download anchor tags
+ *   'custom'           – any [data-dl-target="custom"] elements
+ *
+ * This also honours the global monetagDirectLink fallback.
+ */
+function applyDirectLinksToButtons() {
+  if (state.currentPage === 'admin') return;
+  if (!state.directLinks || !state.directLinks.length) return;
+
+  // Apply to any element explicitly tagged with data-dl-target
+  document.querySelectorAll('[data-dl-target]').forEach(el => {
+    const target = el.getAttribute('data-dl-target');
+    const link = getDirectLinkForTarget(target);
+    if (!link) return;
+    if (el.tagName === 'A') {
+      el.href = link;
+      el.target = '_blank';
+      el.rel = 'noopener noreferrer';
+    } else {
+      el.setAttribute('data-monetag-dl', link);
+    }
+  });
+
+  // Apply 'externalDownload' links to all external anchor tags with .pdf extension
+  const extLink = getDirectLinkForTarget('externalDownload');
+  if (extLink) {
+    document.querySelectorAll('a[href$=".pdf"][target="_blank"]').forEach(a => {
+      a.setAttribute('data-original-href', a.href);
+      a.href = extLink;
+    });
+  }
 }
 
 function closeDownloadModal() {
@@ -1280,6 +1350,8 @@ async function saveDirectLink() {
     });
     if (res.ok) {
       const data = await res.json(); state.adsSettings = data;
+      // Sync active direct links to state so they apply site-wide immediately
+      state.directLinks = (data.directLinks || []).filter(l => l.enabled !== false);
       hideAddDirectLinkForm();
       const dlList = document.getElementById('directLinksList');
       if (dlList) { const tmp = document.createElement('div'); tmp.innerHTML = renderDirectLinksSection(data.directLinks || []); const nl = tmp.querySelector('#directLinksList'); if (nl) dlList.innerHTML = nl.innerHTML; }
@@ -1299,6 +1371,8 @@ async function deleteDirectLink(linkId) {
     });
     if (res.ok) {
       state.adsSettings = await res.json();
+      // Sync active direct links to state
+      state.directLinks = (state.adsSettings.directLinks || []).filter(l => l.enabled !== false);
       const row = document.getElementById('dlRow-' + linkId); if (row) row.remove();
       showToast('Direct link deleted', 'info');
     }
@@ -1315,7 +1389,12 @@ async function toggleDirectLink(linkId, enabled) {
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.adminToken },
       body: JSON.stringify({ directLinks: updatedLinks, _logAction: 'Direct Link Toggled', _logDetails: 'ID: ' + linkId + ', enabled: ' + enabled })
     });
-    if (res.ok) { state.adsSettings = await res.json(); }
+    if (res.ok) {
+      state.adsSettings = await res.json();
+      // Sync active direct links to state immediately
+      state.directLinks = (state.adsSettings.directLinks || []).filter(l => l.enabled !== false);
+      showToast('Direct link ' + (enabled ? 'enabled' : 'disabled'), enabled ? 'success' : 'info');
+    }
   } catch (err) { console.error(err); }
 }
 
