@@ -161,92 +161,10 @@
     </header>
 
     <!-- MAIN CONTAINER -->
-    <main class="flex-1 max-w-[1500px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 z-10 relative">
+    <main class="flex-1 max-w-[1280px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 z-10 relative">
 
-        <!-- Mobile Sidebar Expand/Collapse Toggle Button (Visible only on mobile/tablet screens < lg) -->
-        <div class="lg:hidden mb-4">
-            <button id="mobileSidebarToggleBtn" onclick="toggleMobileSidebar()" class="w-full bg-slate-900/95 border border-amber-500/40 text-amber-300 font-bold text-xs py-3 px-4 rounded-2xl flex items-center justify-between shadow-lg font-sinhala transition hover:bg-slate-800 active:scale-[0.99]">
-                <span class="flex items-center gap-2">
-                    <i class="fa-solid fa-bars-staggered text-amber-400"></i>
-                    <span id="mobileSidebarToggleText">පාඩම් මාලාව සහ ශිෂ්‍ය පීඨය (Sidebar පෙන්වන්න)</span>
-                </span>
-                <i id="mobileSidebarChevron" class="fa-solid fa-chevron-down text-amber-400 transition-transform duration-300 text-xs"></i>
-            </button>
-        </div>
-
-        <!-- 2-COLUMN LMS DASHBOARD GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-            <!-- ==================== LMS SIDEBAR (Collapsible on Mobile, 4 cols on lg, 3 cols on xl) ==================== -->
-            <aside id="lmsSidebar" class="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 transition-all duration-300">
-
-                <!-- 1. STUDENT PROFILE & COINS CARD -->
-                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-4 shadow-xl">
-                    <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
-                        <div class="flex items-center space-x-3 min-w-0">
-                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md border border-yellow-200/40 flex-shrink-0">
-                                <i class="fa-solid fa-user-graduate"></i>
-                            </div>
-                            <div class="overflow-hidden min-w-0">
-                                <h4 id="sidebarUserName" class="text-xs sm:text-sm font-bold text-amber-100 truncate">ආයුබෝවන්!</h4>
-                                <p id="sidebarUserEmail" class="text-[11px] text-slate-400 truncate">ලොගින් වී නොමැත</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Coins & Plan Status -->
-                    <div class="grid grid-cols-2 gap-2 text-center">
-                        <div class="bg-slate-950/80 p-2.5 rounded-2xl border border-slate-800">
-                            <p class="text-[10px] text-slate-400 uppercase font-bold">වත්මන් Plan</p>
-                            <p id="sidebarPlanName" class="text-xs font-black text-amber-300 mt-0.5 truncate">Free</p>
-                        </div>
-                        <div class="bg-slate-950/80 p-2.5 rounded-2xl border border-slate-800">
-                            <p class="text-[10px] text-slate-400 uppercase font-bold">ඉතිරි Coins</p>
-                            <p id="sidebarCoinsCount" class="text-xs font-black text-emerald-400 mt-0.5 truncate">0 Coins</p>
-                        </div>
-                    </div>
-
-                    <button onclick="openDashboard()" class="w-full bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 active-press">
-                        <i class="fa-solid fa-crown text-amber-400"></i>
-                        <span>Membership Dashboard</span>
-                    </button>
-                </div>
-
-                <!-- 2. LESSON NAVIGATION SIDEBAR -->
-                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-3 shadow-xl">
-                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-700/60">
-                        <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center">
-                            <i class="fa-solid fa-book-open mr-2"></i> පාඩම් මාලාව (Lessons)
-                        </h4>
-                        <span id="sidebarActiveGradeBadge" class="bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg border border-amber-500/30">6 ශ්‍රේණිය</span>
-                    </div>
-
-                    <!-- Interactive Lesson Cards List -->
-                    <div id="sidebarLessonList" class="space-y-2 max-h-[380px] overflow-y-auto pr-1 no-scrollbar">
-                        <div class="p-3 text-center text-slate-400 text-xs font-sinhala">පාඩමක් තෝරන්න</div>
-                    </div>
-                </div>
-
-
-                <!-- 4. BANK & WHATSAPP SUPPORT CARD -->
-                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-emerald-500/30 bg-emerald-950/10 space-y-3 shadow-xl">
-                    <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>සහාය ලබා ගැනීමට (Help):</span>
-                    </div>
-                    <p class="text-[11px] text-slate-300 leading-relaxed font-sinhala">
-                        Coins සක්‍රීය කරගැනීමට හෝ ඕනෑම ගැටලුවකට WhatsApp හරහා අප හා සම්බන්ධ වන්න.
-                    </p>
-                    <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 rounded-xl transition shadow flex items-center justify-center space-x-2 active-press">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>WhatsApp 070 389 6029</span>
-                    </a>
-                </div>
-
-            </aside>
-
-            <!-- ==================== MAIN WORKSPACE (8 cols on lg, 9 cols on xl) ==================== -->
-            <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+        <!-- SINGLE COLUMN FULL-WIDTH LMS WORKSPACE -->
+        <div class="max-w-5xl mx-auto space-y-6">
 
                 <!-- WELCOME HERO SECTION -->
                 <div id="welcomeHero" class="glass-card rounded-3xl p-6 sm:p-10 shadow-2xl border border-amber-500/40 mb-6 relative overflow-hidden animate__animated animate__fadeIn">
@@ -748,9 +666,7 @@
                     <p class="text-slate-400 text-xs">මෙම පාඩම සඳහා තොරතුරු ඇතුළත් කර නොමැත.</p>
                 </div>
 
-            </div> <!-- Close right workspace column (lg:col-span-8 xl:col-span-9) -->
-        </div> <!-- Close 2-column grid container -->
-
+        </div> <!-- Close single column workspace container -->
     </main>
 
     <!-- MOBILE FIXED BOTTOM NAVIGATION BAR -->
@@ -758,10 +674,6 @@
         <button onclick="resetToHome()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
             <i class="fa-solid fa-house text-base"></i>
             <span class="text-[10px] font-bold mt-0.5">මුලට</span>
-        </button>
-        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
-            <i class="fa-solid fa-book-open text-base"></i>
-            <span class="text-[10px] font-bold mt-0.5">පාඩම්</span>
         </button>
         <button onclick="openDashboard()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
             <i class="fa-solid fa-crown text-base"></i>
