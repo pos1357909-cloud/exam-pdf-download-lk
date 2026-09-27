@@ -1,19 +1,5 @@
 {
-  "students": [
-    {
-      "studentId": "STD-TEST-1790488434224",
-      "name": "Test Student",
-      "email": "testuser_1790488434224@test.com",
-      "password": "pass123",
-      "role": "user",
-      "plan": "Silver",
-      "coins": 1250,
-      "hasClaimedFreeCoins": true,
-      "todayUsedCoins": 0,
-      "lastActiveDate": "2026-09-27",
-      "createdAt": "2026-09-27T05:53:54.448Z"
-    }
-  ],
+  "students": [],
   "approvals": [
     {
       "requestId": "REQ-TEST-1790488435652",

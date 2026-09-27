@@ -868,6 +868,22 @@ router.put('/students/:id', async (req, res) => {
   }
 });
 
+// DELETE /api/students/:id: Delete student by ID or email
+router.delete('/students/:id', async (req, res) => {
+  try {
+    const targetId = decodeURIComponent(req.params.id);
+    if (mongoose.connection.readyState === 1) {
+      await Student.deleteOne({ $or: [{ studentId: targetId }, { email: targetId }] });
+    }
+    memoryStore.students = memoryStore.students.filter(s => s.studentId !== targetId && s.email !== targetId);
+    saveFallbackData(memoryStore);
+
+    res.json({ success: true, message: 'Student deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST /api/students/consume-coin
 router.post('/students/consume-coin', async (req, res) => {
   try {

@@ -1483,6 +1483,9 @@
                             <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1.5 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition">
                                 <i class="fa-solid fa-coins mr-1"></i>Coins
                             </button>
+                            <button onclick="adminDeleteStudent(${index})" class="bg-rose-500/20 text-rose-300 px-2 py-1.5 rounded-lg border border-rose-500/40 hover:bg-rose-500 hover:text-white font-bold text-[11px] transition" title="ශිෂ්‍යයා ඉවත් කරන්න">
+                                <i class="fa-solid fa-trash mr-1"></i>Del
+                            </button>
                         </div>
                     </td>
                 `;
@@ -1535,6 +1538,26 @@
                 }).catch(() => {});
 
                 alert(`Coins ප්‍රමාණය සාර්ථකව වෙනස් කරන ලදී! නව Coins ප්‍රමාණය: ${student.coins}`);
+            }
+        }
+
+        async function adminDeleteStudent(studentIndex) {
+            const student = registeredStudents[studentIndex];
+            if (!student) return;
+            if (confirm(`ඔබට ශිෂ්‍ය ${student.name} (${student.email}) පද්ධතියෙන් මුළුමනින්ම ඉවත් කිරීමට අවශ්‍යද?`)) {
+                const idToDelete = student.studentId || student.email;
+                registeredStudents.splice(studentIndex, 1);
+                saveData();
+                renderAdminStudentsList();
+
+                try {
+                    await fetch(`/api/students/${encodeURIComponent(idToDelete)}`, {
+                        method: 'DELETE'
+                    });
+                    showToast('🗑️ ශිෂ්‍යයා සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී!', 'success');
+                } catch (err) {
+                    console.error('Delete student error:', err);
+                }
             }
         }
 
@@ -1991,6 +2014,11 @@
             }, 4000);
         }
 
+        // Tracking sets to prevent repetitive notifications
+        const seenStudentKeys = new Set();
+        const seenApprovalKeys = new Set();
+        let isInitialSyncFinished = false;
+
         // Initialize Socket.IO connection
         let socket = null;
         try {
@@ -2005,28 +2033,28 @@
             });
 
             // ── EVENT: New student registered ──────────────────────────────
-            // Admin sees this instantly on their PC
             socket.on('student:registered', (data) => {
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
-                    showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+                    const key = data.studentId || data.email;
+                    if (key && !seenStudentKeys.has(key)) {
+                        seenStudentKeys.add(key);
+                        showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+                    }
                     fetchAndRenderStudents();
                 }
             });
 
             // ── EVENT: Student data updated by admin ───────────────────────
-            // Student's phone gets coins/plan update instantly
             socket.on('student:updated', (data) => {
                 if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
                 if (currentUser.email !== data.email) return;
 
-                // Update local state
                 currentUser.coins = data.coins;
                 currentUser.plan = data.plan;
                 if (data.todayUsedCoins !== undefined) currentUser.todayUsedCoins = data.todayUsedCoins;
                 saveData();
                 updateAuthUI();
 
-                // Refresh dashboard if open
                 const dashSection = document.getElementById('dashboardSection');
                 if (dashSection && !dashSection.classList.contains('hidden')) {
                     document.getElementById('dashPlanName').innerText = currentUser.plan;
@@ -2039,15 +2067,12 @@
             });
 
             // ── EVENT: Payment approval status changed by admin ────────────
-            // Student phone sees approval result (approved/rejected) instantly
             socket.on('approval:updated', (data) => {
-                // For Admin: fresh fetch from DB
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     fetchAndRenderApprovals();
                     return;
                 }
 
-                // For Student: check if this approval is theirs
                 if (!currentUser || currentUser.email !== data.studentEmail) return;
 
                 if (data.status === 'approved') {
@@ -2070,12 +2095,14 @@
             });
 
             // ── EVENT: New payment claim submitted by student ──────────────
-            // Admin sees new approval requests in real-time
             socket.on('approval:new', (data) => {
                 if (!currentUser || (currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL)) return;
 
-                // Toast immediately, then fresh fetch
-                showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
+                const key = data.requestId || (data.studentEmail + '_' + data.paymentId);
+                if (key && !seenApprovalKeys.has(key)) {
+                    seenApprovalKeys.add(key);
+                    showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
+                }
                 fetchAndRenderApprovals();
             });
 
@@ -2092,7 +2119,7 @@
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     syncAdminDataQuietly();
                 }
-            }, 5000); // Poll every 5 seconds
+            }, 5000);
         }
 
         async function syncAdminDataQuietly() {
@@ -2101,12 +2128,24 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data && Array.isArray(data)) {
-                        const previousCount = registeredStudents.length;
-                        if (previousCount > 0 && data.length > previousCount) {
-                            const newCount = data.length - previousCount;
-                            const latest = data[0];
-                            showToast(`🎓 නව ශිෂ්‍යයින් ${newCount} දෙනෙක් ලියාපදිංචි විය: ${latest.name || latest.email}`, 'info');
+                        let hasNewStudent = false;
+                        let newestStudent = null;
+
+                        data.forEach(s => {
+                            const key = s.studentId || s.email;
+                            if (key) {
+                                if (isInitialSyncFinished && !seenStudentKeys.has(key)) {
+                                    hasNewStudent = true;
+                                    newestStudent = s;
+                                }
+                                seenStudentKeys.add(key);
+                            }
+                        });
+
+                        if (hasNewStudent && newestStudent) {
+                            showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${newestStudent.name || newestStudent.email}`, 'info');
                         }
+
                         registeredStudents = data;
                         localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
 
@@ -2126,10 +2165,24 @@
                 if (apRes.ok) {
                     const apData = await apRes.json();
                     if (apData && Array.isArray(apData)) {
-                        const prevApCount = approvalRequests.length;
-                        if (prevApCount > 0 && apData.length > prevApCount) {
-                            showToast(`💳 නව ගෙවීම් ඉල්ලීමක් ලැබිණි!`, 'warning');
+                        let hasNewApproval = false;
+                        let newestApproval = null;
+
+                        apData.forEach(a => {
+                            const key = a.requestId || (a.studentEmail + '_' + a.paymentId);
+                            if (key) {
+                                if (isInitialSyncFinished && !seenApprovalKeys.has(key)) {
+                                    hasNewApproval = true;
+                                    newestApproval = a;
+                                }
+                                seenApprovalKeys.add(key);
+                            }
+                        });
+
+                        if (hasNewApproval && newestApproval) {
+                            showToast(`💳 නව ගෙවීම් ඉල්ලීමක් ලැබිණි: ${newestApproval.studentName} (${newestApproval.plan})`, 'warning');
                         }
+
                         approvalRequests = apData;
                         localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
 
@@ -2143,6 +2196,8 @@
                     }
                 }
             } catch (err) {}
+
+            isInitialSyncFinished = true;
         }
 
         document.addEventListener('visibilitychange', () => {
