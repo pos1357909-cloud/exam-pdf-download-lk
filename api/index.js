@@ -862,14 +862,20 @@ router.post('/students/login', async (req, res) => {
 // GET /api/students: List all registered students
 router.get('/students', async (req, res) => {
   try {
+    let mongoStudents = [];
     if (mongoose.connection.readyState === 1) {
-      const students = await Student.find({}).sort({ createdAt: -1 });
-      res.json(students);
-    } else {
-      res.json(memoryStore.students);
+      mongoStudents = await Student.find({}).sort({ createdAt: -1 });
     }
+    const studentMap = new Map();
+    (memoryStore.students || []).forEach(s => { if (s && s.email) studentMap.set(s.email.toLowerCase(), s); });
+    mongoStudents.forEach(s => {
+      const obj = s.toObject ? s.toObject() : s;
+      if (obj && obj.email) studentMap.set(obj.email.toLowerCase(), obj);
+    });
+
+    res.json(Array.from(studentMap.values()));
   } catch (error) {
-    res.json(memoryStore.students);
+    res.json(memoryStore.students || []);
   }
 });
 
@@ -904,6 +910,21 @@ router.put('/students/:id', async (req, res) => {
       });
     }
     res.json(updated || { success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /api/students: Delete ALL registered students
+router.delete('/students', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await Student.deleteMany({});
+    }
+    memoryStore.students = [];
+    saveFallbackData(memoryStore);
+
+    res.json({ success: true, message: 'All registered students deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
