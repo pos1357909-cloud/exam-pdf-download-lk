@@ -1875,6 +1875,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (Array.isArray(data)) {
+                        studentMap.clear(); // Clear local cache to prevent deleted students from coming back
                         data.forEach(s => { if (s && s.email) studentMap.set(s.email.toLowerCase(), s); });
                     }
                 }
@@ -2628,6 +2629,28 @@
 
             socket.on('disconnect', () => {
                 console.log('Real-time disconnected');
+            });
+
+            socket.on('student:removed', (data) => {
+                if (currentUser && currentUser.email === data.email) {
+                    alert("ඔබගේ ගිණුම පද්ධතියෙන් ඉවත් කර ඇත. කරුණාකර නැවත ලියාපදිංචි වන්න.");
+                    logout();
+                }
+                
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    fetchAndRenderStudents();
+                }
+            });
+
+            socket.on('student:removed_all', () => {
+                if (currentUser && currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL) {
+                    alert("පද්ධතියේ සියලුම ගිණුම් ඉවත් කර ඇත. කරුණාකර නැවත ලියාපදිංචි වන්න.");
+                    logout();
+                }
+                
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    fetchAndRenderStudents();
+                }
             });
 
             socket.on('student:registered', (data) => {

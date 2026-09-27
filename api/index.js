@@ -962,6 +962,8 @@ router.delete('/students', async (req, res) => {
     memoryStore.students = [];
     saveFallbackData(memoryStore);
 
+    emitEvent(req, 'student:removed_all', {});
+
     res.json({ success: true, message: 'All registered students deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
