@@ -912,7 +912,13 @@
             // Asynchronously sync with Cloud Database (MongoDB)
             syncWithDatabase();
             if (typeof startAdminPolling === 'function') startAdminPolling();
+
+            // Sync student data on page load to get latest coins from server (admin may have changed)
+            if (currentUser && currentUser.role !== 'admin') {
+                syncStudentDataFromServer();
+            }
         };
+
 
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('lmsSidebar');
@@ -1275,7 +1281,7 @@
         }
 
         /* USER DASHBOARD & ANALYTICS */
-        function openDashboard() {
+        async function openDashboard() {
             closeOutOfCoinsModal();
             if (!currentUser) { openAuthModal('register'); return; }
             if (currentUser.role === 'admin') { openAdminDashboard(); return; }
@@ -1286,10 +1292,48 @@
             document.getElementById('dashboardSection').classList.remove('hidden');
 
             checkDailyAnalyticsReset();
-            document.getElementById('dashPlanName').innerText = currentUser.plan;
-            document.getElementById('dashCoins').innerText = currentUser.coins;
-            document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins;
-            document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+            // Show cached data immediately
+            renderDashboardData();
+
+            // Then fetch fresh data from server and re-render
+            await syncStudentDataFromServer();
+        }
+
+        function renderDashboardData() {
+            if (!currentUser) return;
+            document.getElementById('dashPlanName').innerText = currentUser.plan || 'Free';
+            document.getElementById('dashCoins').innerText = currentUser.coins ?? 0;
+            document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins ?? 0;
+            document.getElementById('dashTodayRemaining').innerText = currentUser.coins ?? 0;
+        }
+
+        async function syncStudentDataFromServer() {
+            if (!currentUser || currentUser.role === 'admin') return;
+            try {
+                const res = await fetch('/api/students/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUser.email, password: currentUser.password })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.student) {
+                        // Update coins, plan, status from server (keep password in memory)
+                        const serverStudent = data.student;
+                        currentUser.coins = serverStudent.coins ?? currentUser.coins;
+                        currentUser.plan = serverStudent.plan || currentUser.plan;
+                        currentUser.status = serverStudent.status || currentUser.status;
+                        currentUser.todayUsedCoins = serverStudent.todayUsedCoins ?? currentUser.todayUsedCoins;
+                        currentUser.hasClaimedFreeCoins = serverStudent.hasClaimedFreeCoins ?? currentUser.hasClaimedFreeCoins;
+                        saveData();
+                        updateAuthUI();
+                        renderDashboardData();
+                    }
+                }
+            } catch (err) {
+                // Silently fail - use cached data
+                console.log('Student data sync failed, using cached data');
+            }
         }
 
         function claimFreeCoins() {
@@ -2140,7 +2184,7 @@
             }
         }
 
-        function adminEditCoins(studentIndex) {
+        async function adminEditCoins(studentIndex) {
             const student = registeredStudents[studentIndex];
             const amountStr = prompt(`${student.name} ගේ Coins වෙනස් කිරීමට අවශ්‍ය ප්‍රමාණය සටහන් කරන්න:\n(Coins එකතු කිරීමට ධන අගයන් උදා: 100, Coins අයින් කිරීමට ඍණ අගයන් උදා: -50 ඇතුලත් කරන්න)`, "100");
             const amount = parseInt(amountStr);
@@ -2150,11 +2194,22 @@
                 saveData();
                 renderAdminStudentsList();
 
-                fetch(`/api/students/${student.studentId || student.email}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ coins: student.coins })
-                }).catch(() => {});
+                try {
+                    // Send full update including plan and status so socket event has complete data
+                    await fetch(`/api/students/${student.studentId || student.email}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            coins: student.coins,
+                            plan: student.plan || 'Free',
+                            status: student.status || 'active',
+                            todayUsedCoins: student.todayUsedCoins || 0
+                        })
+                    });
+                    showToast(`✅ ${student.name} ගේ Coins ${amount > 0 ? '+' : ''}${amount} → නව Coins: ${student.coins}`, 'success');
+                } catch (err) {
+                    showToast('⚠️ Server update failed - local update only', 'warning');
+                }
 
                 alert(`Coins ප්‍රමාණය සාර්ථකව වෙනස් කරන ලදී! නව Coins ප්‍රමාණය: ${student.coins}`);
             }
@@ -2811,10 +2866,12 @@
                 if (currentUser.email !== data.email) return;
 
                 const wasPending = currentUser.status === 'pending';
+                const oldCoins = currentUser.coins;
 
-                currentUser.coins = data.coins;
-                currentUser.plan = data.plan;
-                if (data.todayUsedCoins !== undefined) currentUser.todayUsedCoins = data.todayUsedCoins;
+                // Safely update only if values are not null/undefined
+                if (data.coins !== null && data.coins !== undefined) currentUser.coins = data.coins;
+                if (data.plan) currentUser.plan = data.plan;
+                if (data.todayUsedCoins !== undefined && data.todayUsedCoins !== null) currentUser.todayUsedCoins = data.todayUsedCoins;
                 if (data.status) currentUser.status = data.status;
                 saveData();
                 updateAuthUI();
@@ -2822,22 +2879,20 @@
                 // If student was pending and now active, redirect to home
                 if (wasPending && data.status === 'active') {
                     document.getElementById('pendingSection').classList.add('hidden');
-                    showToast(`🎉 ඔබේ ගිණුම Admin විසින් Approve කරන ලදී! Coins ${data.coins} ලැබිණි. ලොග් වන්න!`, 'success');
-                    setTimeout(() => {
-                        resetToHome();
-                    }, 2000);
+                    showToast(`🎉 ඔබේ ගිණුම Admin විසින් Approve කරන ලදී! Coins ${currentUser.coins} ලැබිණි!`, 'success');
+                    setTimeout(() => { resetToHome(); }, 2000);
                     return;
                 }
 
+                // Update dashboard if visible
                 const dashSection = document.getElementById('dashboardSection');
                 if (dashSection && !dashSection.classList.contains('hidden')) {
-                    document.getElementById('dashPlanName').innerText = currentUser.plan;
-                    document.getElementById('dashCoins').innerText = currentUser.coins;
-                    document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins || 0;
-                    document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+                    renderDashboardData();
                 }
 
-                showToast(`✅ Admin ඔබේ ගිණුම යාවත්කාලීන කළා! Coins: ${data.coins}, Plan: ${data.plan}`, 'success');
+                const diff = currentUser.coins - oldCoins;
+                const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+                showToast(`💰 Admin ඔබේ Coins ${diffStr} කළා! නව Coins: ${currentUser.coins} | Plan: ${currentUser.plan}`, 'success');
             });
 
             // 🔴 Auto-logout when Admin removes a student

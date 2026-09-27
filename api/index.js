@@ -915,13 +915,15 @@ router.put('/students/:id', async (req, res) => {
     }
 
     if (updated) {
+      // Convert mongoose doc to plain object if needed
+      const updatedObj = typeof updated.toObject === 'function' ? updated.toObject() : updated;
       // 🔴 Real-time: Notify the specific student of their updated data
       emitEvent(req, 'student:updated', {
-        email: updated.email,
-        coins: updated.coins,
-        plan: updated.plan,
-        status: updated.status,
-        todayUsedCoins: updated.todayUsedCoins
+        email: updatedObj.email,
+        coins: updatedObj.coins ?? 0,
+        plan: updatedObj.plan || 'Free',
+        status: updatedObj.status || 'active',
+        todayUsedCoins: updatedObj.todayUsedCoins ?? 0
       });
     }
     res.json(updated || { success: true });
