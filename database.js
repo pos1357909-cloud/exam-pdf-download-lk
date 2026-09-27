@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let isConnected = false;
 
 const connectDB = async () => {
-  if (isConnected) {
+  if (isConnected && mongoose.connection.readyState === 1) {
     return;
   }
 
@@ -11,13 +11,13 @@ const connectDB = async () => {
 
   try {
     const db = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
       bufferCommands: false,
     });
     isConnected = db.connections[0].readyState === 1;
     console.log('MongoDB Connected Successfully');
   } catch (error) {
-    console.error('MongoDB Connection Error:', error);
-    throw error;
+    console.error('MongoDB Connection Error:', error.message);
   }
 };
 

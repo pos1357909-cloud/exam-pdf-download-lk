@@ -102,6 +102,40 @@ const Grade = mongoose.models.Grade || mongoose.model('Grade', GradeSchema);
 const Pdf = mongoose.models.Pdf || mongoose.model('Pdf', PdfSchema);
 const Blog = mongoose.models.Blog || mongoose.model('Blog', BlogSchema);
 
+// History LMS Models
+const HistoryGradeSchema = new mongoose.Schema({
+  grade: { type: String, required: true, unique: true },
+  lessons: { type: Array, default: [] }
+});
+
+const StudentSchema = new mongoose.Schema({
+  studentId: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, default: 'user' },
+  plan: { type: String, default: 'Free' },
+  coins: { type: Number, default: 75 },
+  hasClaimedFreeCoins: { type: Boolean, default: true },
+  todayUsedCoins: { type: Number, default: 0 },
+  lastActiveDate: { type: String }
+}, { timestamps: true });
+
+const ApprovalSchema = new mongoose.Schema({
+  requestId: { type: String, required: true, unique: true },
+  studentEmail: { type: String, required: true },
+  studentName: { type: String, required: true },
+  paymentId: { type: String, required: true },
+  plan: { type: String, required: true },
+  coins: { type: Number, required: true },
+  status: { type: String, default: 'pending' },
+  date: { type: String }
+}, { timestamps: true });
+
+const HistoryGrade = mongoose.models.HistoryGrade || mongoose.model('HistoryGrade', HistoryGradeSchema);
+const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema);
+const Approval = mongoose.models.Approval || mongoose.model('Approval', ApprovalSchema);
+
 // Auth Middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -117,6 +151,7 @@ const authenticateToken = (req, res, next) => {
 
 // Seed Default Data Function
 const seedDefaults = async () => {
+  if (mongoose.connection.readyState !== 1) return;
   const adminUsername = process.env.ADMIN_USERNAME || 'ZTX';
   const adminPassword = process.env.ADMIN_PASSWORD || 'BN23@123x';
   const adminEmail = 'dinukanimsara031@gmail.com';
@@ -190,12 +225,17 @@ const seedDefaults = async () => {
   }
 };
 
-// Seed route trigger middleware
+let isSeeded = false;
+
+// Seed route trigger middleware (runs once on cold start)
 router.use(async (req, res, next) => {
-  try {
-    await seedDefaults();
-  } catch (err) {
-    console.error('Seeding error:', err);
+  if (!isSeeded) {
+    try {
+      await seedDefaults();
+      isSeeded = true;
+    } catch (err) {
+      console.error('Seeding error:', err);
+    }
   }
   next();
 });
@@ -566,6 +606,228 @@ router.post('/admin/ads/restore', authenticateToken, async (req, res) => {
     settings.adLastUpdated = new Date();
     await settings.save();
     res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ---------------- HISTORY LMS ENDPOINTS ----------------
+
+// GET /api/history-data: Fetch all lessons and questions by grade
+router.get('/history-data', async (req, res) => {
+  const defaultData = {
+    "6": [
+      {
+        lessonId: "l_6_1",
+        lessonTitle: "1 පාඩම - අපේ මූලාශ්‍ර",
+        mcq: [
+          { id: "mcq_1", question: "ඉතිහාසය හැදෑරීම සඳහා භාවිත වන ප්‍රධාන මූලාශ්‍ර වර්ග දෙක කුමක්ද?", options: ["සාහිත්‍ය මූලාශ්‍ර සහ පුරාවිද්‍යා මූලාශ්‍ර", "ලිඛිත මූලාශ්‍ර සහ මුඛ පරම්පරාගත මූලාශ්‍ර", "ගල් පුවරු සහ තාලපත", "පොත්පත් සහ පුවත්පත්"], answer: 0, explanation: "ඉතිහාස මූලාශ්‍ර ප්‍රධාන වශයෙන් සාහිත්‍ය මූලාශ්‍ර සහ පුරාවිද්‍යා මූලාශ්‍ර ලෙස කොටස් දෙකකට බෙදේ." }
+        ],
+        short: [
+          { id: "short_1", question: "පුරාවිද්‍යා මූලාශ්‍ර යනු මොනවාද?", answer: "අතීත මිනිසාගේ ක්‍රියාකාරකම් නිසා ඉතිරිවී ඇති භෞතික අවශේෂ පුරාවිද්‍යා මූලාශ්‍ර වේ." }
+        ],
+        essay: [
+          { id: "essay_1", title: "ලංකාවේ ලිඛිත මූලාශ්‍රවල වැදගත්කම පැහැදිලි කරන්න.", answer: "අතීත රාජාවලිය සහ ශාසනික තොරතුරු නිවැරදිව තේරුම් ගැනීමට ලිඛිත මූලාශ්‍ර උපකාරී වේ." }
+        ]
+      }
+    ]
+  };
+
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.json(defaultData);
+    }
+    const grades = await HistoryGrade.find({});
+    if (!grades || grades.length === 0) {
+      return res.json(defaultData);
+    }
+    
+    const formatted = {};
+    grades.forEach(g => {
+      formatted[g.grade] = g.lessons || [];
+    });
+    res.json(formatted);
+  } catch (error) {
+    res.json(defaultData);
+  }
+});
+
+// POST /api/history-data: Save or update full history data
+router.post('/history-data', async (req, res) => {
+  try {
+    const data = req.body;
+    for (const [grade, lessons] of Object.entries(data)) {
+      await HistoryGrade.findOneAndUpdate(
+        { grade: grade.toString() },
+        { grade: grade.toString(), lessons },
+        { upsert: true, new: true }
+      );
+    }
+    res.json({ success: true, message: 'History data updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/students/register
+router.post('/students/register', async (req, res) => {
+  try {
+    const { name, email, password, studentId } = req.body;
+    const cleanEmail = (email || '').trim().toLowerCase();
+
+    if (!cleanEmail || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
+    }
+
+    const existing = await Student.findOne({ email: cleanEmail });
+    if (existing) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    const newStudent = new Student({
+      studentId: studentId || ('STD-' + Math.floor(100000 + Math.random() * 900000)),
+      name: name || 'Student',
+      email: cleanEmail,
+      password,
+      role: 'user',
+      plan: 'Free',
+      coins: 75,
+      hasClaimedFreeCoins: true,
+      todayUsedCoins: 0,
+      lastActiveDate: new Date().toISOString().split('T')[0]
+    });
+
+    await newStudent.save();
+    res.status(201).json(newStudent);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/students/login
+router.post('/students/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const cleanEmail = (email || '').trim().toLowerCase();
+
+    if (cleanEmail === 'exampaperlkonlinepapershop@gmail.com') {
+      if (password === 'FG@#478f') {
+        return res.json({
+          student: {
+            name: "System Admin",
+            email: "exampaperlkonlinepapershop@gmail.com",
+            role: "admin",
+            plan: "Admin Unlimited",
+            coins: 999999,
+            todayUsedCoins: 0,
+            lastActiveDate: new Date().toISOString().split('T')[0]
+          }
+        });
+      } else {
+        return res.status(401).json({ error: 'Admin password incorrect' });
+      }
+    }
+
+    const student = await Student.findOne({ email: cleanEmail });
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    if (student.password !== password) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    res.json({ student });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/students: List all registered students
+router.get('/students', async (req, res) => {
+  try {
+    const students = await Student.find({}).sort({ createdAt: -1 });
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /api/students/:id: Update student coins, password, etc.
+router.put('/students/:id', async (req, res) => {
+  try {
+    const updated = await Student.findOneAndUpdate(
+      { $or: [{ studentId: req.params.id }, { email: req.params.id }] },
+      req.body,
+      { new: true }
+    );
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/students/consume-coin
+router.post('/students/consume-coin', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
+
+    const student = await Student.findOne({ email: email.toLowerCase() });
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+
+    if (student.coins > 0) {
+      student.coins -= 1;
+      student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+      await student.save();
+    }
+    res.json({ coins: student.coins, todayUsedCoins: student.todayUsedCoins });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/approvals: List all payment approvals
+router.get('/approvals', async (req, res) => {
+  try {
+    const approvals = await Approval.find({}).sort({ createdAt: -1 });
+    res.json(approvals);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/approvals: Submit payment claim
+router.post('/approvals', async (req, res) => {
+  try {
+    const approval = new Approval(req.body);
+    await approval.save();
+    res.status(201).json(approval);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /api/approvals/:id: Approve or Reject
+router.put('/approvals/:id', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const approval = await Approval.findOne({ requestId: req.params.id });
+    if (!approval) return res.status(404).json({ error: 'Approval request not found' });
+
+    approval.status = status;
+    await approval.save();
+
+    if (status === 'approved') {
+      const student = await Student.findOne({ email: approval.studentEmail.toLowerCase() });
+      if (student) {
+        student.plan = approval.plan;
+        student.coins = (student.coins || 0) + Number(approval.coins);
+        await student.save();
+      }
+    }
+
+    res.json({ success: true, approval });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
