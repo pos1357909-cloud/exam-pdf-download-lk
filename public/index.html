@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;600;700;800&family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Noto+Serif+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Animate.css CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Socket.IO Client for Real-time -->
+    <script src="/socket.io/socket.io.js"></script>
 
     <script>
         tailwind.config = {
@@ -1862,6 +1864,150 @@
                 }
             };
             fileReader.readAsText(event.target.files[0]);
+        }
+
+        /* ========================================================
+           🔴 SOCKET.IO REAL-TIME SYSTEM
+           - Admin PC: sees new student registrations instantly
+           - Student Phone: sees coin/plan updates instantly
+           - Both: see approval status changes instantly
+        ======================================================== */
+
+        function showToast(message, type = 'info') {
+            const colors = {
+                info:    'bg-slate-800 border-amber-500/50 text-amber-200',
+                success: 'bg-emerald-900/90 border-emerald-500/60 text-emerald-200',
+                warning: 'bg-amber-900/90 border-amber-500/60 text-amber-200',
+                error:   'bg-rose-900/90 border-rose-500/60 text-rose-200'
+            };
+            const icons = { info: 'fa-bell', success: 'fa-circle-check', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark' };
+
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl border shadow-2xl text-sm font-bold font-sinhala transition-all duration-500 animate__animated animate__fadeInUp ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-lg"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
+                setTimeout(() => toast.remove(), 600);
+            }, 4000);
+        }
+
+        // Initialize Socket.IO connection
+        let socket = null;
+        try {
+            socket = io();
+
+            socket.on('connect', () => {
+                console.log('🔌 Real-time connected:', socket.id);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('❌ Real-time disconnected');
+            });
+
+            // ── EVENT: New student registered ──────────────────────────────
+            // Admin sees this instantly on their PC
+            socket.on('student:registered', (data) => {
+                if (!currentUser || currentUser.role !== 'admin') return;
+
+                // Add to local students list if not already there
+                const exists = registeredStudents.find(s => s.email === data.email);
+                if (!exists) {
+                    registeredStudents.push(data);
+                    localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+                }
+
+                // Refresh students table if visible
+                const adminView = document.getElementById('adminView-students');
+                if (adminView && !adminView.classList.contains('hidden')) {
+                    renderAdminStudentsList();
+                }
+
+                showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+            });
+
+            // ── EVENT: Student data updated by admin ───────────────────────
+            // Student's phone gets coins/plan update instantly
+            socket.on('student:updated', (data) => {
+                if (!currentUser || currentUser.role === 'admin') return;
+                if (currentUser.email !== data.email) return;
+
+                // Update local state
+                currentUser.coins = data.coins;
+                currentUser.plan = data.plan;
+                if (data.todayUsedCoins !== undefined) currentUser.todayUsedCoins = data.todayUsedCoins;
+                saveData();
+                updateAuthUI();
+
+                // Refresh dashboard if open
+                const dashSection = document.getElementById('dashboardSection');
+                if (dashSection && !dashSection.classList.contains('hidden')) {
+                    document.getElementById('dashPlanName').innerText = currentUser.plan;
+                    document.getElementById('dashCoins').innerText = currentUser.coins;
+                    document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins || 0;
+                    document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+                }
+
+                showToast(`✅ Admin ඔබේ ගිණුම යාවත්කාලීන කළා! Coins: ${data.coins}, Plan: ${data.plan}`, 'success');
+            });
+
+            // ── EVENT: Payment approval status changed by admin ────────────
+            // Student phone sees approval result (approved/rejected) instantly
+            socket.on('approval:updated', (data) => {
+                // For Admin: refresh approvals list
+                if (currentUser && currentUser.role === 'admin') {
+                    const approvalView = document.getElementById('adminView-approvals');
+                    if (approvalView && !approvalView.classList.contains('hidden')) {
+                        renderAdminApprovals();
+                    }
+                    return;
+                }
+
+                // For Student: check if this approval is theirs
+                if (!currentUser || currentUser.email !== data.studentEmail) return;
+
+                if (data.status === 'approved') {
+                    currentUser.coins = data.coins;
+                    currentUser.plan = data.plan;
+                    saveData();
+                    updateAuthUI();
+
+                    const dashSection = document.getElementById('dashboardSection');
+                    if (dashSection && !dashSection.classList.contains('hidden')) {
+                        document.getElementById('dashPlanName').innerText = currentUser.plan;
+                        document.getElementById('dashCoins').innerText = currentUser.coins;
+                        document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+                    }
+
+                    showToast(`🎉 ඔබේ ගෙවීම අනුමත කෙරිණි! ${data.coinsAdded} Coins සක්‍රීය විය. Plan: ${data.plan}`, 'success');
+                } else if (data.status === 'rejected') {
+                    showToast(`❌ ඔබේ ගෙවීමේ ඉල්ලීම (${data.plan}) ප්‍රතික්ෂේප කෙරිණි. Admin ව WhatsApp ඔස්සේ සම්බන්ධ වන්න.`, 'error');
+                }
+            });
+
+            // ── EVENT: New payment claim submitted by student ──────────────
+            // Admin sees new approval requests in real-time
+            socket.on('approval:new', (data) => {
+                if (!currentUser || currentUser.role !== 'admin') return;
+
+                // Add to local list
+                const exists = approvalRequests.find(r => r.requestId === data.requestId);
+                if (!exists) {
+                    approvalRequests.unshift(data);
+                    localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+                }
+
+                // Refresh approvals tab if visible
+                const approvalView = document.getElementById('adminView-approvals');
+                if (approvalView && !approvalView.classList.contains('hidden')) {
+                    renderAdminApprovals();
+                }
+
+                showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
+            });
+
+        } catch (err) {
+            console.log('Socket.IO not available (possibly serverless mode):', err.message);
         }
     </script>
 </body>

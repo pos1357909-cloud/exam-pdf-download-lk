@@ -240,6 +240,14 @@ router.use(async (req, res, next) => {
   next();
 });
 
+// Helper: emit socket event if io is available
+function emitEvent(req, event, data) {
+  try {
+    const io = req.app && req.app.get ? req.app.get('io') : null;
+    if (io) io.emit(event, data);
+  } catch (e) { /* ignore in serverless */ }
+}
+
 // ---------------- PUBLIC API ENDPOINTS ----------------
 
 // Get All PDFs with Filters & Search
@@ -698,6 +706,15 @@ router.post('/students/register', async (req, res) => {
     });
 
     await newStudent.save();
+    // 🔴 Real-time: Notify Admin that a new student registered
+    emitEvent(req, 'student:registered', {
+      studentId: newStudent.studentId,
+      name: newStudent.name,
+      email: newStudent.email,
+      plan: newStudent.plan,
+      coins: newStudent.coins,
+      createdAt: newStudent.createdAt
+    });
     res.status(201).json(newStudent);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -761,6 +778,15 @@ router.put('/students/:id', async (req, res) => {
       req.body,
       { new: true }
     );
+    if (updated) {
+      // 🔴 Real-time: Notify the specific student of their updated data
+      emitEvent(req, 'student:updated', {
+        email: updated.email,
+        coins: updated.coins,
+        plan: updated.plan,
+        todayUsedCoins: updated.todayUsedCoins
+      });
+    }
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -802,6 +828,16 @@ router.post('/approvals', async (req, res) => {
   try {
     const approval = new Approval(req.body);
     await approval.save();
+    // 🔴 Real-time: Notify Admin of a new payment claim
+    emitEvent(req, 'approval:new', {
+      requestId: approval.requestId,
+      studentEmail: approval.studentEmail,
+      studentName: approval.studentName,
+      plan: approval.plan,
+      coins: approval.coins,
+      paymentId: approval.paymentId,
+      date: approval.date
+    });
     res.status(201).json(approval);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -818,14 +854,26 @@ router.put('/approvals/:id', async (req, res) => {
     approval.status = status;
     await approval.save();
 
+    let updatedStudent = null;
     if (status === 'approved') {
       const student = await Student.findOne({ email: approval.studentEmail.toLowerCase() });
       if (student) {
         student.plan = approval.plan;
         student.coins = (student.coins || 0) + Number(approval.coins);
         await student.save();
+        updatedStudent = student;
       }
     }
+
+    // 🔴 Real-time: Notify student of approval status change
+    emitEvent(req, 'approval:updated', {
+      requestId: approval.requestId,
+      studentEmail: approval.studentEmail,
+      status: approval.status,
+      plan: approval.plan,
+      coins: updatedStudent ? updatedStudent.coins : null,
+      coinsAdded: Number(approval.coins)
+    });
 
     res.json({ success: true, approval });
   } catch (error) {
