@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 const dns = require('dns');
 
 // Configure DNS servers to avoid local ISP/DNS SRV resolution failures
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
-} catch (e) {}
+// (Removed dns.setServers to prevent Vercel DNS blocking issues)
 
 let isConnected = false;
 
