@@ -912,9 +912,10 @@
             // Asynchronously sync with Cloud Database (MongoDB)
             syncWithDatabase();
             if (typeof startAdminPolling === 'function') startAdminPolling();
+            if (typeof startStudentSessionWatcher === 'function') startStudentSessionWatcher();
 
             // Sync student data on page load to get latest coins from server (admin may have changed)
-            if (currentUser && currentUser.role !== 'admin') {
+            if (currentUser && currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL) {
                 syncStudentDataFromServer();
             }
         };
@@ -1285,10 +1286,116 @@
         }
 
         function logoutUser() {
+            if (studentPollingInterval) {
+                clearInterval(studentPollingInterval);
+                studentPollingInterval = null;
+            }
             currentUser = null;
             saveData();
             updateAuthUI();
             resetToHome();
+        }
+
+        // 🔴 Force logout student when deleted by admin
+        function forceStudentLogout(message) {
+            if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
+            
+            const emailToRemove = (currentUser.email || '').toLowerCase().trim();
+            const idToRemove = (currentUser.studentId || '').trim();
+
+            if (studentPollingInterval) {
+                clearInterval(studentPollingInterval);
+                studentPollingInterval = null;
+            }
+
+            currentUser = null;
+            localStorage.removeItem('hrh_current_user_v3');
+
+            if (Array.isArray(registeredStudents)) {
+                registeredStudents = registeredStudents.filter(s => {
+                    const sEmail = (s.email || '').toLowerCase().trim();
+                    const sId = (s.studentId || '').trim();
+                    if (emailToRemove && sEmail === emailToRemove) return false;
+                    if (idToRemove && sId === idToRemove) return false;
+                    return true;
+                });
+                localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+            }
+
+            saveData();
+            updateAuthUI();
+            resetToHome();
+
+            const alertMsg = message || 'ඔබගේ ගිණුම Admin විසින් පද්ධතියෙන් ඉවත් කර ඇත. ඔබව Logout කරන ලදී. ඔබට නැවත ලියාපදිංචි විය හැක.';
+            if (typeof showToast === 'function') {
+                showToast('🚫 ' + alertMsg, 'error');
+            }
+            alert('🚫 ' + alertMsg);
+        }
+
+        let studentSessionCheckInProgress = false;
+        async function checkStudentSessionStatus() {
+            if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
+            if (studentSessionCheckInProgress) return;
+            studentSessionCheckInProgress = true;
+
+            try {
+                const target = currentUser.email ? currentUser.email.trim() : (currentUser.studentId || '');
+                if (!target) {
+                    studentSessionCheckInProgress = false;
+                    return;
+                }
+                const res = await fetch(`/api/students/${encodeURIComponent(target)}`);
+                if (res.status === 404) {
+                    studentSessionCheckInProgress = false;
+                    forceStudentLogout('ඔබගේ ගිණුම Admin විසින් පද්ධතියෙන් ඉවත් කර ඇත.');
+                    return;
+                }
+                if (res.ok) {
+                    const serverStudent = await res.json();
+                    if (serverStudent) {
+                        let hasChanges = false;
+                        if (serverStudent.coins !== undefined && serverStudent.coins !== currentUser.coins) {
+                            currentUser.coins = serverStudent.coins;
+                            hasChanges = true;
+                        }
+                        if (serverStudent.plan && serverStudent.plan !== currentUser.plan) {
+                            currentUser.plan = serverStudent.plan;
+                            hasChanges = true;
+                        }
+                        if (serverStudent.status && serverStudent.status !== currentUser.status) {
+                            currentUser.status = serverStudent.status;
+                            hasChanges = true;
+                        }
+                        if (serverStudent.todayUsedCoins !== undefined && serverStudent.todayUsedCoins !== currentUser.todayUsedCoins) {
+                            currentUser.todayUsedCoins = serverStudent.todayUsedCoins;
+                            hasChanges = true;
+                        }
+                        if (hasChanges) {
+                            saveData();
+                            updateAuthUI();
+                            const dashSection = document.getElementById('dashboardSection');
+                            if (dashSection && !dashSection.classList.contains('hidden')) {
+                                renderDashboardData();
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                // Ignore transient network errors
+            } finally {
+                studentSessionCheckInProgress = false;
+            }
+        }
+
+        let studentPollingInterval = null;
+        function startStudentSessionWatcher() {
+            if (studentPollingInterval) clearInterval(studentPollingInterval);
+            studentPollingInterval = setInterval(() => {
+                if (currentUser && currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL) {
+                    checkStudentSessionStatus();
+                }
+            }, 6000);
         }
 
         /* USER DASHBOARD & ANALYTICS */
@@ -1319,18 +1426,18 @@
         }
 
         async function syncStudentDataFromServer() {
-            if (!currentUser || currentUser.role === 'admin') return;
+            if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
             try {
-                const res = await fetch('/api/students/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentUser.email, password: currentUser.password })
-                });
+                const target = currentUser.email ? currentUser.email.trim() : (currentUser.studentId || '');
+                if (!target) return;
+                const res = await fetch(`/api/students/${encodeURIComponent(target)}`);
+                if (res.status === 404) {
+                    forceStudentLogout('ඔබගේ ගිණුම Admin විසින් පද්ධතියෙන් ඉවත් කර ඇත.');
+                    return;
+                }
                 if (res.ok) {
-                    const data = await res.json();
-                    if (data.student) {
-                        // Update coins, plan, status from server (keep password in memory)
-                        const serverStudent = data.student;
+                    const serverStudent = await res.json();
+                    if (serverStudent) {
                         currentUser.coins = serverStudent.coins ?? currentUser.coins;
                         currentUser.plan = serverStudent.plan || currentUser.plan;
                         currentUser.status = serverStudent.status || currentUser.status;
@@ -1342,7 +1449,6 @@
                     }
                 }
             } catch (err) {
-                // Silently fail - use cached data
                 console.log('Student data sync failed, using cached data');
             }
         }
@@ -2053,6 +2159,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (Array.isArray(data)) {
+                        studentMap.clear();
                         data.forEach(s => { if (s && s.email) studentMap.set(s.email.toLowerCase(), s); });
                     }
                 }

@@ -893,16 +893,29 @@ router.get('/students', async (req, res) => {
   }
 });
 
-// GET /api/students/:email: Get a single student by email
+// GET /api/students/:email: Get a single student by email or ID
 router.get('/students/:email', async (req, res) => {
   try {
-    const targetEmail = req.params.email.toLowerCase();
+    const rawTarget = decodeURIComponent(req.params.email || '').trim();
+    const targetEmail = rawTarget.toLowerCase();
     let student = null;
     if (mongoose.connection.readyState === 1) {
-      student = await Student.findOne({ email: targetEmail });
+      const orConditions = [
+        { email: targetEmail },
+        { email: rawTarget },
+        { studentId: rawTarget }
+      ];
+      if (mongoose.isValidObjectId(rawTarget)) {
+        orConditions.push({ _id: rawTarget });
+      }
+      student = await Student.findOne({ $or: orConditions });
     }
     if (!student) {
-      student = (memoryStore.students || []).find(s => s.email && s.email.toLowerCase() === targetEmail);
+      student = (memoryStore.students || []).find(s => 
+        (s.email && s.email.toLowerCase() === targetEmail) || 
+        s.studentId === rawTarget ||
+        (s._id && s._id.toString() === rawTarget)
+      );
     }
     if (student) {
       res.json(student);
@@ -973,27 +986,62 @@ router.delete('/students', async (req, res) => {
 // DELETE /api/students/:id: Delete student by ID or email
 router.delete('/students/:id', async (req, res) => {
   try {
-    const targetId = decodeURIComponent(req.params.id);
+    const rawTarget = decodeURIComponent(req.params.id || '').trim();
+    const queryEmail = (req.query.email || (req.body && req.body.email) || '').trim().toLowerCase();
+    const targetLower = rawTarget.toLowerCase();
 
-    // Find the student's email before deleting (for socket notification)
     let removedEmail = null;
+    let removedStudentId = null;
+
     if (mongoose.connection.readyState === 1) {
-      const found = await Student.findOne({ $or: [{ studentId: targetId }, { email: targetId }] });
-      if (found) removedEmail = found.email;
-      await Student.deleteOne({ $or: [{ studentId: targetId }, { email: targetId }] });
+      const orConditions = [
+        { studentId: rawTarget },
+        { email: targetLower },
+        { email: rawTarget }
+      ];
+      if (queryEmail) {
+        orConditions.push({ email: queryEmail });
+      }
+      if (mongoose.isValidObjectId(rawTarget)) {
+        orConditions.push({ _id: rawTarget });
+      }
+
+      const found = await Student.findOne({ $or: orConditions });
+      if (found) {
+        removedEmail = found.email ? found.email.toLowerCase() : null;
+        removedStudentId = found.studentId;
+        await Student.deleteOne({ _id: found._id });
+      } else {
+        await Student.deleteMany({ $or: orConditions });
+      }
     }
 
-    const fallbackStudent = memoryStore.students.find(s => s.studentId === targetId || s.email === targetId);
-    if (!removedEmail && fallbackStudent) removedEmail = fallbackStudent.email;
-    memoryStore.students = memoryStore.students.filter(s => s.studentId !== targetId && s.email !== targetId);
+    const fallbackStudent = (memoryStore.students || []).find(s =>
+      s.studentId === rawTarget ||
+      (s.email && s.email.toLowerCase() === targetLower) ||
+      (queryEmail && s.email && s.email.toLowerCase() === queryEmail) ||
+      (s._id && s._id.toString() === rawTarget)
+    );
+    if (!removedEmail && fallbackStudent) {
+      removedEmail = fallbackStudent.email ? fallbackStudent.email.toLowerCase() : null;
+      removedStudentId = fallbackStudent.studentId;
+    }
+
+    memoryStore.students = (memoryStore.students || []).filter(s =>
+      s.studentId !== rawTarget &&
+      (!s.email || (s.email.toLowerCase() !== targetLower && (!queryEmail || s.email.toLowerCase() !== queryEmail)))
+    );
     saveFallbackData(memoryStore);
 
-    // 🔴 Real-time: Force logout the removed student
-    if (removedEmail) {
-      emitEvent(req, 'student:removed', { email: removedEmail });
-    }
+    const finalEmail = removedEmail || (targetLower.includes('@') ? targetLower : (queryEmail || null));
 
-    res.json({ success: true, message: 'Student deleted successfully' });
+    // 🔴 Real-time: Force logout the removed student
+    emitEvent(req, 'student:removed', {
+      email: finalEmail ? finalEmail.toLowerCase() : null,
+      studentId: removedStudentId || rawTarget
+    });
+
+    res.json({ success: true, message: 'Student deleted successfully', email: finalEmail });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
