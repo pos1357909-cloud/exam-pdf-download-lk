@@ -227,58 +227,6 @@
                     </div>
                 </div>
 
-                <!-- 3. STUDY MODE SELECTOR CARD -->
-                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-3 shadow-xl">
-                    <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center pb-2.5 border-b border-slate-700/60">
-                        <i class="fa-solid fa-layer-group mr-2"></i> අධ්‍යයන මාදිලිය (Study Mode)
-                    </h4>
-                    <div class="space-y-2 font-sinhala">
-                        <button onclick="switchMode('mcq')" id="sidebar-btn-mcq" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-circle-dot text-amber-400"></i>
-                                <span>MCQ Quiz (බහුවරණ)</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-amber-400"></i>
-                        </button>
-                        <button onclick="switchMode('short')" id="sidebar-btn-short" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-clone text-amber-400"></i>
-                                <span>කෙටි ප්‍රශ්න (Short Q&A)</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                        </button>
-                        <button onclick="switchMode('essay')" id="sidebar-btn-essay" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-align-left text-amber-400"></i>
-                                <span>රචනා ප්‍රශ්න (Essay Q&A)</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                        </button>
-
-                        <!-- NEW OPTIONS: Short Notes, Mind Map, PDF Downloads -->
-                        <button onclick="switchMode('shortNotes')" id="sidebar-btn-shortNotes" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-note-sticky text-amber-400"></i>
-                                <span>Short Notes (සාරාංශ)</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                        </button>
-                        <button onclick="switchMode('mindMap')" id="sidebar-btn-mindMap" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-sitemap text-amber-400"></i>
-                                <span>Mind Map (මනෝ සිතියම්)</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                        </button>
-                        <button onclick="switchMode('pdf')" id="sidebar-btn-pdf" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
-                            <span class="flex items-center space-x-2">
-                                <i class="fa-solid fa-file-pdf text-rose-400"></i>
-                                <span>PDF Downloads</span>
-                            </span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                        </button>
-                    </div>
-                </div>
 
                 <!-- 4. BANK & WHATSAPP SUPPORT CARD -->
                 <div class="glass-card rounded-3xl p-4 sm:p-5 border border-emerald-500/30 bg-emerald-950/10 space-y-3 shadow-xl">
@@ -322,42 +270,42 @@
                     </div>
                 </div>
 
-                <!-- MODE & LESSON SELECTOR BAR -->
-                <div id="modeSelector" class="hidden mb-6 space-y-4 font-sinhala">
-                    <div class="glass-card p-3.5 sm:p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 border border-amber-500/30">
+                <!-- MODE & LESSON SELECTOR BAR (SINGLE UNIFIED TOP CONTROL PANEL) -->
+                <div id="modeSelector" class="hidden mb-6 space-y-3 font-sinhala animate__animated animate__fadeIn">
+                    <div class="glass-card p-3 sm:p-4 rounded-3xl shadow-xl border border-amber-500/30 space-y-3">
                         
-                        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                            <span id="activeGradeBadge" class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-slate-950 text-xs sm:text-sm font-extrabold px-3.5 py-1.5 rounded-xl shadow border border-yellow-200/40 whitespace-nowrap">
-                                6 ශ්‍රේණිය
-                            </span>
-                            
-                            <!-- Lesson Selector Dropdown -->
-                            <div class="flex items-center space-x-2 flex-1 min-w-[200px]">
-                                <label class="text-xs font-bold text-amber-300 whitespace-nowrap hidden sm:inline"><i class="fa-solid fa-book-open mr-1"></i> පාඩම:</label>
-                                <select id="lessonSelect" onchange="onLessonChange()" class="p-2 sm:p-2.5 rounded-xl text-xs font-bold border border-amber-500/40 bg-slate-900 text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 w-full truncate">
-                                </select>
+                        <!-- Grade & Lesson Dropdown Bar -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-2.5 flex-1">
+                                <span id="activeGradeBadge" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow whitespace-nowrap">
+                                    6 ශ්‍රේණිය
+                                </span>
+                                <div class="relative flex-1">
+                                    <select id="lessonSelect" onchange="onLessonChange()" class="w-full p-2 sm:p-2.5 rounded-xl text-xs sm:text-sm font-bold border border-amber-500/40 bg-slate-950/90 text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 truncate cursor-pointer shadow-inner">
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Mode Switch Tabs -->
-                        <div class="flex bg-slate-950/90 p-1 sm:p-1.5 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto no-scrollbar gap-1">
-                            <button onclick="switchMode('mcq')" id="btn-mode-mcq" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-circle-dot text-[10px]"></i> <span>MCQ Quiz</span>
+                        <!-- 6 Study Mode Nav Tabs -->
+                        <div class="flex bg-slate-950/90 p-1.5 rounded-2xl border border-slate-800/80 overflow-x-auto no-scrollbar gap-1.5">
+                            <button onclick="switchMode('mcq')" id="btn-mode-mcq" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-list-check text-xs"></i> <span>MCQ Quiz</span>
                             </button>
-                            <button onclick="switchMode('short')" id="btn-mode-short" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-clone text-[10px]"></i> <span>කෙටි ප්‍රශ්න</span>
+                            <button onclick="switchMode('short')" id="btn-mode-short" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-clone text-xs"></i> <span>කෙටි ප්‍රශ්න</span>
                             </button>
-                            <button onclick="switchMode('essay')" id="btn-mode-essay" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-align-left text-[10px]"></i> <span>රචනා</span>
+                            <button onclick="switchMode('essay')" id="btn-mode-essay" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-align-left text-xs"></i> <span>රචනා ප්‍රශ්න</span>
                             </button>
-                            <button onclick="switchMode('shortNotes')" id="btn-mode-shortNotes" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-note-sticky text-[10px]"></i> <span>Short Notes</span>
+                            <button onclick="switchMode('shortNotes')" id="btn-mode-shortNotes" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-note-sticky text-xs"></i> <span>Short Notes</span>
                             </button>
-                            <button onclick="switchMode('mindMap')" id="btn-mode-mindMap" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-sitemap text-[10px]"></i> <span>Mind Map</span>
+                            <button onclick="switchMode('mindMap')" id="btn-mode-mindMap" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-sitemap text-xs"></i> <span>Mind Map</span>
                             </button>
-                            <button onclick="switchMode('pdf')" id="btn-mode-pdf" class="mode-btn flex-1 md:flex-none px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
-                                <i class="fa-solid fa-file-pdf text-[10px] text-rose-400"></i> <span>PDF</span>
+                            <button onclick="switchMode('pdf')" id="btn-mode-pdf" class="mode-btn flex-1 min-w-[105px] px-3 py-2 rounded-xl text-xs font-extrabold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-file-pdf text-xs text-rose-400"></i> <span>PDF</span>
                             </button>
                         </div>
                     </div>
