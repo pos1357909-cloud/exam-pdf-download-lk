@@ -1,202 +1,1868 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="si" class="h-full bg-slate-950 select-none">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EXAM PDF DOWNLOAD LK | Grade 1 to 13 Educational Resources</title>
-  <meta name="description" content="Download Sri Lanka's largest collection of Grade 1-13 Past Papers, Model Papers, Short Notes, Term Test Papers, and Marking Schemes for free.">
-  <link rel="icon" href="https://img.icons8.com/color/96/pdf-2.png" type="image/png">
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              primary: '#0F4C81',
-              secondary: '#1E88E5',
-              accent: '#FFD54F',
-              dark: '#0B0F17'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Revision Hub - ශ්‍රී ලාංකේය ඉතිහාසය LMS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;600;700;800&family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Noto+Serif+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        history: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                            800: '#78350f',
+                            900: '#451a03',
+                            dark: '#0f0a05',
+                            gold: '#fbbf24',
+                            bronze: '#b45309'
+                        }
+                    },
+                    fontFamily: {
+                        sinhala: ['"Noto Sans Sinhala"', '"Noto Serif Sinhala"', 'sans-serif'],
+                        sinhalaHeading: ['"Abhaya Libre"', 'serif'],
+                        sinhalaDisplay: ['"Noto Sans Sinhala"', 'sans-serif'],
+                        sinhalaFancy: ['"Abhaya Libre"', 'serif'],
+                        englishHeading: ['Cinzel', 'serif']
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  <!-- FontAwesome Icons CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+    </script>
+
+    <style>
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
+        body { 
+            font-family: 'Noto Sans Sinhala', 'Noto Serif Sinhala', sans-serif; 
+            background-color: #0b0f19; 
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(180, 83, 9, 0.08), transparent 50%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, .font-heading { font-family: 'Abhaya Libre', 'Cinzel', serif; }
+        .font-sinhala-fancy { font-family: 'Abhaya Libre', serif; }
+        .font-sinhala-display { font-family: 'Noto Sans Sinhala', sans-serif; letter-spacing: 0.02em; }
+        .font-english-brand { font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+
+        .glass-card {
+            background: rgba(18, 24, 38, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+        }
+        
+        .glass-header {
+            background: rgba(11, 15, 25, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fffbeb 0%, #fde68a 30%, #f59e0b 70%, #b45309 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<body class="min-h-full flex flex-col relative overflow-x-hidden" oncontextmenu="return false;">
 
-  <!-- HEADER / NAVBAR -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0B0F17]/80 border-b border-slate-200 dark:border-slate-800 transition-all">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      <!-- Logo -->
-      <a href="#" onclick="navigateTo('home')" class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#0F4C81] to-[#1E88E5] flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-blue-500/20">
-          <i class="fa-solid fa-file-pdf"></i>
-        </div>
-        <div>
-          <span class="text-xl font-extrabold tracking-tight text-[#0F4C81] dark:text-blue-400 block leading-tight">EXAM PDF</span>
-          <span class="text-xs font-bold text-amber-500 tracking-widest block uppercase">DOWNLOAD LK</span>
-        </div>
-      </a>
+    <!-- HEADER NAVIGATION -->
+    <header class="glass-header sticky top-0 z-40 shadow-2xl transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetToHome()">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-2xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 border border-amber-300/40">
+                            <i class="fa-solid fa-landmark text-slate-950"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black font-english-brand gradient-text leading-tight tracking-wider">HISTORY REVISION HUB</h1>
+                        <p class="text-[13px] text-amber-300/90 font-medium hidden sm:block tracking-wide font-sinhala-display">6 - 11 ශ්‍රේණි අධ්‍යාපනික LMS පද්ධතිය</p>
+                    </div>
+                </div>
 
-      <!-- Desktop Nav Navigation -->
-      <nav class="hidden md:flex items-center gap-8 font-semibold text-sm">
-        <a href="#" onclick="navigateTo('home')" class="hover:text-[#1E88E5] transition-colors">Home</a>
-        <a href="#" onclick="navigateTo('grades')" class="hover:text-[#1E88E5] transition-colors">Grades (1-13)</a>
-        <a href="#" onclick="navigateTo('subjects')" class="hover:text-[#1E88E5] transition-colors">Subjects</a>
-        <a href="#" onclick="navigateTo('bookmarks')" class="hover:text-[#1E88E5] transition-colors flex items-center gap-1.5">
-          <i class="fa-regular fa-bookmark text-amber-500"></i> Saved
-        </a>
-        <a href="#" onclick="navigateTo('blog')" class="hover:text-[#1E88E5] transition-colors">Exam News</a>
-        <a href="#" onclick="navigateTo('contact')" class="hover:text-[#1E88E5] transition-colors">Contact</a>
-      </nav>
-
-      <!-- Header Action Controls -->
-      <div class="flex items-center gap-3">
-        <!-- Theme Toggle -->
-        <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-          <i class="fa-solid fa-moon dark:hidden"></i>
-          <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
-        </button>
-
-        <!-- Admin Portal Access -->
-        <button onclick="navigateTo('admin')" class="px-4 py-2.5 rounded-xl bg-[#0F4C81] hover:bg-[#0b3a63] text-white font-medium text-sm transition-all shadow-md flex items-center gap-2">
-          <i class="fa-solid fa-[#0F4C81] fa-user-shield"></i> Admin
-        </button>
-
-        <!-- Mobile Menu Hamburger -->
-        <button id="mobileMenuBtn" class="md:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Dynamic Header Ad Container -->
-  <div id="headerAdContainer" class="max-w-7xl mx-auto px-4 mt-4 hidden"></div>
-
-  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
-  <main id="appContent" class="flex-grow">
-    <!-- Content injected via app.js -->
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-        <!-- Brand Info -->
-        <div class="space-y-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0F4C81] to-[#1E88E5] flex items-center justify-center text-white text-xl font-bold">
-              <i class="fa-solid fa-file-pdf"></i>
+                <div class="flex items-center space-x-3">
+                    <div id="userCoinBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold items-center gap-2">
+                        <i class="fa-solid fa-coins text-amber-400"></i>
+                        <span id="headerCoinCount">0</span>
+                    </div>
+                    <div id="authNavButtons"></div>
+                </div>
             </div>
-            <span class="text-xl font-bold text-white">EXAM PDF DOWNLOAD LK</span>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Sri Lanka’s premier educational PDF distribution platform. Supporting students from Grade 1 through Grade 13 with verified exam resources.
-          </p>
-          <div class="flex gap-3 text-slate-400 pt-2">
-            <a href="https://facebook.com" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-[#1E88E5] hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="https://t.me" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-[#1E88E5] hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-telegram"></i></a>
-            <a href="https://whatsapp.com" target="_blank" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-all"><i class="fa-brands fa-whatsapp"></i></a>
-          </div>
         </div>
 
-        <!-- Quick Links -->
-        <div>
-          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Quick Navigation</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="#" onclick="navigateTo('home')" class="hover:text-amber-400 transition-colors">Home Page</a></li>
-            <li><a href="#" onclick="navigateTo('grades')" class="hover:text-amber-400 transition-colors">Grade 1 - 13 Papers</a></li>
-            <li><a href="#" onclick="navigateTo('subjects')" class="hover:text-amber-400 transition-colors">Subject Library</a></li>
-            <li><a href="#" onclick="navigateTo('blog')" class="hover:text-amber-400 transition-colors">Educational News</a></li>
-          </ul>
+        <!-- Grade Selector Navigation Tabs -->
+        <div class="bg-slate-950/80 border-t border-amber-500/20 px-4 py-2">
+            <div class="max-w-7xl mx-auto flex items-center justify-start sm:justify-center space-x-2 overflow-x-auto no-scrollbar" id="gradeTabs"></div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 relative">
+
+        <!-- WELCOME HERO SECTION -->
+        <div id="welcomeHero" class="glass-card rounded-3xl p-6 sm:p-12 shadow-2xl border border-amber-500/40 mb-8 relative overflow-hidden animate__animated animate__fadeIn">
+            <div class="relative z-10 text-center max-w-3xl mx-auto space-y-6">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest shadow-lg">
+                    <i class="fa-solid fa-graduation-cap text-amber-400 text-sm"></i>
+                    <span class="font-english-brand tracking-wider">SRI LANKAN HISTORY LMS</span>
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-black text-amber-100 leading-tight font-sinhala-fancy">
+                    ඉතිහාසය විෂයට <span class="gradient-text">විශිෂ්ට සාමාර්ථයක්</span> ලබා ගනිමු!
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-sinhala">
+                    6 - 11 ශ්‍රේණි සඳහා පාඩමෙන් පාඩමට වෙන්කළ MCQ, කෙටි ප්‍රශ්න සහ රචනා ප්‍රශ්න පිළිවෙළින් අංකනය කර අධ්‍යයනය කරන්න.
+                </p>
+            </div>
         </div>
 
-        <!-- Popular Grades -->
-        <div>
-          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Popular Grades</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="#" onclick="filterByGrade(5)" class="hover:text-amber-400 transition-colors">Grade 5 Scholarship</a></li>
-            <li><a href="#" onclick="filterByGrade(11)" class="hover:text-amber-400 transition-colors">Grade 11 (O/L Exam)</a></li>
-            <li><a href="#" onclick="filterByGrade(12)" class="hover:text-amber-400 transition-colors">Grade 12 (A/L Stream)</a></li>
-            <li><a href="#" onclick="filterByGrade(13)" class="hover:text-amber-400 transition-colors">Grade 13 (A/L Exam)</a></li>
-          </ul>
+        <!-- MODE & LESSON SELECTOR BAR -->
+        <div id="modeSelector" class="hidden mb-8 space-y-4 font-sinhala">
+            <div class="glass-card p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 border border-amber-500/30">
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <span id="activeGradeBadge" class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-slate-950 text-base font-extrabold px-4 py-1.5 rounded-xl shadow border border-yellow-200/40">
+                        6 ශ්‍රේණිය
+                    </span>
+                    
+                    <!-- Lesson Selector Dropdown -->
+                    <div class="flex items-center space-x-2 flex-1 md:flex-none">
+                        <label class="text-xs font-bold text-amber-300"><i class="fa-solid fa-book-open mr-1"></i> පාඩම:</label>
+                        <select id="lessonSelect" onchange="onLessonChange()" class="p-2.5 rounded-xl text-xs font-bold border border-amber-500/40 bg-slate-900 text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 w-full md:w-auto">
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mode Switch Tabs -->
+                <div class="flex bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto">
+                    <button onclick="switchMode('mcq')" id="btn-mode-mcq" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-circle-dot"></i> <span>MCQ Quiz</span>
+                    </button>
+                    <button onclick="switchMode('short')" id="btn-mode-short" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-clone"></i> <span>කෙටි ප්‍රශ්න</span>
+                    </button>
+                    <button onclick="switchMode('essay')" id="btn-mode-essay" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-align-left"></i> <span>රචනා ප්‍රශ්න</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Legal & Contact -->
-        <div>
-          <h4 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Legal & Support</h4>
-          <ul class="space-y-2.5 text-sm">
-            <li><a href="#" onclick="showPolicy('dmca')" class="hover:text-amber-400 transition-colors">DMCA Disclaimer</a></li>
-            <li><a href="#" onclick="showPolicy('privacy')" class="hover:text-amber-400 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" onclick="showPolicy('terms')" class="hover:text-amber-400 transition-colors">Terms of Service</a></li>
-            <li><a href="#" onclick="navigateTo('contact')" class="hover:text-amber-400 transition-colors">Report Issue</a></li>
-          </ul>
+        <!-- MCQ SECTION -->
+        <section id="mcqSection" class="hidden animate__animated animate__fadeIn">
+            <div id="mcqContainer" class="max-w-3xl mx-auto glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 font-sinhala">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <span id="mcqProgressText" class="text-xs font-extrabold uppercase tracking-wider text-slate-950 bg-amber-400 px-3 py-1 rounded-full shadow">
+                            ප්‍රශ්න 1/5
+                        </span>
+                        <div class="w-32 bg-slate-900 h-2 rounded-full overflow-hidden border border-amber-500/20">
+                            <div id="mcqProgressBar" class="bg-gradient-to-r from-amber-600 to-yellow-400 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <div id="mcqScoreBadge" class="text-xs font-extrabold text-amber-200 bg-slate-900 px-3.5 py-1.5 rounded-full border border-amber-500/30 flex items-center">
+                        <i class="fa-solid fa-star text-amber-400 mr-1.5"></i> ලකුණු: <span id="mcqCurrentScore" class="text-amber-400 ml-1">0</span>
+                    </div>
+                </div>
+
+                <h3 id="mcqQuestionText" class="text-xl sm:text-2xl font-bold text-amber-100 mb-6 leading-relaxed font-sinhala-fancy">--</h3>
+                <div id="mcqOptions" class="space-y-3 mb-6"></div>
+
+                <div id="mcqExplanation" class="hidden bg-amber-500/10 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-200 mb-6 animate__animated animate__fadeIn">
+                    <p class="font-bold flex items-center mb-1 text-amber-400"><i class="fa-solid fa-lightbulb mr-2"></i> පැහැදිලි කිරීම:</p>
+                    <p id="mcqExplanationText">--</p>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-slate-700/60">
+                    <button id="mcqNextBtn" onclick="nextMcqQuestion()" disabled class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition duration-200 flex items-center space-x-2 shadow-lg">
+                        <span>ඊළඟ ප්‍රශ්නය</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mcqResultsCard" class="hidden max-w-xl mx-auto glass-card rounded-3xl p-8 shadow-2xl border border-amber-500/30 text-center animate__animated animate__zoomIn font-sinhala">
+                <i class="fa-solid fa-trophy text-5xl text-amber-400 mb-4"></i>
+                <h3 class="text-3xl font-extrabold text-amber-100 mb-1 font-sinhala-fancy">ප්‍රශ්නාවලිය අවසන්!</h3>
+                <div class="bg-slate-950/90 rounded-2xl p-6 border border-amber-500/30 my-6">
+                    <span id="finalScoreDisplay" class="text-5xl font-black gradient-text">0/0</span>
+                </div>
+                <button onclick="initMcqQuiz()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-xl">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> නැවත උත්සාහ කරන්න
+                </button>
+            </div>
+        </section>
+
+        <!-- SHORT QUESTIONS SECTION -->
+        <section id="shortSection" class="hidden animate__animated animate__fadeIn">
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6" id="shortContainer"></div>
+        </section>
+
+        <!-- ESSAY QUESTIONS SECTION -->
+        <section id="essaySection" class="hidden animate__animated animate__fadeIn">
+            <div class="max-w-4xl mx-auto space-y-6" id="essayContainer"></div>
+        </section>
+
+        <!-- LOGIN / REGISTER MODAL SECTION -->
+        <section id="authSection" class="hidden max-w-md mx-auto animate__animated animate__fadeIn font-sinhala">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30">
+                <div class="flex justify-center border-b border-slate-700/60 pb-4 mb-6">
+                    <button onclick="toggleAuthMode('login')" id="tabLogin" class="text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2">ලොගින් වන්න</button>
+                    <button onclick="toggleAuthMode('register')" id="tabRegister" class="text-lg font-bold text-slate-400 px-4 pb-2">ලියාපදිංචි වන්න</button>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
+                        <input type="email" id="loginEmail" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
+                        <input type="password" id="loginPassword" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg">
+                        ඇතුළු වන්න (Login)
+                    </button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">සම්පූර්ණ නම (Full Name)</label>
+                        <input type="text" id="regName" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
+                        <input type="email" id="regEmail" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
+                        <input type="password" id="regPassword" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg">
+                        ලියාපදිංචි වන්න (Register)
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- USER MEMBERSHIP DASHBOARD SECTION -->
+        <section id="dashboardSection" class="hidden max-w-5xl mx-auto space-y-8 animate__animated animate__fadeIn font-sinhala">
+            <!-- Active Plan & Coins Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
+                    <p class="text-xs font-bold text-slate-400">වත්මන් පැකේජය (Active Plan)</p>
+                    <h3 id="dashPlanName" class="text-2xl font-black gradient-text mt-1">Free Plan</h3>
+                    <p class="text-xs text-amber-300/80 mt-2" id="dashPlanDesc">නොමිලේ ලැබෙන Coins භාවිත කරන්න.</p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
+                    <p class="text-xs font-bold text-slate-400">ඉතිරි Coins (Remaining Coins)</p>
+                    <div class="flex items-center space-x-3 mt-1">
+                        <i class="fa-solid fa-coins text-3xl text-amber-400"></i>
+                        <h3 id="dashCoins" class="text-3xl font-black text-amber-100">75</h3>
+                    </div>
+                    <p class="text-xs text-emerald-400 mt-2">1 MCQ / Short Quest = 1 Coin</p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
+                    <p class="text-xs font-bold text-slate-400">අද දවසේ Analytics (Today Usage)</p>
+                    <div class="space-y-1 mt-2">
+                        <p class="text-xs text-slate-300">භාවිත කළ Coins: <span id="dashTodayUsed" class="font-bold text-amber-400">0</span></p>
+                        <p class="text-xs text-slate-300">ඉතිරි Coins: <span id="dashTodayRemaining" class="font-bold text-emerald-400">75</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT INSTRUCTIONS CARD -->
+            <div class="glass-card rounded-3xl p-6 border border-amber-500/40 bg-slate-900/90 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="space-y-3 flex-1">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>බැංකු ගෙවීම් උපදෙස් (Bank Deposit)</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-100">Coins සක්‍රීය කරගැනීමට අදාළ පැකේජයේ මුදල පහත බැංකු ගිණුමට තැන්පත් කරන්න:</h4>
+                        
+                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Bank Name:</span> Bank of Ceylon (BOC)</p>
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Branch:</span> Kebithigollawa Branch (621)</p>
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Number:</span> <span class="font-mono text-amber-200 font-bold text-sm">0009651439</span></p>
+                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Holder:</span> MR H D N HEMAPALA</p>
+                        </div>
+
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ගෙවීම සිදු කිරීමෙන් පසු Admin ගෙන් ලැබුණු Payment ID එක පහත "පැකේජ් සක්‍රිය කරන්න" ක්ලික් කර ඇතුළත් කරන්න.
+                        </p>
+                    </div>
+
+                    <div class="w-full md:w-auto text-center flex flex-col items-center justify-center">
+                        <div class="bg-amber-500/20 border border-amber-500/40 p-3 rounded-2xl mb-3 text-center max-w-xs">
+                            <p class="text-xs font-bold text-amber-200 leading-snug">
+                                <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i>
+                                මුදල් ගෙවු රිසිට් පත අනිවාර්යයෙන් ම මේ WhatsApp එකට යවා ඔබගේ Payment ID එක ලබා ගන්න.
+                            </p>
+                        </div>
+
+                        <a href="https://wa.me/94703896029" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-6 py-3.5 rounded-2xl transition shadow-xl w-full md:w-auto">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                            <span>WhatsApp වෙත යවන්න</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upgrade Packages Grid -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-amber-500/30">
+                <h3 class="text-xl font-bold text-amber-100 mb-6 flex items-center">
+                    <i class="fa-solid fa-crown text-amber-400 mr-2"></i> Membership Packages සක්‍රීය කරගන්න
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- FREE -->
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-extrabold text-amber-400 uppercase">Free Package</span>
+                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 0</h4>
+                            <p class="text-xs text-slate-300">75 Coins ලැබෙනු ඇත. (එක් Email එකකට වරක් පමණි)</p>
+                        </div>
+                        <button onclick="claimFreeCoins()" class="mt-4 w-full bg-slate-800 hover:bg-slate-700 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition">පැකේජ් සක්‍රිය කරන්න</button>
+                    </div>
+
+                    <!-- LKR 100 -->
+                    <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-extrabold text-amber-400 uppercase">Bronze Package</span>
+                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 100</h4>
+                            <p class="text-xs text-slate-300">300 Coins ලැබෙනු ඇත.</p>
+                        </div>
+                        <button onclick="openPaymentModal('Bronze', 300)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
+                    </div>
+
+                    <!-- LKR 200 -->
+                    <div class="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
+                        <div>
+                            <span class="text-xs font-extrabold text-amber-400 uppercase">Silver Package</span>
+                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 200</h4>
+                            <p class="text-xs text-slate-300">750 Coins ලැබෙනු ඇත.</p>
+                        </div>
+                        <button onclick="openPaymentModal('Silver', 750)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
+                    </div>
+
+                    <!-- LKR 300 -->
+                    <div class="bg-slate-900/90 border border-amber-400 rounded-2xl p-5 flex flex-col justify-between relative shadow-lg shadow-amber-500/10">
+                        <div class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">POPULAR</div>
+                        <div>
+                            <span class="text-xs font-extrabold text-amber-400 uppercase">Gold Package</span>
+                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 300</h4>
+                            <p class="text-xs text-slate-300">2000 Coins ලැබෙනු ඇත.</p>
+                        </div>
+                        <button onclick="openPaymentModal('Gold', 2000)" class="mt-4 w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN DASHBOARD -->
+        <section id="adminSection" class="hidden animate__animated animate__fadeIn font-sinhala">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700/60 pb-6 mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black gradient-text flex items-center font-sinhala-fancy">
+                            <i class="fa-solid fa-user-shield text-amber-400 mr-3"></i> Admin Panel (පරිපාලක පීඨය)
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">ශිෂ්‍යයින් කළමනාකරණය, අවසර දීම් (Approvals), ප්‍රශ්න සංස්කරණය සහ Bulk Import මෙතැනින් සිදු කරන්න.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportDataJSON()" class="bg-slate-900 hover:bg-slate-800 text-amber-200 text-xs font-bold px-3 py-2 rounded-xl border border-amber-500/30 transition">
+                            <i class="fa-solid fa-download mr-1"></i> Export Data (JSON)
+                        </button>
+                        <label class="bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-2 rounded-xl transition cursor-pointer shadow">
+                            <i class="fa-solid fa-upload mr-1"></i> Import JSON
+                            <input type="file" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="flex space-x-3 border-b border-slate-700/60 mb-6 overflow-x-auto no-scrollbar">
+                    <button onclick="switchAdminTab('students')" id="adminTab-students" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap">
+                        <i class="fa-solid fa-users mr-1"></i> Students (ශිෂ්‍යයින්)
+                    </button>
+                    <button onclick="switchAdminTab('approvals')" id="adminTab-approvals" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                        <i class="fa-solid fa-check-circle mr-1"></i> Approvals (අවසරදීම්)
+                    </button>
+                    <button onclick="switchAdminTab('manageLessons')" id="adminTab-manageLessons" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                        <i class="fa-solid fa-book mr-1"></i> පාඩම් මාතෘකා
+                    </button>
+                    <button onclick="switchAdminTab('bulkImport')" id="adminTab-bulkImport" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                        <i class="fa-solid fa-file-import mr-1"></i> Bulk Import
+                    </button>
+                    <button onclick="switchAdminTab('manageQuestions')" id="adminTab-manageQuestions" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                        <i class="fa-solid fa-list-check mr-1"></i> ප්‍රශ්න කළමනාකරණය
+                    </button>
+                </div>
+
+                <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
+                <div id="adminView-students" class="space-y-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300 border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-amber-400">
+                                    <th class="p-3">Student ID</th>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Password</th>
+                                    <th class="p-3">Plan</th>
+                                    <th class="p-3">Coins</th>
+                                    <th class="p-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN TAB: APPROVALS -->
+                <div id="adminView-approvals" class="hidden space-y-6">
+                    <h3 class="text-sm font-bold text-amber-300">පැකේජ් සක්‍රීය කිරීමේ ඉල්ලීම් (Pending Package Approvals)</h3>
+                    <div id="approvalsContainer" class="space-y-3"></div>
+                </div>
+
+                <!-- ADMIN TAB: MANAGE LESSONS -->
+                <div id="adminView-manageLessons" class="hidden space-y-6">
+                    <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
+                                <select id="lessonMgrGradeSelect" onchange="renderAdminLessonsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    <option value="6">6 ශ්‍රේණිය</option>
+                                    <option value="7">7 ශ්‍රේණිය</option>
+                                    <option value="8">8 ශ්‍රේණිය</option>
+                                    <option value="9">9 ශ්‍රේණිය</option>
+                                    <option value="10">10 ශ්‍රේණිය</option>
+                                    <option value="11">11 ශ්‍රේණිය</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-300 mb-1">නව පාඩම් මාතෘකාවක් එකතු කරන්න</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="newLessonTitleInput" placeholder="උදා: 2 පාඩම - මුල් මානව ජනාවාස" class="flex-1 p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    <button onclick="addNewLessonTitle()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow">
+                                        <i class="fa-solid fa-plus mr-1"></i> එකතු කරන්න
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="adminLessonsContainer" class="space-y-3"></div>
+                </div>
+
+                <!-- ADMIN TAB: BULK TEXT FORMAT IMPORT -->
+                <div id="adminView-bulkImport" class="hidden space-y-6">
+                    <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය (Grade)</label>
+                                <select id="importGrade" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    <option value="6">6 ශ්‍රේණිය</option>
+                                    <option value="7">7 ශ්‍රේණිය</option>
+                                    <option value="8">8 ශ්‍රේණිය</option>
+                                    <option value="9">9 ශ්‍රේණිය</option>
+                                    <option value="10">10 ශ්‍රේණිය</option>
+                                    <option value="11">11 ශ්‍රේණිය</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">පාඩමේ නම (Lesson Title)</label>
+                                <input type="text" id="importLessonTitle" placeholder="උදා: 1 පාඩම - අපේ මූලාශ්‍ර" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">ප්‍රශ්න වර්ගය (Type)</label>
+                                <select id="importType" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    <option value="mcq">MCQ Questions</option>
+                                    <option value="short">Short Questions</option>
+                                    <option value="essay">Essay Questions</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-amber-300 mb-1">ඔබේ Format එක අනුව Text Paste කරන්න:</label>
+                            <textarea id="bulkTextInput" rows="10" class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-xs text-amber-100 font-mono focus:ring-2 focus:ring-amber-500" placeholder="1. ප්‍රශ්නය&#10;1) පිළිතුර 1 | 2) පිළිතුර 2 | 3) පිළිතුර 3 | 4) පිළිතුර 4&#10;Correct: 2&#10;Explanation: පැහැදිලි කිරීම"></textarea>
+                        </div>
+
+                        <button onclick="processBulkImport()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-6 py-3 rounded-xl transition shadow-lg">
+                            <i class="fa-solid fa-plus-circle mr-2"></i> ප්‍රශ්න පද්ධතියට ඇතුළත් කරන්න (Process Import)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ADMIN TAB: MANAGE QUESTIONS -->
+                <div id="adminView-manageQuestions" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
+                            <select id="manageGradeSelect" onchange="loadManageQuestions()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                <option value="6">6 ශ්‍රේණිය</option>
+                                <option value="7">7 ශ්‍රේණිය</option>
+                                <option value="8">8 ශ්‍රේණිය</option>
+                                <option value="9">9 ශ්‍රේණිය</option>
+                                <option value="10">10 ශ්‍රේණිය</option>
+                                <option value="11">11 ශ්‍රේණිය</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">පාඩම තෝරන්න</label>
+                            <select id="manageLessonSelect" onchange="renderManageQuestionsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-between items-center bg-slate-900/90 p-3 rounded-xl border border-slate-800 gap-2">
+                        <label class="flex items-center space-x-2 text-xs font-bold text-amber-200 cursor-pointer">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllQuestions(this)" class="w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                            <span>සියල්ල තෝරන්න (Select All)</span>
+                        </label>
+                        <button onclick="deleteSelectedQuestions()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition shadow flex items-center">
+                            <i class="fa-solid fa-trash-can mr-2"></i> තෝරාගත් ප්‍රශ්න ඩිලිට් කරන්න (Delete Selected)
+                        </button>
+                    </div>
+
+                    <div id="manageQuestionsList" class="space-y-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <div id="noDataAlert" class="hidden max-w-xl mx-auto glass-card rounded-2xl p-8 shadow-2xl text-center border border-amber-500/20 font-sinhala">
+            <i class="fa-solid fa-folder-open text-4xl text-amber-400 mb-3 animate-bounce"></i>
+            <h3 class="text-xl font-bold text-amber-100 mb-1 font-sinhala-fancy">තොරතුරු හමු නොවීය</h3>
+            <p class="text-slate-400 text-xs">මෙම පාඩම සඳහා ප්‍රශ්න ඇතුළත් කර නොමැත.</p>
         </div>
-      </div>
 
-      <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
-        <p>© 2026 EXAM PDF DOWNLOAD LK. All Rights Reserved.</p>
-        <p class="mt-2 sm:mt-0">Built with High-Performance Node.js & MongoDB Engine</p>
-      </div>
+    </main>
+
+    <!-- PAYMENT / CLAIM CODE MODAL -->
+    <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 font-sinhala">
+        <div class="glass-card rounded-3xl p-6 max-w-md w-full border border-amber-500/40 space-y-4">
+            <h3 class="text-lg font-bold text-amber-100" id="payModalTitle">පැකේජය සක්‍රීය කරන්න</h3>
+            <p class="text-xs text-slate-300">මුදල් ගෙවා ලබා ගත් Payment ID එක ඇතුලත් කරන්න:</p>
+            <input type="text" id="paymentIdInput" placeholder="Payment ID එක මෙතන ගහන්න..." class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-amber-100 text-xs font-bold">
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closePaymentModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">අවලංගු කරන්න</button>
+                <button onclick="submitPaymentClaim()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs">Send</button>
+            </div>
+        </div>
     </div>
-  </footer>
 
-  <!-- DOWNLOAD MODAL / MONETAG TIMER OVERLAY -->
-  <div id="downloadModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-8 text-center border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden">
-      <button onclick="closeDownloadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
+    <!-- OUT OF COINS POPUP MODAL -->
+    <div id="outOfCoinsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 font-sinhala animate__animated animate__fadeIn">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-rose-500/40 text-center space-y-5 shadow-2xl relative">
+            <div class="w-16 h-16 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto border border-rose-500/40 text-rose-400 text-3xl">
+                <i class="fa-solid fa-coins animate-bounce"></i>
+            </div>
+            
+            <h3 class="text-2xl font-black text-amber-100 font-sinhala-fancy">ඔබගේ Coins ප්‍රමාණය අවසන් වී ඇත!</h3>
+            
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                තවදුරටත් ප්‍රශ්න පත්‍ර කිරීමට, කරුණාකර අලුත් පැකේජයක් සක්‍රිය කර ගන්න.
+            </p>
 
-      <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-[#1E88E5] flex items-center justify-center text-3xl mx-auto mb-4">
-        <i class="fa-solid fa-cloud-arrow-down"></i>
-      </div>
+            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300">
+                <p class="font-bold text-amber-400 text-center mb-2">බැංකු තැන්පතු විස්තර (Bank Details)</p>
+                <p><span class="text-amber-300 font-bold">Bank:</span> Bank of Ceylon (BOC)</p>
+                <p><span class="text-amber-300 font-bold">Branch:</span> Kebithigollawa (621)</p>
+                <p><span class="text-amber-300 font-bold">Acc No:</span> <span class="font-mono text-amber-200 font-bold">0009651439</span></p>
+                <p><span class="text-amber-300 font-bold">Name:</span> MR H D N HEMAPALA</p>
+            </div>
 
-      <h3 id="modalPdfTitle" class="font-bold text-lg text-slate-900 dark:text-white mb-2 line-clamp-2">PDF Document</h3>
-      <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Your download link is preparing. Thank you for using EXAM PDF DOWNLOAD LK.</p>
-
-      <!-- Monetag Redirect Progress Indicator -->
-      <div id="timerContainer" class="mb-6 space-y-3">
-        <div class="text-4xl font-extrabold text-[#0F4C81] dark:text-blue-400" id="countdownTimer">5</div>
-        <p class="text-xs text-amber-600 dark:text-amber-400 font-semibold flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-[#0F4C81] fa-spinner animate-spin"></i> Directing to download link...
-        </p>
-      </div>
-
-      <!-- Action Buttons -->
-      <div id="downloadActions" class="space-y-3 hidden">
-        <a id="directDownloadBtn" href="#" target="_blank" class="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/30">
-          <i class="fa-solid fa-download"></i> Start Download Now
-        </a>
-      </div>
+            <div class="flex flex-col gap-2 pt-2">
+                <button onclick="goToDashboardFromModal()" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition hover:scale-[1.02]">
+                    <i class="fa-solid fa-crown mr-1"></i> අලුත් පැකේජ් බලන්න (Dashboard)
+                </button>
+                <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl shadow transition flex items-center justify-center space-x-2 text-xs">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>WhatsApp හරහා රිසිට්පත යවන්න</span>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- PDF PREVIEW / VIEWER MODAL -->
-  <div id="viewerModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col">
-    <div class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between">
-      <span id="viewerTitle" class="text-white font-semibold truncate max-w-md">Document Viewer</span>
-      <div class="flex items-center gap-4">
-        <button onclick="closeViewer()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm">
-          <i class="fa-solid fa-xmark mr-1"></i> Close
-        </button>
-      </div>
-    </div>
-    <div class="flex-grow w-full h-full bg-slate-900">
-      <iframe id="pdfIframe" src="" class="w-full h-full border-0"></iframe>
-    </div>
-  </div>
+    <script>
+        // Keyboard Shortcuts Protection
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'p')) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+            }
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+        });
 
-  <!-- Main JavaScript App -->
-  <script src="app.js"></script>
+        // Default Sample Data
+        const defaultHistoryData = {
+            "6": [
+                {
+                    lessonId: "l_6_1",
+                    lessonTitle: "1 පාඩම - අපේ මූලාශ්‍ර",
+                    mcq: [
+                        { id: "mcq_1", question: "ඉතිහාසය හැදෑරීම සඳහා භාවිත වන ප්‍රධාන මූලාශ්‍ර වර්ග දෙක කුමක්ද?", options: ["සාහිත්‍ය මූලාශ්‍ර සහ පුරාවිද්‍යා මූලාශ්‍ර", "ලිඛිත මූලාශ්‍ර සහ මුඛ පරම්පරාගත මූලාශ්‍ර", "ගල් පුවරු සහ තාලපත", "පොත්පත් සහ පුවත්පත්"], answer: 0, explanation: "ඉතිහාස මූලාශ්‍ර ප්‍රධාන වශයෙන් සාහිත්‍ය මූලාශ්‍ර සහ පුරාවිද්‍යා මූලාශ්‍ර ලෙස කොටස් දෙකකට බෙදේ." }
+                    ],
+                    short: [
+                        { id: "short_1", question: "පුරාවිද්‍යා මූලාශ්‍ර යනු මොනවාද?", answer: "අතීත මිනිසාගේ ක්‍රියාකාරකම් නිසා ඉතිරිවී ඇති භෞතික අවශේෂ පුරාවිද්‍යා මූලාශ්‍ර වේ." }
+                    ],
+                    essay: [
+                        { id: "essay_1", title: "ලංකාවේ ලිඛිත මූලාශ්‍රවල වැදගත්කම පැහැදිලි කරන්න.", answer: "අතීත රාජාවලිය සහ ශාසනික තොරතුරු නිවැරදිව තේරුම් ගැනීමට ලිඛිත මූලාශ්‍ර උපකාරී වේ." }
+                    ]
+                }
+            ]
+        };
+
+        // ADMIN SECURE CREDENTIALS
+        const ADMIN_EMAIL = "exampaperlkonlinepapershop@gmail.com";
+        const ADMIN_PASS = "FG@#478f";
+
+        // Global State Management
+        let historyData = JSON.parse(localStorage.getItem('hrh_history_data_v3')) || defaultHistoryData;
+        let currentUser = JSON.parse(localStorage.getItem('hrh_current_user_v3')) || null;
+        let registeredStudents = JSON.parse(localStorage.getItem('hrh_students_list_v1')) || [];
+        let approvalRequests = JSON.parse(localStorage.getItem('hrh_approval_requests_v1')) || [];
+
+        let selectedPackageForModal = { plan: '', coins: 0 };
+
+        let currentGrade = "6";
+        let currentLessonIndex = 0;
+        let currentMode = "mcq";
+        let currentMcqIndex = 0;
+        let mcqScore = 0;
+
+        window.onload = function () {
+            saveData();
+            checkDailyAnalyticsReset();
+            renderGradeTabs();
+            updateAuthUI();
+            selectGrade("6");
+            
+            // Asynchronously sync with Cloud Database (MongoDB)
+            syncWithDatabase();
+        };
+
+        async function syncWithDatabase() {
+            try {
+                // 1. Sync History Lessons & Questions
+                const res = await fetch('/api/history-data');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Object.keys(data).length > 0) {
+                        historyData = data;
+                        localStorage.setItem('hrh_history_data_v3', JSON.stringify(historyData));
+                        loadLessonsForGrade();
+                    }
+                }
+            } catch (err) {
+                console.log('API sync notice: using cached local data');
+            }
+
+            try {
+                // 2. If logged in as admin, fetch latest students and approvals from MongoDB
+                if (currentUser && currentUser.role === 'admin') {
+                    const stRes = await fetch('/api/students');
+                    if (stRes.ok) {
+                        registeredStudents = await stRes.json();
+                        localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+                    }
+                    const apRes = await fetch('/api/approvals');
+                    if (apRes.ok) {
+                        approvalRequests = await apRes.json();
+                        localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+                    }
+                }
+            } catch (err) {
+                console.log('Admin sync notice: using cached local data');
+            }
+        }
+
+        async function syncHistoryDataToAPI() {
+            try {
+                await fetch('/api/history-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(historyData)
+                });
+            } catch (err) {
+                console.error('Failed to sync historyData to API:', err);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('hrh_history_data_v3', JSON.stringify(historyData));
+            localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+            localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+            
+            if (currentUser) {
+                localStorage.setItem('hrh_current_user_v3', JSON.stringify(currentUser));
+                const index = registeredStudents.findIndex(s => s.email === currentUser.email);
+                if (index !== -1 && currentUser.role !== 'admin') {
+                    registeredStudents[index] = currentUser;
+                    localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+                }
+            } else {
+                localStorage.removeItem('hrh_current_user_v3');
+            }
+        }
+
+        function generateUniqueStudentId() {
+            return "STD-" + Math.floor(100000 + Math.random() * 900000);
+        }
+
+        function checkDailyAnalyticsReset() {
+            if (!currentUser) return;
+            const today = new Date().toISOString().split('T')[0];
+            if (currentUser.lastActiveDate !== today) {
+                currentUser.lastActiveDate = today;
+                currentUser.todayUsedCoins = 0;
+                saveData();
+            }
+        }
+
+        function updateAuthUI() {
+            const container = document.getElementById('authNavButtons');
+            const coinBadge = document.getElementById('userCoinBadge');
+
+            if (currentUser) {
+                coinBadge.classList.remove('hidden');
+                coinBadge.classList.add('flex');
+                
+                if (currentUser.role === 'admin') {
+                    document.getElementById('headerCoinCount').innerText = "Unlimited";
+                } else {
+                    document.getElementById('headerCoinCount').innerText = currentUser.coins + " Coins";
+                }
+
+                let adminBtn = '';
+                let dashboardBtn = '';
+
+                if (currentUser.role === 'admin') {
+                    adminBtn = `
+                        <button onclick="openAdminDashboard()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-2 rounded-xl transition shadow font-sinhala">
+                            <i class="fa-solid fa-user-shield mr-1"></i> Admin Panel
+                        </button>
+                    `;
+                } else {
+                    dashboardBtn = `
+                        <button onclick="openDashboard()" class="bg-slate-900 border border-amber-500/30 text-amber-200 text-xs font-bold px-3 py-2 rounded-xl hover:bg-slate-800 transition font-sinhala">
+                            <i class="fa-solid fa-crown text-amber-400 mr-1"></i> Dashboard
+                        </button>
+                    `;
+                }
+
+                container.innerHTML = `
+                    ${adminBtn}
+                    ${dashboardBtn}
+                    <button onclick="logoutUser()" class="bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition font-sinhala">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                `;
+            } else {
+                coinBadge.classList.add('hidden');
+                coinBadge.classList.remove('flex');
+                container.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow font-sinhala">
+                        <i class="fa-solid fa-user mr-1"></i> ලොගින් වන්න
+                    </button>
+                `;
+            }
+        }
+
+        /* AUTHENTICATION HANDLERS */
+        function openAuthModal(defaultTab = 'register') {
+            hideAllSections();
+            document.getElementById('welcomeHero').classList.add('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            document.getElementById('authSection').classList.remove('hidden');
+            toggleAuthMode(defaultTab);
+        }
+
+        function toggleAuthMode(mode) {
+            if (mode === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('tabLogin').className = "text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
+                document.getElementById('tabRegister').className = "text-lg font-bold text-slate-400 px-4 pb-2";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('tabRegister').className = "text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
+                document.getElementById('tabLogin').className = "text-lg font-bold text-slate-400 px-4 pb-2";
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+
+            if (email === ADMIN_EMAIL.toLowerCase()) {
+                alert("මෙම Admin Email ලිපිනය හරහා ලියාපදිංචි විය නොහැක!");
+                return;
+            }
+
+            const existing = registeredStudents.find(s => s.email === email);
+            if (existing) {
+                alert("මෙම Email එක දැනටමත් ලියාපදිංචි කර ඇත! කරුණාකර 'ලොගින් වන්න' Tab එක හරහා ඇතුළු වන්න.");
+                return;
+            }
+
+            const studentId = generateUniqueStudentId();
+
+            const newStudent = {
+                studentId: studentId,
+                name,
+                email,
+                password,
+                role: "user",
+                plan: "Free",
+                coins: 75,
+                hasClaimedFreeCoins: true,
+                todayUsedCoins: 0,
+                lastActiveDate: new Date().toISOString().split('T')[0]
+            };
+
+            // Register in Cloud Database
+            try {
+                await fetch('/api/students/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newStudent)
+                });
+            } catch (err) {
+                console.log('DB register offline/sync fallback');
+            }
+
+            registeredStudents.push(newStudent);
+            currentUser = newStudent;
+            saveData();
+            updateAuthUI();
+            alert("ලියාපදිංචිය සාර්ථකයි! නොමිලේ Coins 75ක් හිමිවිය.");
+            resetToHome();
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPassword').value;
+
+            // Admin Login Check
+            if (email === ADMIN_EMAIL.toLowerCase()) {
+                if (pass === ADMIN_PASS) {
+                    currentUser = {
+                        name: "System Admin",
+                        email: ADMIN_EMAIL,
+                        role: "admin",
+                        plan: "Admin Unlimited",
+                        coins: Infinity,
+                        todayUsedCoins: 0,
+                        lastActiveDate: new Date().toISOString().split('T')[0]
+                    };
+                    saveData();
+                    updateAuthUI();
+                    alert("Admin ලෙස සාර්ථකව පිවිසුණි!");
+                    openAdminDashboard();
+                    return;
+                } else {
+                    alert("Admin මුරපදය වැරදිය!");
+                    return;
+                }
+            }
+
+            // Cloud DB Login Attempt
+            try {
+                const res = await fetch('/api/students/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.student) {
+                        currentUser = data.student;
+                        saveData();
+                        updateAuthUI();
+                        alert("සාර්ථකව ඇතුළු විය!");
+                        resetToHome();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.log('Login API network fallback');
+            }
+
+            // Fallback to local storage if API didn't succeed
+            let student = registeredStudents.find(s => s.email === email);
+            
+            if (!student) {
+                alert("මෙම Email එකෙන් ශිෂ්‍යයෙකු ලියාපදිංචි වී නොමැත. කරුණාකර පළමුව ලියාපදිංචි වන්න.");
+                return;
+            }
+
+            if (student.password !== pass) {
+                alert("ඔබ ඇතුළත් කළ මුරපදය (Password) වැරදියි!");
+                return;
+            }
+
+            if (!student.studentId) {
+                student.studentId = generateUniqueStudentId();
+            }
+
+            currentUser = student;
+            saveData();
+            updateAuthUI();
+            alert("සාර්ථකව ඇතුළු විය!");
+            resetToHome();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            saveData();
+            updateAuthUI();
+            resetToHome();
+        }
+
+        /* USER DASHBOARD & ANALYTICS */
+        function openDashboard() {
+            closeOutOfCoinsModal();
+            if (!currentUser) { openAuthModal('register'); return; }
+            if (currentUser.role === 'admin') { openAdminDashboard(); return; }
+
+            hideAllSections();
+            document.getElementById('welcomeHero').classList.add('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+
+            checkDailyAnalyticsReset();
+            document.getElementById('dashPlanName').innerText = currentUser.plan;
+            document.getElementById('dashCoins').innerText = currentUser.coins;
+            document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins;
+            document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+        }
+
+        function claimFreeCoins() {
+            if (!currentUser) { openAuthModal('register'); return; }
+
+            if (currentUser.hasClaimedFreeCoins) {
+                alert("Free coins ලබා දී අවසන්. අනිත් පැකේජ් තුනෙන් එකකට යන්න.");
+                return;
+            }
+
+            currentUser.coins += 75;
+            currentUser.hasClaimedFreeCoins = true;
+            saveData();
+            
+            // Sync with backend
+            fetch(`/api/students/${currentUser.studentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coins: currentUser.coins, hasClaimedFreeCoins: true })
+            }).catch(() => {});
+
+            updateAuthUI();
+            openDashboard();
+            alert("නොමිලේ Coins 75ක් සාර්ථකව එකතු විය!");
+        }
+
+        function openPaymentModal(plan, coins) {
+            if (!currentUser) { openAuthModal('register'); return; }
+            selectedPackageForModal = { plan, coins };
+            document.getElementById('payModalTitle').innerText = `${plan} Package - Coins ${coins} සක්‍රීය කරන්න`;
+            document.getElementById('paymentIdInput').value = '';
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function showOutOfCoinsModal() {
+            hideAllSections();
+            document.getElementById('outOfCoinsModal').classList.remove('hidden');
+        }
+
+        function closeOutOfCoinsModal() {
+            document.getElementById('outOfCoinsModal').classList.add('hidden');
+        }
+
+        function goToDashboardFromModal() {
+            closeOutOfCoinsModal();
+            openDashboard();
+        }
+
+        async function submitPaymentClaim() {
+            const paymentId = document.getElementById('paymentIdInput').value.trim();
+            if (!paymentId) { alert("කරුණාකර Payment ID එක ඇතුලත් කරන්න!"); return; }
+
+            const newReq = {
+                requestId: "REQ-" + Date.now(),
+                studentEmail: currentUser.email,
+                studentName: currentUser.name,
+                paymentId: paymentId,
+                plan: selectedPackageForModal.plan,
+                coins: selectedPackageForModal.coins,
+                status: "pending",
+                date: new Date().toLocaleString()
+            };
+
+            approvalRequests.push(newReq);
+            saveData();
+
+            // Sync with MongoDB
+            try {
+                await fetch('/api/approvals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newReq)
+                });
+            } catch (err) {}
+
+            closePaymentModal();
+            alert("ඔබගේ ID එක සාර්ථකව Admin වෙත යොමු කෙරිණි. Admin ගේ අවසරය (Approval) ලද සැනින් Coins සක්‍රීය වේ.");
+        }
+
+        function consumeCoin() {
+            if (!currentUser) {
+                alert("ප්‍රශ්න පත්‍ර කිරීමට කරුණාකර ප්‍රථමයෙන් ලියාපදිංචි වන්න.");
+                openAuthModal('register');
+                return false;
+            }
+
+            if (currentUser.role === 'admin') return true;
+
+            checkDailyAnalyticsReset();
+            
+            // COINS NO LONGER AVAILABLE -> HIDE CONTENT AND SHOW POPUP MODAL
+            if (currentUser.coins <= 0) {
+                showOutOfCoinsModal();
+                return false;
+            }
+
+            currentUser.coins -= 1;
+            currentUser.todayUsedCoins += 1;
+            saveData();
+            updateAuthUI();
+
+            // Background async sync to Database
+            fetch('/api/students/consume-coin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: currentUser.email })
+            }).catch(() => {});
+
+            return true;
+        }
+
+        /* LMS CORE LOGIC & NAVIGATION */
+        function renderGradeTabs() {
+            const tabsContainer = document.getElementById('gradeTabs');
+            tabsContainer.innerHTML = '';
+            for (let g = 6; g <= 11; g++) {
+                const btn = document.createElement('button');
+                btn.id = `grade-tab-${g}`;
+                btn.onclick = () => selectGrade(g.toString());
+                btn.className = `px-5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border border-amber-500/20 text-amber-200 font-sinhala`;
+                btn.innerText = `${g} ශ්‍රේණිය`;
+                tabsContainer.appendChild(btn);
+            }
+        }
+
+        function selectGrade(grade) {
+            closeOutOfCoinsModal();
+            currentGrade = grade;
+            for (let g = 6; g <= 11; g++) {
+                const tab = document.getElementById(`grade-tab-${g}`);
+                if (tab) tab.className = (g.toString() === grade) ? 
+                    `px-5 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg border border-amber-300 font-sinhala` : 
+                    `px-5 py-2 rounded-xl text-xs font-bold border border-amber-500/20 text-amber-200 hover:bg-amber-500/10 font-sinhala`;
+            }
+
+            document.getElementById('welcomeHero').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('modeSelector').classList.remove('hidden');
+            document.getElementById('activeGradeBadge').innerText = `${grade} ශ්‍රේණිය`;
+
+            loadLessonsForGrade();
+        }
+
+        function loadLessonsForGrade() {
+            const lessonSelect = document.getElementById('lessonSelect');
+            lessonSelect.innerHTML = '';
+
+            const lessons = historyData[currentGrade] || [];
+            if (lessons.length === 0) {
+                lessonSelect.innerHTML = '<option value="-1">පාඩම් නොමැත</option>';
+                currentLessonIndex = -1;
+            } else {
+                lessons.forEach((l, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = l.lessonTitle;
+                    lessonSelect.appendChild(opt);
+                });
+                currentLessonIndex = 0;
+            }
+            switchMode(currentMode);
+        }
+
+        function onLessonChange() {
+            const select = document.getElementById('lessonSelect');
+            currentLessonIndex = parseInt(select.value);
+            switchMode(currentMode);
+        }
+
+        function resetToHome() {
+            closeOutOfCoinsModal();
+            document.getElementById('welcomeHero').classList.remove('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('authSection').classList.add('hidden');
+            hideAllSections();
+        }
+
+        function switchMode(mode) {
+            closeOutOfCoinsModal();
+            if (!currentUser) {
+                openAuthModal('register');
+                return;
+            }
+
+            // CHECK COINS ON MODE SWITCH
+            if (currentUser.role !== 'admin' && currentUser.coins <= 0) {
+                showOutOfCoinsModal();
+                return;
+            }
+
+            currentMode = mode;
+            ['mcq', 'short', 'essay'].forEach(m => {
+                const btn = document.getElementById(`btn-mode-${m}`);
+                btn.className = (m === mode) ? 
+                    "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow font-sinhala" : 
+                    "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 font-sinhala";
+            });
+
+            hideAllSections();
+
+            const lesson = (historyData[currentGrade] && currentLessonIndex >= 0) ? historyData[currentGrade][currentLessonIndex] : null;
+
+            if (!lesson || !lesson[mode] || lesson[mode].length === 0) {
+                document.getElementById('noDataAlert').classList.remove('hidden');
+                return;
+            }
+
+            if (mode === 'mcq') {
+                document.getElementById('mcqSection').classList.remove('hidden');
+                initMcqQuiz();
+            } else if (mode === 'short') {
+                document.getElementById('shortSection').classList.remove('hidden');
+                renderShortQuestions();
+            } else if (mode === 'essay') {
+                document.getElementById('essaySection').classList.remove('hidden');
+                renderEssayQuestions();
+            }
+        }
+
+        function hideAllSections() {
+            document.getElementById('mcqSection').classList.add('hidden');
+            document.getElementById('shortSection').classList.add('hidden');
+            document.getElementById('essaySection').classList.add('hidden');
+            document.getElementById('noDataAlert').classList.add('hidden');
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+        }
+
+        /* MCQ ENGINE */
+        function initMcqQuiz() {
+            currentMcqIndex = 0;
+            mcqScore = 0;
+            document.getElementById('mcqContainer').classList.remove('hidden');
+            document.getElementById('mcqResultsCard').classList.add('hidden');
+            renderMcqQuestion();
+        }
+
+        function renderMcqQuestion() {
+            const mcqList = historyData[currentGrade][currentLessonIndex].mcq;
+            const item = mcqList[currentMcqIndex];
+
+            document.getElementById('mcqProgressBar').style.width = `${((currentMcqIndex + 1) / mcqList.length) * 100}%`;
+            document.getElementById('mcqProgressText').innerText = `ප්‍රශ්න ${currentMcqIndex + 1}/${mcqList.length}`;
+            
+            const cleanQuestion = item.question.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
+            document.getElementById('mcqQuestionText').innerText = `${currentMcqIndex + 1}. ${cleanQuestion}`;
+
+            const optionsContainer = document.getElementById('mcqOptions');
+            optionsContainer.innerHTML = '';
+            document.getElementById('mcqExplanation').classList.add('hidden');
+            document.getElementById('mcqNextBtn').disabled = true;
+
+            item.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-2xl border border-slate-700/80 bg-slate-900/80 hover:border-amber-500/50 text-xs sm:text-sm text-slate-200 flex items-center justify-between transition duration-200 font-sinhala`;
+                btn.onclick = () => selectMcqOption(idx);
+                btn.id = `opt-${idx}`;
+                btn.innerHTML = `<span>${idx + 1}) ${opt}</span>`;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectMcqOption(idx) {
+            if (!consumeCoin()) return;
+
+            const item = historyData[currentGrade][currentLessonIndex].mcq[currentMcqIndex];
+            if (idx === item.answer) {
+                mcqScore++;
+                document.getElementById(`opt-${idx}`).classList.add('border-emerald-500', 'bg-emerald-500/20');
+            } else {
+                document.getElementById(`opt-${idx}`).classList.add('border-rose-500', 'bg-rose-500/20');
+                document.getElementById(`opt-${item.answer}`).classList.add('border-emerald-500', 'bg-emerald-500/20');
+            }
+            if (item.explanation) {
+                document.getElementById('mcqExplanationText').innerText = item.explanation;
+                document.getElementById('mcqExplanation').classList.remove('hidden');
+            }
+            document.getElementById('mcqNextBtn').disabled = false;
+        }
+
+        function nextMcqQuestion() {
+            const mcqList = historyData[currentGrade][currentLessonIndex].mcq;
+            currentMcqIndex++;
+            if (currentMcqIndex < mcqList.length) renderMcqQuestion();
+            else {
+                document.getElementById('mcqContainer').classList.add('hidden');
+                document.getElementById('mcqResultsCard').classList.remove('hidden');
+                document.getElementById('finalScoreDisplay').innerText = `${mcqScore}/${mcqList.length}`;
+            }
+        }
+
+        /* SHORT QUESTIONS */
+        function renderShortQuestions() {
+            const container = document.getElementById('shortContainer');
+            container.innerHTML = '';
+            const list = historyData[currentGrade][currentLessonIndex].short;
+
+            list.forEach((item, index) => {
+                const cleanQuestion = item.question.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
+                const card = document.createElement('div');
+                card.className = "perspective-1000 h-64 cursor-pointer font-sinhala";
+                card.innerHTML = `
+                    <div id="flashcard-${index}" onclick="handleShortCardClick(this)" class="relative w-full h-full duration-500 transform-style-3d rounded-3xl shadow-xl">
+                        <div class="absolute inset-0 backface-hidden p-6 flex flex-col justify-between items-center bg-slate-900/95 rounded-3xl border border-amber-500/30 glass-card">
+                            <span class="bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[11px] font-bold px-3 py-1 rounded-full">ප්‍රශ්නය ${index + 1}</span>
+                            <p class="text-lg sm:text-xl font-bold text-amber-100 font-sinhala-fancy text-center my-auto leading-relaxed">${cleanQuestion}</p>
+                            <span class="text-[11px] text-amber-400 font-medium"><i class="fa-solid fa-rotate mr-1"></i> පිළිතුර බලන්න Click කරන්න (1 Coin)</span>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 p-6 flex flex-col justify-between items-center bg-slate-800 rounded-3xl border border-amber-400 glass-card">
+                            <span class="bg-amber-400 text-slate-950 text-[11px] font-extrabold px-3 py-1 rounded-full">පිළිතුර ${index + 1}</span>
+                            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed font-sinhala text-center my-auto">${item.answer}</p>
+                            <span class="text-[11px] text-slate-400"><i class="fa-solid fa-rotate mr-1"></i> හැරවීමට Click කරන්න</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleShortCardClick(cardElem) {
+            if (!cardElem.classList.contains('rotate-y-180')) {
+                if (!consumeCoin()) return;
+            }
+            cardElem.classList.toggle('rotate-y-180');
+        }
+
+        /* ESSAY QUESTIONS */
+        function renderEssayQuestions() {
+            const container = document.getElementById('essayContainer');
+            container.innerHTML = '';
+            const list = historyData[currentGrade][currentLessonIndex].essay;
+
+            list.forEach((item, index) => {
+                const cleanTitle = item.title.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-3xl p-6 shadow-xl border border-amber-500/30 space-y-4 font-sinhala";
+                card.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <h4 class="text-xl font-bold text-amber-100 font-sinhala-fancy">${index + 1}. ${cleanTitle}</h4>
+                    </div>
+                    <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
+                        <p class="text-slate-200 text-sm sm:text-base leading-relaxed font-sinhala whitespace-pre-line">${item.answer}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* ADMIN DASHBOARD */
+        function openAdminDashboard() {
+            closeOutOfCoinsModal();
+            if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+                alert("පරිපාලක පීඨයට පිවිසීමට අවසර නැත!");
+                openAuthModal('login');
+                return;
+            }
+            document.getElementById('welcomeHero').classList.add('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            hideAllSections();
+            document.getElementById('adminSection').classList.remove('hidden');
+            switchAdminTab('students');
+        }
+
+        function switchAdminTab(tab) {
+            ['students', 'approvals', 'manageLessons', 'bulkImport', 'manageQuestions'].forEach(t => {
+                document.getElementById(`adminView-${t}`).classList.add('hidden');
+                document.getElementById(`adminTab-${t}`).className = "pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap";
+            });
+
+            document.getElementById(`adminView-${tab}`).classList.remove('hidden');
+            document.getElementById(`adminTab-${tab}`).className = "pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap";
+
+            if (tab === 'students') renderAdminStudentsList();
+            if (tab === 'approvals') renderAdminApprovals();
+            if (tab === 'manageLessons') renderAdminLessonsList();
+            if (tab === 'manageQuestions') loadManageQuestions();
+        }
+
+        function renderAdminStudentsList() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            registeredStudents.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800 hover:bg-slate-900/50";
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-amber-400">
+                        <div class="flex items-center space-x-2">
+                            <span>${student.studentId || '-'}</span>
+                            ${student.studentId ? `
+                            <button onclick="copyToClipboard('${student.studentId}')" title="Copy Student ID" class="text-slate-400 hover:text-amber-300 transition">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>` : ''}
+                        </div>
+                    </td>
+                    <td class="p-3 font-bold">${student.name}</td>
+                    <td class="p-3 text-slate-400">${student.email}</td>
+                    <td class="p-3 font-mono text-xs text-yellow-300/80">${student.password || 'N/A'}</td>
+                    <td class="p-3 text-emerald-400">${student.plan || 'Free'}</td>
+                    <td class="p-3 font-bold text-amber-300">${student.coins}</td>
+                    <td class="p-3 flex items-center space-x-2">
+                        <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/40 hover:bg-blue-500 hover:text-slate-950 font-bold">Edit Pass</button>
+                        <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold">Edit Coins</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`Student ID (${text}) සාර්ථකව Copy විය!`);
+            }).catch(err => {
+                alert('Copy කිරීමට නොහැකි විය: ' + err);
+            });
+        }
+
+        function adminEditPassword(studentIndex) {
+            const student = registeredStudents[studentIndex];
+            const newPassword = prompt(`${student.name} (${student.email}) සඳහා නව Password එක ඇතුළත් කරන්න:`, student.password || "");
+            if (newPassword !== null && newPassword.trim() !== "") {
+                student.password = newPassword.trim();
+                saveData();
+                renderAdminStudentsList();
+
+                // Sync to MongoDB
+                fetch(`/api/students/${student.studentId || student.email}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: student.password })
+                }).catch(() => {});
+
+                alert(`Password එක සාර්ථකව වෙනස් කරන ලදී!`);
+            }
+        }
+
+        function adminEditCoins(studentIndex) {
+            const student = registeredStudents[studentIndex];
+            const amountStr = prompt(`${student.name} ගේ Coins වෙනස් කිරීමට අවශ්‍ය ප්‍රමාණය සටහන් කරන්න:\n(Coins එකතු කිරීමට ධන අගයන් උදා: 100, Coins අයින් කිරීමට ඍණ අගයන් උදා: -50 ඇතුලත් කරන්න)`, "100");
+            const amount = parseInt(amountStr);
+            if (!isNaN(amount)) {
+                student.coins += amount;
+                if (student.coins < 0) student.coins = 0;
+                saveData();
+                renderAdminStudentsList();
+
+                // Sync to MongoDB
+                fetch(`/api/students/${student.studentId || student.email}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ coins: student.coins })
+                }).catch(() => {});
+
+                alert(`Coins ප්‍රමාණය සාර්ථකව වෙනස් කරන ලදී! නව Coins ප්‍රමාණය: ${student.coins}`);
+            }
+        }
+
+        function renderAdminApprovals() {
+            const container = document.getElementById('approvalsContainer');
+            container.innerHTML = '';
+
+            const pending = approvalRequests.filter(r => r.status === 'pending');
+
+            if (pending.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">අවසර දීමට ඉල්ලීම් කිසිවක් නැත.</p>`;
+                return;
+            }
+
+            pending.forEach((req) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 font-sinhala";
+                item.innerHTML = `
+                    <div>
+                        <p class="text-xs text-amber-400 font-bold">Student: ${req.studentName} (${req.studentEmail})</p>
+                        <p class="text-xs text-slate-300">Payment ID: <span class="font-mono text-amber-200 font-bold">${req.paymentId}</span></p>
+                        <p class="text-xs text-emerald-400">Package: ${req.plan} (${req.coins} Coins)</p>
+                        <p class="text-[10px] text-slate-500">${req.date}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="approveRequest('${req.requestId}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2 rounded-xl text-xs transition">
+                            Approve (අවසර දෙන්න)
+                        </button>
+                        <button onclick="rejectRequest('${req.requestId}')" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs transition">
+                            Reject
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function approveRequest(reqId) {
+            const req = approvalRequests.find(r => r.requestId === reqId);
+            if (!req) return;
+
+            const student = registeredStudents.find(s => s.email === req.studentEmail);
+            if (student) {
+                student.plan = req.plan;
+                student.coins += req.coins;
+            }
+
+            req.status = 'approved';
+            saveData();
+            renderAdminApprovals();
+
+            // Sync to MongoDB
+            fetch(`/api/approvals/${reqId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'approved' })
+            }).catch(() => {});
+
+            alert("ඉල්ලීම සාර්ථකව Approve කරන ලදී!");
+        }
+
+        function rejectRequest(reqId) {
+            const req = approvalRequests.find(r => r.requestId === reqId);
+            if (!req) return;
+
+            req.status = 'rejected';
+            saveData();
+            renderAdminApprovals();
+
+            // Sync to MongoDB
+            fetch(`/api/approvals/${reqId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'rejected' })
+            }).catch(() => {});
+
+            alert("ඉල්ලීම ප්‍රතික්ෂේප කරන ලදී.");
+        }
+
+        function renderAdminLessonsList() {
+            const grade = document.getElementById('lessonMgrGradeSelect').value;
+            const container = document.getElementById('adminLessonsContainer');
+            container.innerHTML = '';
+
+            const lessons = historyData[grade] || [];
+            if (lessons.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">මෙම ශ්‍රේණිය සඳහා පාඩම් මාතෘකා නැත.</p>`;
+                return;
+            }
+
+            lessons.forEach((l, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 font-sinhala";
+                item.innerHTML = `
+                    <input type="text" id="lessonTitleInput_${grade}_${idx}" value="${l.lessonTitle}" class="w-full sm:flex-1 p-2 bg-slate-950 border border-slate-700 rounded-xl text-amber-100 text-xs font-bold">
+                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                        <button onclick="updateLessonTitle('${grade}', ${idx})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> වෙනස් කරන්න (Edit)
+                        </button>
+                        <button onclick="deleteLessonTitle('${grade}', ${idx})" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-trash-can mr-1"></i> මකන්න (Delete)
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addNewLessonTitle() {
+            const grade = document.getElementById('lessonMgrGradeSelect').value;
+            const input = document.getElementById('newLessonTitleInput');
+            const title = input.value.trim();
+
+            if (!title) { alert("කරුණාකර පාඩමේ නම ඇතුළත් කරන්න."); return; }
+            if (!historyData[grade]) historyData[grade] = [];
+
+            historyData[grade].push({
+                lessonId: `l_${grade}_${Date.now()}`,
+                lessonTitle: title,
+                mcq: [],
+                short: [],
+                essay: []
+            });
+
+            saveData();
+            syncHistoryDataToAPI();
+            input.value = '';
+            renderAdminLessonsList();
+            alert("නව පාඩම් මාතෘකාව සාර්ථකව එකතු කරන ලදී!");
+        }
+
+        function updateLessonTitle(grade, index) {
+            const input = document.getElementById(`lessonTitleInput_${grade}_${index}`);
+            const newTitle = input.value.trim();
+
+            if (!newTitle) { alert("මාතෘකාව හිස්ව තැබිය නොහැක."); return; }
+
+            historyData[grade][index].lessonTitle = newTitle;
+            saveData();
+            syncHistoryDataToAPI();
+            alert("පාඩම් මාතෘකාව සාර්ථකව වෙනස් කරන ලදී!");
+            renderAdminLessonsList();
+        }
+
+        function deleteLessonTitle(grade, index) {
+            if (confirm("මෙම පාඩම් මාතෘකාව සහ ඊට අයත් සියලුම ප්‍රශ්න මකා දැමීමට අවශ්‍ය බව තහවුරු කරන්න?")) {
+                historyData[grade].splice(index, 1);
+                saveData();
+                syncHistoryDataToAPI();
+                renderAdminLessonsList();
+                alert("පාඩම් මාතෘකාව ඉවත් කරන ලදී.");
+            }
+        }
+
+        function processBulkImport() {
+            const grade = document.getElementById('importGrade').value;
+            const lessonTitle = document.getElementById('importLessonTitle').value.trim();
+            const type = document.getElementById('importType').value;
+            const rawText = document.getElementById('bulkTextInput').value.trim();
+
+            if (!lessonTitle) { alert("කරුණාකර පාඩමේ නම ඇතුළත් කරන්න!"); return; }
+            if (!rawText) { alert("කරුණාකර ප්‍රශ්න ඇතුළත් කරන්න!"); return; }
+
+            if (!historyData[grade]) historyData[grade] = [];
+
+            let lessonObj = historyData[grade].find(l => l.lessonTitle.toLowerCase() === lessonTitle.toLowerCase());
+            if (!lessonObj) {
+                lessonObj = { lessonId: `l_${grade}_${Date.now()}`, lessonTitle, mcq: [], short: [], essay: [] };
+                historyData[grade].push(lessonObj);
+            }
+
+            const blocks = rawText.split(/\n\s*\n/).map(b => b.trim()).filter(b => b.length > 0);
+            let addedCount = 0;
+
+            if (type === 'mcq') {
+                blocks.forEach(block => {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    if (lines.length >= 2) {
+                        const question = lines[0].replace(/^(?:ප්‍රශ්නය|\d+[\.\)]|\#)\s*/i, '');
+                        let options = [];
+                        let correctIndex = 0;
+                        let explanation = "";
+
+                        lines.forEach((line, i) => {
+                            if (line.includes('|') || /^[1-5\)\.\-\A-E]+/i.test(line)) {
+                                if (line.includes('|')) {
+                                    const opts = line.split('|');
+                                    opts.forEach(o => {
+                                        const cleanOpt = o.replace(/^([1-5\)\.\-\s]+|[A-E][\)\.\-\s]+)+/i, '').trim();
+                                        if (cleanOpt) options.push(cleanOpt);
+                                    });
+                                } else if (i > 0 && !line.toLowerCase().startsWith('correct') && !line.toLowerCase().startsWith('explanation')) {
+                                    const cleanOpt = line.replace(/^([1-5\)\.\-\s]+|[A-E][\)\.\-\s]+)+/i, '').trim();
+                                    if (cleanOpt) options.push(cleanOpt);
+                                }
+                            }
+
+                            if (/^correct\s*:\s*(\d+)/i.test(line)) {
+                                const match = line.match(/^correct\s*:\s*(\d+)/i);
+                                if (match) correctIndex = parseInt(match[1]) - 1;
+                            }
+
+                            if (/^explanation\s*:\s*(.*)/i.test(line)) {
+                                const match = line.match(/^explanation\s*:\s*(.*)/i);
+                                if (match) explanation = match[1].trim();
+                            }
+                        });
+
+                        if (options.length > 0) {
+                            lessonObj.mcq.push({
+                                id: `mcq_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                                question, options, answer: Math.max(0, correctIndex), explanation
+                            });
+                            addedCount++;
+                        }
+                    }
+                });
+            } else if (type === 'short') {
+                blocks.forEach(block => {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    if (lines.length >= 2) {
+                        const question = lines[0].replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
+                        const answer = lines[1].replace(/^(?:Answer|පිළිතුර)\s*:\s*/i, '');
+                        lessonObj.short.push({ id: `short_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`, question, answer });
+                        addedCount++;
+                    }
+                });
+            } else if (type === 'essay') {
+                blocks.forEach(block => {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    if (lines.length >= 2) {
+                        const title = lines[0].replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
+                        const answer = lines.slice(1).join('\n').replace(/^(?:Guide|පිළිතුර)\s*:\s*/i, '');
+                        lessonObj.essay.push({ id: `essay_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`, title, answer });
+                        addedCount++;
+                    }
+                });
+            }
+
+            saveData();
+            syncHistoryDataToAPI();
+            alert(`${addedCount} ප්‍රශ්න සංඛ්‍යාවක් සාර්ථකව ඇතුළත් කරන ලදී!`);
+            document.getElementById('bulkTextInput').value = '';
+            selectGrade(grade);
+        }
+
+        function loadManageQuestions() {
+            const grade = document.getElementById('manageGradeSelect').value;
+            const lessonSelect = document.getElementById('manageLessonSelect');
+            lessonSelect.innerHTML = '';
+
+            const lessons = historyData[grade] || [];
+            if (lessons.length === 0) {
+                lessonSelect.innerHTML = '<option value="-1">පාඩම් නොමැත</option>';
+            } else {
+                lessons.forEach((l, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = l.lessonTitle;
+                    lessonSelect.appendChild(opt);
+                });
+            }
+            renderManageQuestionsList();
+        }
+
+        function renderManageQuestionsList() {
+            const grade = document.getElementById('manageGradeSelect').value;
+            const lessonIdx = parseInt(document.getElementById('manageLessonSelect').value);
+            const container = document.getElementById('manageQuestionsList');
+            container.innerHTML = '';
+            document.getElementById('selectAllCheckbox').checked = false;
+
+            if (isNaN(lessonIdx) || lessonIdx < 0 || !historyData[grade] || !historyData[grade][lessonIdx]) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">කළමනාකරණය කිරීමට ප්‍රශ්න හමු නොවුණි.</p>`;
+                return;
+            }
+
+            const lesson = historyData[grade][lessonIdx];
+
+            if (lesson.mcq && lesson.mcq.length > 0) {
+                let html = `<h4 class="text-sm font-bold text-amber-300 mb-2 border-b border-slate-800 pb-1">MCQ ප්‍රශ්න (${lesson.mcq.length})</h4>`;
+                lesson.mcq.forEach((q, i) => {
+                    html += `
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
+                            <label class="flex items-center space-x-3 text-xs text-slate-200 cursor-pointer flex-1">
+                                <input type="checkbox" data-type="mcq" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                                <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.question}</div>
+                            </label>
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'mcq', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML += html;
+            }
+
+            if (lesson.short && lesson.short.length > 0) {
+                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1">කෙටි ප්‍රශ්න (${lesson.short.length})</h4>`;
+                lesson.short.forEach((q, i) => {
+                    html += `
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
+                            <label class="flex items-center space-x-3 text-xs text-slate-200 cursor-pointer flex-1">
+                                <input type="checkbox" data-type="short" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                                <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.question}</div>
+                            </label>
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'short', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML += html;
+            }
+
+            if (lesson.essay && lesson.essay.length > 0) {
+                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1">රචනා ප්‍රශ්න (${lesson.essay.length})</h4>`;
+                lesson.essay.forEach((q, i) => {
+                    html += `
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
+                            <label class="flex items-center space-x-3 text-xs text-slate-200 cursor-pointer flex-1">
+                                <input type="checkbox" data-type="essay" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                                <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.title}</div>
+                            </label>
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'essay', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML += html;
+            }
+        }
+
+        function toggleSelectAllQuestions(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.q-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        function deleteSelectedQuestions() {
+            const grade = document.getElementById('manageGradeSelect').value;
+            const lessonIdx = parseInt(document.getElementById('manageLessonSelect').value);
+
+            if (isNaN(lessonIdx) || lessonIdx < 0 || !historyData[grade] || !historyData[grade][lessonIdx]) return;
+
+            const selectedCheckboxes = Array.from(document.querySelectorAll('.q-checkbox:checked'));
+            if (selectedCheckboxes.length === 0) { alert("කරුණාකර ඉවත් කිරීමට ප්‍රශ්න ටික් (Select) කරන්න."); return; }
+
+            if (confirm(`තෝරාගත් ප්‍රශ්න ${selectedCheckboxes.length} මකා දැමීමට අවශ්‍ය බව තහවුරු කරන්න?`)) {
+                const toDelete = { mcq: [], short: [], essay: [] };
+                selectedCheckboxes.forEach(cb => {
+                    const type = cb.getAttribute('data-type');
+                    const index = parseInt(cb.getAttribute('data-index'));
+                    toDelete[type].push(index);
+                });
+
+                ['mcq', 'short', 'essay'].forEach(type => {
+                    toDelete[type].sort((a, b) => b - a).forEach(idx => {
+                        historyData[grade][lessonIdx][type].splice(idx, 1);
+                    });
+                });
+
+                saveData();
+                syncHistoryDataToAPI();
+                renderManageQuestionsList();
+                alert("තෝරාගත් ප්‍රශ්න ඉවත් කරන ලදී.");
+            }
+        }
+
+        function deleteQuestion(grade, lessonIdx, type, qIndex) {
+            if (confirm("මෙම ප්‍රශ්නය ඉවත් කිරීමට අවශ්‍ය බව තහවුරු කරන්න?")) {
+                historyData[grade][lessonIdx][type].splice(qIndex, 1);
+                saveData();
+                syncHistoryDataToAPI();
+                renderManageQuestionsList();
+            }
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historyData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `history_lms_backup_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importDataJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                try {
+                    historyData = JSON.parse(e.target.result);
+                    saveData();
+                    syncHistoryDataToAPI();
+                    alert("Data සාර්ථකව Import කරන ලදී!");
+                    location.reload();
+                } catch (err) {
+                    alert("වලංගු නොවන JSON ගොනුවකි.");
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
+        }
+    </script>
 </body>
 </html>

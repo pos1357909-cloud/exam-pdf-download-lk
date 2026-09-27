@@ -837,7 +837,11 @@ router.put('/approvals/:id', async (req, res) => {
 const app = express();
 app.use(express.json());
 app.use(async (req, res, next) => {
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB connection error in serverless wrapper:', err.message);
+  }
   next();
 });
 // On Vercel, the full path (e.g. /api/admin/login) is forwarded to this function,
