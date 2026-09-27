@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const connectDB = require('../database');
 
 const router = express.Router();
+router.use(cors());
 const JWT_SECRET = process.env.JWT_SECRET || 'exampdfdownloadlk_secret_key_2026';
 
 // ---------------- MONGOOSE SCHEMAS & MODELS ----------------
@@ -677,6 +679,29 @@ router.post('/history-data', async (req, res) => {
   }
 });
 
+// ---------------- FALLBACK FILE/MEMORY STORAGE ----------------
+const fs = require('fs');
+const path = require('path');
+const FALLBACK_FILE = path.join(__dirname, '../data_fallback.json');
+
+function loadFallbackData() {
+  try {
+    if (fs.existsSync(FALLBACK_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(FALLBACK_FILE, 'utf8'));
+      return { students: parsed.students || [], approvals: parsed.approvals || [] };
+    }
+  } catch (e) {}
+  return { students: [], approvals: [] };
+}
+
+function saveFallbackData(data) {
+  try {
+    fs.writeFileSync(FALLBACK_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {}
+}
+
+const memoryStore = loadFallbackData();
+
 // POST /api/students/register
 router.post('/students/register', async (req, res) => {
   try {
@@ -687,35 +712,62 @@ router.post('/students/register', async (req, res) => {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    const existing = await Student.findOne({ email: cleanEmail });
-    if (existing) {
-      return res.status(400).json({ error: 'Email already registered' });
+    let createdStudent = null;
+
+    if (mongoose.connection.readyState === 1) {
+      const existing = await Student.findOne({ email: cleanEmail });
+      if (existing) {
+        return res.status(400).json({ error: 'Email already registered' });
+      }
+
+      const newStudent = new Student({
+        studentId: studentId || ('STD-' + Math.floor(100000 + Math.random() * 900000)),
+        name: name || 'Student',
+        email: cleanEmail,
+        password,
+        role: 'user',
+        plan: 'Free',
+        coins: 75,
+        hasClaimedFreeCoins: true,
+        todayUsedCoins: 0,
+        lastActiveDate: new Date().toISOString().split('T')[0]
+      });
+
+      await newStudent.save();
+      createdStudent = newStudent.toObject();
+    } else {
+      const existing = memoryStore.students.find(s => s.email === cleanEmail);
+      if (existing) {
+        return res.status(400).json({ error: 'Email already registered' });
+      }
+
+      createdStudent = {
+        studentId: studentId || ('STD-' + Math.floor(100000 + Math.random() * 900000)),
+        name: name || 'Student',
+        email: cleanEmail,
+        password,
+        role: 'user',
+        plan: 'Free',
+        coins: 75,
+        hasClaimedFreeCoins: true,
+        todayUsedCoins: 0,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        createdAt: new Date()
+      };
+      memoryStore.students.unshift(createdStudent);
+      saveFallbackData(memoryStore);
     }
 
-    const newStudent = new Student({
-      studentId: studentId || ('STD-' + Math.floor(100000 + Math.random() * 900000)),
-      name: name || 'Student',
-      email: cleanEmail,
-      password,
-      role: 'user',
-      plan: 'Free',
-      coins: 75,
-      hasClaimedFreeCoins: true,
-      todayUsedCoins: 0,
-      lastActiveDate: new Date().toISOString().split('T')[0]
-    });
-
-    await newStudent.save();
     // 🔴 Real-time: Notify Admin that a new student registered
     emitEvent(req, 'student:registered', {
-      studentId: newStudent.studentId,
-      name: newStudent.name,
-      email: newStudent.email,
-      plan: newStudent.plan,
-      coins: newStudent.coins,
-      createdAt: newStudent.createdAt
+      studentId: createdStudent.studentId,
+      name: createdStudent.name,
+      email: createdStudent.email,
+      plan: createdStudent.plan,
+      coins: createdStudent.coins,
+      createdAt: createdStudent.createdAt
     });
-    res.status(201).json(newStudent);
+    res.status(201).json(createdStudent);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -745,7 +797,13 @@ router.post('/students/login', async (req, res) => {
       }
     }
 
-    const student = await Student.findOne({ email: cleanEmail });
+    let student = null;
+    if (mongoose.connection.readyState === 1) {
+      student = await Student.findOne({ email: cleanEmail });
+    } else {
+      student = memoryStore.students.find(s => s.email === cleanEmail);
+    }
+
     if (!student) {
       return res.status(404).json({ error: 'Student not found' });
     }
@@ -763,21 +821,38 @@ router.post('/students/login', async (req, res) => {
 // GET /api/students: List all registered students
 router.get('/students', async (req, res) => {
   try {
-    const students = await Student.find({}).sort({ createdAt: -1 });
-    res.json(students);
+    if (mongoose.connection.readyState === 1) {
+      const students = await Student.find({}).sort({ createdAt: -1 });
+      res.json(students);
+    } else {
+      res.json(memoryStore.students);
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.json(memoryStore.students);
   }
 });
 
 // PUT /api/students/:id: Update student coins, password, etc.
 router.put('/students/:id', async (req, res) => {
   try {
-    const updated = await Student.findOneAndUpdate(
-      { $or: [{ studentId: req.params.id }, { email: req.params.id }] },
-      req.body,
-      { new: true }
-    );
+    const targetId = req.params.id;
+    let updated = null;
+
+    if (mongoose.connection.readyState === 1) {
+      updated = await Student.findOneAndUpdate(
+        { $or: [{ studentId: targetId }, { email: targetId }] },
+        req.body,
+        { new: true }
+      );
+    } else {
+      const idx = memoryStore.students.findIndex(s => s.studentId === targetId || s.email === targetId);
+      if (idx !== -1) {
+        Object.assign(memoryStore.students[idx], req.body);
+        updated = memoryStore.students[idx];
+        saveFallbackData(memoryStore);
+      }
+    }
+
     if (updated) {
       // 🔴 Real-time: Notify the specific student of their updated data
       emitEvent(req, 'student:updated', {
@@ -787,7 +862,7 @@ router.put('/students/:id', async (req, res) => {
         todayUsedCoins: updated.todayUsedCoins
       });
     }
-    res.json(updated);
+    res.json(updated || { success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -799,14 +874,23 @@ router.post('/students/consume-coin', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email required' });
 
-    const student = await Student.findOne({ email: email.toLowerCase() });
-    if (!student) return res.status(404).json({ error: 'Student not found' });
-
-    if (student.coins > 0) {
-      student.coins -= 1;
-      student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
-      await student.save();
+    let student = null;
+    if (mongoose.connection.readyState === 1) {
+      student = await Student.findOne({ email: email.toLowerCase() });
+      if (student && student.coins > 0) {
+        student.coins -= 1;
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        await student.save();
+      }
+    } else {
+      student = memoryStore.students.find(s => s.email === email.toLowerCase());
+      if (student && student.coins > 0) {
+        student.coins -= 1;
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        saveFallbackData(memoryStore);
+      }
     }
+    if (!student) return res.status(404).json({ error: 'Student not found' });
     res.json({ coins: student.coins, todayUsedCoins: student.todayUsedCoins });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -816,29 +900,42 @@ router.post('/students/consume-coin', async (req, res) => {
 // GET /api/approvals: List all payment approvals
 router.get('/approvals', async (req, res) => {
   try {
-    const approvals = await Approval.find({}).sort({ createdAt: -1 });
-    res.json(approvals);
+    if (mongoose.connection.readyState === 1) {
+      const approvals = await Approval.find({}).sort({ createdAt: -1 });
+      res.json(approvals);
+    } else {
+      res.json(memoryStore.approvals);
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.json(memoryStore.approvals);
   }
 });
 
 // POST /api/approvals: Submit payment claim
 router.post('/approvals', async (req, res) => {
   try {
-    const approval = new Approval(req.body);
-    await approval.save();
+    let createdApproval = null;
+    if (mongoose.connection.readyState === 1) {
+      const approval = new Approval(req.body);
+      await approval.save();
+      createdApproval = approval.toObject();
+    } else {
+      createdApproval = { ...req.body, createdAt: new Date() };
+      memoryStore.approvals.unshift(createdApproval);
+      saveFallbackData(memoryStore);
+    }
+
     // 🔴 Real-time: Notify Admin of a new payment claim
     emitEvent(req, 'approval:new', {
-      requestId: approval.requestId,
-      studentEmail: approval.studentEmail,
-      studentName: approval.studentName,
-      plan: approval.plan,
-      coins: approval.coins,
-      paymentId: approval.paymentId,
-      date: approval.date
+      requestId: createdApproval.requestId,
+      studentEmail: createdApproval.studentEmail,
+      studentName: createdApproval.studentName,
+      plan: createdApproval.plan,
+      coins: createdApproval.coins,
+      paymentId: createdApproval.paymentId,
+      date: createdApproval.date
     });
-    res.status(201).json(approval);
+    res.status(201).json(createdApproval);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -848,21 +945,39 @@ router.post('/approvals', async (req, res) => {
 router.put('/approvals/:id', async (req, res) => {
   try {
     const { status } = req.body;
-    const approval = await Approval.findOne({ requestId: req.params.id });
-    if (!approval) return res.status(404).json({ error: 'Approval request not found' });
-
-    approval.status = status;
-    await approval.save();
-
+    let approval = null;
     let updatedStudent = null;
-    if (status === 'approved') {
-      const student = await Student.findOne({ email: approval.studentEmail.toLowerCase() });
-      if (student) {
-        student.plan = approval.plan;
-        student.coins = (student.coins || 0) + Number(approval.coins);
-        await student.save();
-        updatedStudent = student;
+
+    if (mongoose.connection.readyState === 1) {
+      approval = await Approval.findOne({ requestId: req.params.id });
+      if (!approval) return res.status(404).json({ error: 'Approval request not found' });
+
+      approval.status = status;
+      await approval.save();
+
+      if (status === 'approved') {
+        const student = await Student.findOne({ email: approval.studentEmail.toLowerCase() });
+        if (student) {
+          student.plan = approval.plan;
+          student.coins = (student.coins || 0) + Number(approval.coins);
+          await student.save();
+          updatedStudent = student;
+        }
       }
+    } else {
+      approval = memoryStore.approvals.find(a => a.requestId === req.params.id);
+      if (!approval) return res.status(404).json({ error: 'Approval request not found' });
+
+      approval.status = status;
+      if (status === 'approved') {
+        const student = memoryStore.students.find(s => s.email.toLowerCase() === approval.studentEmail.toLowerCase());
+        if (student) {
+          student.plan = approval.plan;
+          student.coins = (student.coins || 0) + Number(approval.coins);
+          updatedStudent = student;
+        }
+      }
+      saveFallbackData(memoryStore);
     }
 
     // 🔴 Real-time: Notify student of approval status change

@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;600;700;800&family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Noto+Serif+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Animate.css CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Socket.IO Client for Real-time -->
+    <script src="/socket.io/socket.io.js"></script>
 
     <script>
         tailwind.config = {
@@ -452,7 +454,18 @@
                 </div>
 
                 <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
-                <div id="adminView-students" class="space-y-6">
+                <div id="adminView-students" class="space-y-4">
+                    <!-- Toolbar: count + refresh -->
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-sinhala">
+                            <i class="fa-solid fa-users mr-1 text-amber-400"></i>
+                            ලියාපදිංචි ශිෂ්‍යයින්:
+                            <span id="studentCount" class="font-bold text-amber-300 ml-1">—</span>
+                        </p>
+                        <button onclick="fetchAndRenderStudents()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-300 border-collapse">
                             <thead>
@@ -472,8 +485,17 @@
                 </div>
 
                 <!-- ADMIN TAB: APPROVALS -->
-                <div id="adminView-approvals" class="hidden space-y-6">
-                    <h3 class="text-sm font-bold text-amber-300">පැකේජ් සක්‍රීය කිරීමේ ඉල්ලීම් (Pending Package Approvals)</h3>
+                <div id="adminView-approvals" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-amber-300 font-sinhala">
+                            <i class="fa-solid fa-clock mr-1"></i>
+                            Pending Approvals:
+                            <span id="approvalCount" class="text-amber-400 ml-1">—</span>
+                        </h3>
+                        <button onclick="fetchAndRenderApprovals()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
                     <div id="approvalsContainer" class="space-y-3"></div>
                 </div>
 
@@ -697,6 +719,7 @@
             
             // Asynchronously sync with Cloud Database (MongoDB)
             syncWithDatabase();
+            if (typeof startAdminPolling === 'function') startAdminPolling();
         };
 
         async function syncWithDatabase() {
@@ -717,17 +740,9 @@
 
             try {
                 // 2. If logged in as admin, fetch latest students and approvals from MongoDB
-                if (currentUser && currentUser.role === 'admin') {
-                    const stRes = await fetch('/api/students');
-                    if (stRes.ok) {
-                        registeredStudents = await stRes.json();
-                        localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
-                    }
-                    const apRes = await fetch('/api/approvals');
-                    if (apRes.ok) {
-                        approvalRequests = await apRes.json();
-                        localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
-                    }
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    fetchAndRenderStudents();
+                    fetchAndRenderApprovals();
                 }
             } catch (err) {
                 console.log('Admin sync notice: using cached local data');
@@ -883,16 +898,24 @@
 
             // Register in Cloud Database
             try {
-                await fetch('/api/students/register', {
+                const res = await fetch('/api/students/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newStudent)
                 });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.error || "ලියාපදිංචිය අසාර්ථක විය!");
+                    return;
+                }
+                if (data && data.studentId) {
+                    newStudent.studentId = data.studentId;
+                }
             } catch (err) {
-                console.log('DB register offline/sync fallback');
+                console.log('DB register offline/sync fallback:', err);
             }
 
-            registeredStudents.push(newStudent);
+            registeredStudents.unshift(newStudent);
             currentUser = newStudent;
             saveData();
             updateAuthUI();
@@ -1378,19 +1401,56 @@
             document.getElementById(`adminView-${tab}`).classList.remove('hidden');
             document.getElementById(`adminTab-${tab}`).className = "pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap";
 
-            if (tab === 'students') renderAdminStudentsList();
-            if (tab === 'approvals') renderAdminApprovals();
+            if (tab === 'students') fetchAndRenderStudents();
+            if (tab === 'approvals') fetchAndRenderApprovals();
             if (tab === 'manageLessons') renderAdminLessonsList();
             if (tab === 'manageQuestions') loadManageQuestions();
+        }
+
+        // ✅ Always fetch fresh students from DB then render
+        async function fetchAndRenderStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            // Show loading spinner
+            tbody.innerHTML = `
+                <tr><td colspan="7" class="p-8 text-center text-amber-400/70 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>Students load කරමින්...
+                </td></tr>`;
+
+            try {
+                const res = await fetch('/api/students');
+                if (res.ok) {
+                    const data = await res.json();
+                    registeredStudents = data;
+                    localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+                }
+            } catch (err) {
+                console.log('DB fetch failed, using cached data:', err.message);
+            }
+
+            renderAdminStudentsList();
         }
 
         function renderAdminStudentsList() {
             const tbody = document.getElementById('studentsTableBody');
             tbody.innerHTML = '';
 
+            // Update live count badge
+            const countEl = document.getElementById('studentCount');
+            if (countEl) countEl.textContent = registeredStudents.length;
+
+            if (registeredStudents.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="7" class="p-8 text-center text-slate-400 text-sm font-sinhala">
+                        <i class="fa-solid fa-users-slash text-2xl mb-2 block text-slate-600"></i>
+                        ලියාපදිංචි ශිෂ්‍යයින් නොමැත.
+                    </td></tr>`;
+                return;
+            }
+
             registeredStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-800 hover:bg-slate-900/50";
+                tr.id = `student-row-${student.email ? student.email.replace(/[@.]/g, '_') : index}`;
+                tr.className = "border-b border-slate-800 hover:bg-slate-900/50 transition-colors duration-200";
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-amber-400">
                         <div class="flex items-center space-x-2">
@@ -1401,14 +1461,29 @@
                             </button>` : ''}
                         </div>
                     </td>
-                    <td class="p-3 font-bold">${student.name}</td>
-                    <td class="p-3 text-slate-400">${student.email}</td>
+                    <td class="p-3 font-bold text-slate-100">${student.name || '-'}</td>
+                    <td class="p-3 text-slate-400 text-xs">${student.email}</td>
                     <td class="p-3 font-mono text-xs text-yellow-300/80">${student.password || 'N/A'}</td>
-                    <td class="p-3 text-emerald-400">${student.plan || 'Free'}</td>
-                    <td class="p-3 font-bold text-amber-300">${student.coins}</td>
-                    <td class="p-3 flex items-center space-x-2">
-                        <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/40 hover:bg-blue-500 hover:text-slate-950 font-bold">Edit Pass</button>
-                        <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold">Edit Coins</button>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${
+                            student.plan === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
+                            student.plan === 'Silver' ? 'bg-slate-400/20 text-slate-300 border border-slate-500/40' :
+                            student.plan === 'Bronze' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40' :
+                            'bg-slate-700/50 text-slate-400 border border-slate-700'
+                        }">${student.plan || 'Free'}</span>
+                    </td>
+                    <td class="p-3 font-bold text-amber-300">${student.coins ?? 0}
+                        <span class="text-xs text-slate-500 font-normal ml-1">coins</span>
+                    </td>
+                    <td class="p-3">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1.5 rounded-lg border border-blue-500/40 hover:bg-blue-500 hover:text-white font-bold text-[11px] transition">
+                                <i class="fa-solid fa-key mr-1"></i>Pass
+                            </button>
+                            <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1.5 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition">
+                                <i class="fa-solid fa-coins mr-1"></i>Coins
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1463,11 +1538,37 @@
             }
         }
 
+        // ✅ Always fetch fresh approvals from DB then render
+        async function fetchAndRenderApprovals() {
+            const container = document.getElementById('approvalsContainer');
+            container.innerHTML = `
+                <div class="text-center py-8 text-amber-400/70 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>Approvals load කරමින්...
+                </div>`;
+
+            try {
+                const res = await fetch('/api/approvals');
+                if (res.ok) {
+                    const data = await res.json();
+                    approvalRequests = data;
+                    localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+                }
+            } catch (err) {
+                console.log('Approvals fetch failed, using cached data:', err.message);
+            }
+
+            renderAdminApprovals();
+        }
+
         function renderAdminApprovals() {
             const container = document.getElementById('approvalsContainer');
             container.innerHTML = '';
 
             const pending = approvalRequests.filter(r => r.status === 'pending');
+
+            // Update count badge
+            const countEl = document.getElementById('approvalCount');
+            if (countEl) countEl.textContent = pending.length;
 
             if (pending.length === 0) {
                 container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">අවසර දීමට ඉල්ලීම් කිසිවක් නැත.</p>`;
@@ -1863,6 +1964,198 @@
             };
             fileReader.readAsText(event.target.files[0]);
         }
+
+        /* ========================================================
+           🔴 SOCKET.IO REAL-TIME SYSTEM
+           - Admin PC: sees new student registrations instantly
+           - Student Phone: sees coin/plan updates instantly
+           - Both: see approval status changes instantly
+        ======================================================== */
+
+        function showToast(message, type = 'info') {
+            const colors = {
+                info:    'bg-slate-800 border-amber-500/50 text-amber-200',
+                success: 'bg-emerald-900/90 border-emerald-500/60 text-emerald-200',
+                warning: 'bg-amber-900/90 border-amber-500/60 text-amber-200',
+                error:   'bg-rose-900/90 border-rose-500/60 text-rose-200'
+            };
+            const icons = { info: 'fa-bell', success: 'fa-circle-check', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark' };
+
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl border shadow-2xl text-sm font-bold font-sinhala transition-all duration-500 animate__animated animate__fadeInUp ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-lg"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
+                setTimeout(() => toast.remove(), 600);
+            }, 4000);
+        }
+
+        // Initialize Socket.IO connection
+        let socket = null;
+        try {
+            socket = io();
+
+            socket.on('connect', () => {
+                console.log('🔌 Real-time connected:', socket.id);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('❌ Real-time disconnected');
+            });
+
+            // ── EVENT: New student registered ──────────────────────────────
+            // Admin sees this instantly on their PC
+            socket.on('student:registered', (data) => {
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+                    fetchAndRenderStudents();
+                }
+            });
+
+            // ── EVENT: Student data updated by admin ───────────────────────
+            // Student's phone gets coins/plan update instantly
+            socket.on('student:updated', (data) => {
+                if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
+                if (currentUser.email !== data.email) return;
+
+                // Update local state
+                currentUser.coins = data.coins;
+                currentUser.plan = data.plan;
+                if (data.todayUsedCoins !== undefined) currentUser.todayUsedCoins = data.todayUsedCoins;
+                saveData();
+                updateAuthUI();
+
+                // Refresh dashboard if open
+                const dashSection = document.getElementById('dashboardSection');
+                if (dashSection && !dashSection.classList.contains('hidden')) {
+                    document.getElementById('dashPlanName').innerText = currentUser.plan;
+                    document.getElementById('dashCoins').innerText = currentUser.coins;
+                    document.getElementById('dashTodayUsed').innerText = currentUser.todayUsedCoins || 0;
+                    document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+                }
+
+                showToast(`✅ Admin ඔබේ ගිණුම යාවත්කාලීන කළා! Coins: ${data.coins}, Plan: ${data.plan}`, 'success');
+            });
+
+            // ── EVENT: Payment approval status changed by admin ────────────
+            // Student phone sees approval result (approved/rejected) instantly
+            socket.on('approval:updated', (data) => {
+                // For Admin: fresh fetch from DB
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    fetchAndRenderApprovals();
+                    return;
+                }
+
+                // For Student: check if this approval is theirs
+                if (!currentUser || currentUser.email !== data.studentEmail) return;
+
+                if (data.status === 'approved') {
+                    currentUser.coins = data.coins;
+                    currentUser.plan = data.plan;
+                    saveData();
+                    updateAuthUI();
+
+                    const dashSection = document.getElementById('dashboardSection');
+                    if (dashSection && !dashSection.classList.contains('hidden')) {
+                        document.getElementById('dashPlanName').innerText = currentUser.plan;
+                        document.getElementById('dashCoins').innerText = currentUser.coins;
+                        document.getElementById('dashTodayRemaining').innerText = currentUser.coins;
+                    }
+
+                    showToast(`🎉 ඔබේ ගෙවීම අනුමත කෙරිණි! ${data.coinsAdded} Coins සක්‍රීය විය. Plan: ${data.plan}`, 'success');
+                } else if (data.status === 'rejected') {
+                    showToast(`❌ ඔබේ ගෙවීමේ ඉල්ලීම (${data.plan}) ප්‍රතික්ෂේප කෙරිණි. Admin ව WhatsApp ඔස්සේ සම්බන්ධ වන්න.`, 'error');
+                }
+            });
+
+            // ── EVENT: New payment claim submitted by student ──────────────
+            // Admin sees new approval requests in real-time
+            socket.on('approval:new', (data) => {
+                if (!currentUser || (currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL)) return;
+
+                // Toast immediately, then fresh fetch
+                showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
+                fetchAndRenderApprovals();
+            });
+
+        } catch (err) {
+            console.log('Socket.IO not available (possibly serverless mode):', err.message);
+        }
+
+        // ── AUTO-POLLING & REAL-TIME FALLBACK FOR ADMIN ─────────────────────
+        let adminPollingInterval = null;
+
+        function startAdminPolling() {
+            if (adminPollingInterval) clearInterval(adminPollingInterval);
+            adminPollingInterval = setInterval(() => {
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    syncAdminDataQuietly();
+                }
+            }, 5000); // Poll every 5 seconds
+        }
+
+        async function syncAdminDataQuietly() {
+            try {
+                const res = await fetch('/api/students');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data)) {
+                        const previousCount = registeredStudents.length;
+                        if (previousCount > 0 && data.length > previousCount) {
+                            const newCount = data.length - previousCount;
+                            const latest = data[0];
+                            showToast(`🎓 නව ශිෂ්‍යයින් ${newCount} දෙනෙක් ලියාපදිංචි විය: ${latest.name || latest.email}`, 'info');
+                        }
+                        registeredStudents = data;
+                        localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+
+                        const adminSection = document.getElementById('adminSection');
+                        if (adminSection && !adminSection.classList.contains('hidden')) {
+                            const studentsView = document.getElementById('adminView-students');
+                            if (studentsView && !studentsView.classList.contains('hidden')) {
+                                renderAdminStudentsList();
+                            }
+                        }
+                    }
+                }
+            } catch (err) {}
+
+            try {
+                const apRes = await fetch('/api/approvals');
+                if (apRes.ok) {
+                    const apData = await apRes.json();
+                    if (apData && Array.isArray(apData)) {
+                        const prevApCount = approvalRequests.length;
+                        if (prevApCount > 0 && apData.length > prevApCount) {
+                            showToast(`💳 නව ගෙවීම් ඉල්ලීමක් ලැබිණි!`, 'warning');
+                        }
+                        approvalRequests = apData;
+                        localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+
+                        const adminSection = document.getElementById('adminSection');
+                        if (adminSection && !adminSection.classList.contains('hidden')) {
+                            const approvalsView = document.getElementById('adminView-approvals');
+                            if (approvalsView && !approvalsView.classList.contains('hidden')) {
+                                renderAdminApprovalsList();
+                            }
+                        }
+                    }
+                }
+            } catch (err) {}
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                syncAdminDataQuietly();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                syncAdminDataQuietly();
+            }
+        });
     </script>
 </body>
 </html>

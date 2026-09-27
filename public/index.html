@@ -719,6 +719,7 @@
             
             // Asynchronously sync with Cloud Database (MongoDB)
             syncWithDatabase();
+            if (typeof startAdminPolling === 'function') startAdminPolling();
         };
 
         async function syncWithDatabase() {
@@ -739,17 +740,9 @@
 
             try {
                 // 2. If logged in as admin, fetch latest students and approvals from MongoDB
-                if (currentUser && currentUser.role === 'admin') {
-                    const stRes = await fetch('/api/students');
-                    if (stRes.ok) {
-                        registeredStudents = await stRes.json();
-                        localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
-                    }
-                    const apRes = await fetch('/api/approvals');
-                    if (apRes.ok) {
-                        approvalRequests = await apRes.json();
-                        localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
-                    }
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    fetchAndRenderStudents();
+                    fetchAndRenderApprovals();
                 }
             } catch (err) {
                 console.log('Admin sync notice: using cached local data');
@@ -905,16 +898,24 @@
 
             // Register in Cloud Database
             try {
-                await fetch('/api/students/register', {
+                const res = await fetch('/api/students/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newStudent)
                 });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.error || "ලියාපදිංචිය අසාර්ථක විය!");
+                    return;
+                }
+                if (data && data.studentId) {
+                    newStudent.studentId = data.studentId;
+                }
             } catch (err) {
-                console.log('DB register offline/sync fallback');
+                console.log('DB register offline/sync fallback:', err);
             }
 
-            registeredStudents.push(newStudent);
+            registeredStudents.unshift(newStudent);
             currentUser = newStudent;
             saveData();
             updateAuthUI();
@@ -2006,19 +2007,16 @@
             // ── EVENT: New student registered ──────────────────────────────
             // Admin sees this instantly on their PC
             socket.on('student:registered', (data) => {
-                if (!currentUser || currentUser.role !== 'admin') return;
-
-                // Toast notification immediately
-                showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
-
-                // Refresh students table from DB (fresh fetch)
-                fetchAndRenderStudents();
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+                    fetchAndRenderStudents();
+                }
             });
 
             // ── EVENT: Student data updated by admin ───────────────────────
             // Student's phone gets coins/plan update instantly
             socket.on('student:updated', (data) => {
-                if (!currentUser || currentUser.role === 'admin') return;
+                if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
                 if (currentUser.email !== data.email) return;
 
                 // Update local state
@@ -2044,7 +2042,7 @@
             // Student phone sees approval result (approved/rejected) instantly
             socket.on('approval:updated', (data) => {
                 // For Admin: fresh fetch from DB
-                if (currentUser && currentUser.role === 'admin') {
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     fetchAndRenderApprovals();
                     return;
                 }
@@ -2074,7 +2072,7 @@
             // ── EVENT: New payment claim submitted by student ──────────────
             // Admin sees new approval requests in real-time
             socket.on('approval:new', (data) => {
-                if (!currentUser || currentUser.role !== 'admin') return;
+                if (!currentUser || (currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL)) return;
 
                 // Toast immediately, then fresh fetch
                 showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
@@ -2084,6 +2082,80 @@
         } catch (err) {
             console.log('Socket.IO not available (possibly serverless mode):', err.message);
         }
+
+        // ── AUTO-POLLING & REAL-TIME FALLBACK FOR ADMIN ─────────────────────
+        let adminPollingInterval = null;
+
+        function startAdminPolling() {
+            if (adminPollingInterval) clearInterval(adminPollingInterval);
+            adminPollingInterval = setInterval(() => {
+                if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                    syncAdminDataQuietly();
+                }
+            }, 5000); // Poll every 5 seconds
+        }
+
+        async function syncAdminDataQuietly() {
+            try {
+                const res = await fetch('/api/students');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data)) {
+                        const previousCount = registeredStudents.length;
+                        if (previousCount > 0 && data.length > previousCount) {
+                            const newCount = data.length - previousCount;
+                            const latest = data[0];
+                            showToast(`🎓 නව ශිෂ්‍යයින් ${newCount} දෙනෙක් ලියාපදිංචි විය: ${latest.name || latest.email}`, 'info');
+                        }
+                        registeredStudents = data;
+                        localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+
+                        const adminSection = document.getElementById('adminSection');
+                        if (adminSection && !adminSection.classList.contains('hidden')) {
+                            const studentsView = document.getElementById('adminView-students');
+                            if (studentsView && !studentsView.classList.contains('hidden')) {
+                                renderAdminStudentsList();
+                            }
+                        }
+                    }
+                }
+            } catch (err) {}
+
+            try {
+                const apRes = await fetch('/api/approvals');
+                if (apRes.ok) {
+                    const apData = await apRes.json();
+                    if (apData && Array.isArray(apData)) {
+                        const prevApCount = approvalRequests.length;
+                        if (prevApCount > 0 && apData.length > prevApCount) {
+                            showToast(`💳 නව ගෙවීම් ඉල්ලීමක් ලැබිණි!`, 'warning');
+                        }
+                        approvalRequests = apData;
+                        localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+
+                        const adminSection = document.getElementById('adminSection');
+                        if (adminSection && !adminSection.classList.contains('hidden')) {
+                            const approvalsView = document.getElementById('adminView-approvals');
+                            if (approvalsView && !approvalsView.classList.contains('hidden')) {
+                                renderAdminApprovalsList();
+                            }
+                        }
+                    }
+                }
+            } catch (err) {}
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                syncAdminDataQuietly();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
+                syncAdminDataQuietly();
+            }
+        });
     </script>
 </body>
 </html>
