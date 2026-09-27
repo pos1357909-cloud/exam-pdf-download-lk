@@ -454,7 +454,18 @@
                 </div>
 
                 <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
-                <div id="adminView-students" class="space-y-6">
+                <div id="adminView-students" class="space-y-4">
+                    <!-- Toolbar: count + refresh -->
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-sinhala">
+                            <i class="fa-solid fa-users mr-1 text-amber-400"></i>
+                            ලියාපදිංචි ශිෂ්‍යයින්:
+                            <span id="studentCount" class="font-bold text-amber-300 ml-1">—</span>
+                        </p>
+                        <button onclick="fetchAndRenderStudents()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-300 border-collapse">
                             <thead>
@@ -474,8 +485,17 @@
                 </div>
 
                 <!-- ADMIN TAB: APPROVALS -->
-                <div id="adminView-approvals" class="hidden space-y-6">
-                    <h3 class="text-sm font-bold text-amber-300">පැකේජ් සක්‍රීය කිරීමේ ඉල්ලීම් (Pending Package Approvals)</h3>
+                <div id="adminView-approvals" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-amber-300 font-sinhala">
+                            <i class="fa-solid fa-clock mr-1"></i>
+                            Pending Approvals:
+                            <span id="approvalCount" class="text-amber-400 ml-1">—</span>
+                        </h3>
+                        <button onclick="fetchAndRenderApprovals()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
                     <div id="approvalsContainer" class="space-y-3"></div>
                 </div>
 
@@ -1380,19 +1400,56 @@
             document.getElementById(`adminView-${tab}`).classList.remove('hidden');
             document.getElementById(`adminTab-${tab}`).className = "pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap";
 
-            if (tab === 'students') renderAdminStudentsList();
-            if (tab === 'approvals') renderAdminApprovals();
+            if (tab === 'students') fetchAndRenderStudents();
+            if (tab === 'approvals') fetchAndRenderApprovals();
             if (tab === 'manageLessons') renderAdminLessonsList();
             if (tab === 'manageQuestions') loadManageQuestions();
+        }
+
+        // ✅ Always fetch fresh students from DB then render
+        async function fetchAndRenderStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            // Show loading spinner
+            tbody.innerHTML = `
+                <tr><td colspan="7" class="p-8 text-center text-amber-400/70 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>Students load කරමින්...
+                </td></tr>`;
+
+            try {
+                const res = await fetch('/api/students');
+                if (res.ok) {
+                    const data = await res.json();
+                    registeredStudents = data;
+                    localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
+                }
+            } catch (err) {
+                console.log('DB fetch failed, using cached data:', err.message);
+            }
+
+            renderAdminStudentsList();
         }
 
         function renderAdminStudentsList() {
             const tbody = document.getElementById('studentsTableBody');
             tbody.innerHTML = '';
 
+            // Update live count badge
+            const countEl = document.getElementById('studentCount');
+            if (countEl) countEl.textContent = registeredStudents.length;
+
+            if (registeredStudents.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="7" class="p-8 text-center text-slate-400 text-sm font-sinhala">
+                        <i class="fa-solid fa-users-slash text-2xl mb-2 block text-slate-600"></i>
+                        ලියාපදිංචි ශිෂ්‍යයින් නොමැත.
+                    </td></tr>`;
+                return;
+            }
+
             registeredStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-800 hover:bg-slate-900/50";
+                tr.id = `student-row-${student.email ? student.email.replace(/[@.]/g, '_') : index}`;
+                tr.className = "border-b border-slate-800 hover:bg-slate-900/50 transition-colors duration-200";
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-amber-400">
                         <div class="flex items-center space-x-2">
@@ -1403,14 +1460,29 @@
                             </button>` : ''}
                         </div>
                     </td>
-                    <td class="p-3 font-bold">${student.name}</td>
-                    <td class="p-3 text-slate-400">${student.email}</td>
+                    <td class="p-3 font-bold text-slate-100">${student.name || '-'}</td>
+                    <td class="p-3 text-slate-400 text-xs">${student.email}</td>
                     <td class="p-3 font-mono text-xs text-yellow-300/80">${student.password || 'N/A'}</td>
-                    <td class="p-3 text-emerald-400">${student.plan || 'Free'}</td>
-                    <td class="p-3 font-bold text-amber-300">${student.coins}</td>
-                    <td class="p-3 flex items-center space-x-2">
-                        <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/40 hover:bg-blue-500 hover:text-slate-950 font-bold">Edit Pass</button>
-                        <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold">Edit Coins</button>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${
+                            student.plan === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
+                            student.plan === 'Silver' ? 'bg-slate-400/20 text-slate-300 border border-slate-500/40' :
+                            student.plan === 'Bronze' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40' :
+                            'bg-slate-700/50 text-slate-400 border border-slate-700'
+                        }">${student.plan || 'Free'}</span>
+                    </td>
+                    <td class="p-3 font-bold text-amber-300">${student.coins ?? 0}
+                        <span class="text-xs text-slate-500 font-normal ml-1">coins</span>
+                    </td>
+                    <td class="p-3">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1.5 rounded-lg border border-blue-500/40 hover:bg-blue-500 hover:text-white font-bold text-[11px] transition">
+                                <i class="fa-solid fa-key mr-1"></i>Pass
+                            </button>
+                            <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1.5 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition">
+                                <i class="fa-solid fa-coins mr-1"></i>Coins
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1465,11 +1537,37 @@
             }
         }
 
+        // ✅ Always fetch fresh approvals from DB then render
+        async function fetchAndRenderApprovals() {
+            const container = document.getElementById('approvalsContainer');
+            container.innerHTML = `
+                <div class="text-center py-8 text-amber-400/70 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>Approvals load කරමින්...
+                </div>`;
+
+            try {
+                const res = await fetch('/api/approvals');
+                if (res.ok) {
+                    const data = await res.json();
+                    approvalRequests = data;
+                    localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
+                }
+            } catch (err) {
+                console.log('Approvals fetch failed, using cached data:', err.message);
+            }
+
+            renderAdminApprovals();
+        }
+
         function renderAdminApprovals() {
             const container = document.getElementById('approvalsContainer');
             container.innerHTML = '';
 
             const pending = approvalRequests.filter(r => r.status === 'pending');
+
+            // Update count badge
+            const countEl = document.getElementById('approvalCount');
+            if (countEl) countEl.textContent = pending.length;
 
             if (pending.length === 0) {
                 container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">අවසර දීමට ඉල්ලීම් කිසිවක් නැත.</p>`;
@@ -1910,20 +2008,11 @@
             socket.on('student:registered', (data) => {
                 if (!currentUser || currentUser.role !== 'admin') return;
 
-                // Add to local students list if not already there
-                const exists = registeredStudents.find(s => s.email === data.email);
-                if (!exists) {
-                    registeredStudents.push(data);
-                    localStorage.setItem('hrh_students_list_v1', JSON.stringify(registeredStudents));
-                }
-
-                // Refresh students table if visible
-                const adminView = document.getElementById('adminView-students');
-                if (adminView && !adminView.classList.contains('hidden')) {
-                    renderAdminStudentsList();
-                }
-
+                // Toast notification immediately
                 showToast(`🎓 නව ශිෂ්‍යයෙක් ලියාපදිංචි විය: ${data.name || data.email}`, 'info');
+
+                // Refresh students table from DB (fresh fetch)
+                fetchAndRenderStudents();
             });
 
             // ── EVENT: Student data updated by admin ───────────────────────
@@ -1954,12 +2043,9 @@
             // ── EVENT: Payment approval status changed by admin ────────────
             // Student phone sees approval result (approved/rejected) instantly
             socket.on('approval:updated', (data) => {
-                // For Admin: refresh approvals list
+                // For Admin: fresh fetch from DB
                 if (currentUser && currentUser.role === 'admin') {
-                    const approvalView = document.getElementById('adminView-approvals');
-                    if (approvalView && !approvalView.classList.contains('hidden')) {
-                        renderAdminApprovals();
-                    }
+                    fetchAndRenderApprovals();
                     return;
                 }
 
@@ -1990,20 +2076,9 @@
             socket.on('approval:new', (data) => {
                 if (!currentUser || currentUser.role !== 'admin') return;
 
-                // Add to local list
-                const exists = approvalRequests.find(r => r.requestId === data.requestId);
-                if (!exists) {
-                    approvalRequests.unshift(data);
-                    localStorage.setItem('hrh_approval_requests_v1', JSON.stringify(approvalRequests));
-                }
-
-                // Refresh approvals tab if visible
-                const approvalView = document.getElementById('adminView-approvals');
-                if (approvalView && !approvalView.classList.contains('hidden')) {
-                    renderAdminApprovals();
-                }
-
+                // Toast immediately, then fresh fetch
                 showToast(`💳 නව ගෙවීම් ඉල්ලීමක්: ${data.studentName} (${data.plan} - ${data.coins} Coins)`, 'warning');
+                fetchAndRenderApprovals();
             });
 
         } catch (err) {
