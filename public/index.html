@@ -339,6 +339,22 @@
                                 <input type="email" id="regEmail" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
                             </div>
                             <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය (Grade)</label>
+                                <select id="regGrade" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                                    <option value="">-- ශ්‍රේණිය තෝරන්න --</option>
+                                    <option value="6">6 ශ්‍රේණිය</option>
+                                    <option value="7">7 ශ්‍රේණිය</option>
+                                    <option value="8">8 ශ්‍රේණිය</option>
+                                    <option value="9">9 ශ්‍රේණිය</option>
+                                    <option value="10">10 ශ්‍රේණිය</option>
+                                    <option value="11">11 ශ්‍රේණිය</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">දුරකථන අංකය (Phone Number)</label>
+                                <input type="tel" id="regPhone" required placeholder="07XXXXXXXX" class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <div>
                                 <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
                                 <input type="password" id="regPassword" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
                             </div>
@@ -349,7 +365,58 @@
                     </div>
                 </section>
 
-                <!-- USER MEMBERSHIP DASHBOARD SECTION -->
+                <!-- PENDING APPROVAL WAITING SCREEN -->
+                <section id="pendingSection" class="hidden max-w-lg mx-auto animate__animated animate__fadeIn font-sinhala">
+                    <div class="glass-card rounded-3xl p-8 sm:p-12 shadow-2xl border border-amber-500/40 text-center space-y-6">
+                        <!-- Animated waiting icon -->
+                        <div class="flex items-center justify-center">
+                            <div class="relative">
+                                <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center">
+                                    <i class="fa-solid fa-hourglass-half text-3xl text-amber-400 animate-spin" style="animation-duration: 3s;"></i>
+                                </div>
+                                <div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center animate-pulse">
+                                    <i class="fa-solid fa-clock text-slate-950 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h2 class="text-2xl sm:text-3xl font-black gradient-text font-sinhala-fancy">
+                                අනුමතය ලැබෙනු ඇත!
+                            </h2>
+                            <p class="text-amber-200 text-sm font-bold">
+                                ✅ ලියාපදිංචිය සාර්ථකයි!
+                            </p>
+                        </div>
+
+                        <!-- Waiting message box -->
+                        <div class="bg-amber-500/10 border border-amber-500/40 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center justify-center space-x-2 text-amber-300 font-bold text-sm">
+                                <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                                <span>Admin අනුමතය (Approval) අවශ්‍ය වේ</span>
+                            </div>
+                            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-sinhala">
+                                ඔබගේ ලියාපදිංචිය Admin කෙනෙකු විසින් සමාලෝචනය කරමින් සිටී. 
+                                Admin OK කිරීමෙන් පසු ඔබේ ගිණුම සක්‍රීය වී <strong class="text-amber-300">නොමිලේ Coins 75ක්</strong> ලැබෙනු ඇත.
+                            </p>
+                            <div class="flex items-center justify-center space-x-1.5 text-amber-400">
+                                <span class="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style="animation-delay: 0s;"></span>
+                                <span class="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></span>
+                                <span class="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></span>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-slate-400 leading-relaxed">
+                            <p>ඔබේ ලියාපදිංචි email: <span id="pendingEmailDisplay" class="text-amber-300 font-bold"></span></p>
+                            <p class="mt-1">Admin ගෙන් Approval ලද සැනින් ඔබ ස්වයංක්‍රීයව ලොග් වෙනු ඇත.</p>
+                        </div>
+
+                        <button onclick="logoutUser()" class="w-full bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-300 font-bold text-xs py-2.5 rounded-xl transition active-press">
+                            <i class="fa-solid fa-right-from-bracket mr-2"></i>ලොග් අවුට් (Logout)
+                        </button>
+                    </div>
+                </section>
+
                 <section id="dashboardSection" class="hidden max-w-5xl mx-auto space-y-6 sm:space-y-8 animate__animated animate__fadeIn font-sinhala">
                     <!-- Active Plan & Coins Overview -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
@@ -529,13 +596,15 @@
                                 </div>
                             </div>
                             <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/50">
-                                <table class="w-full text-left text-xs text-slate-300 border-collapse min-w-[700px]">
+                                <table class="w-full text-left text-xs text-slate-300 border-collapse min-w-[900px]">
                                     <thead>
                                         <tr class="border-b border-slate-700/80 text-amber-400 bg-slate-900/80">
                                             <th class="p-3">Student ID</th>
                                             <th class="p-3">Name</th>
                                             <th class="p-3">Email</th>
-                                            <th class="p-3">Password</th>
+                                            <th class="p-3">Grade</th>
+                                            <th class="p-3">Phone</th>
+                                            <th class="p-3">Status</th>
                                             <th class="p-3">Plan</th>
                                             <th class="p-3">Coins</th>
                                             <th class="p-3">Actions</th>
@@ -1022,6 +1091,18 @@
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const password = document.getElementById('regPassword').value;
+            const grade = document.getElementById('regGrade').value;
+            const phone = document.getElementById('regPhone').value.trim();
+
+            if (!grade) {
+                alert("කරුණාකර ශ්‍රේණිය (Grade) තෝරන්න.");
+                return;
+            }
+
+            if (!phone) {
+                alert("කරුණාකර දුරකථන අංකය (Phone Number) ඇතුළත් කරන්න.");
+                return;
+            }
 
             if (email === ADMIN_EMAIL.toLowerCase()) {
                 alert("මෙම Admin Email ලිපිනය හරහා ලියාපදිංචි විය නොහැක!");
@@ -1041,12 +1122,15 @@
                 name,
                 email,
                 password,
+                grade,
+                phone,
                 role: "user",
                 plan: "Free",
-                coins: 75,
-                hasClaimedFreeCoins: true,
+                coins: 0,
+                hasClaimedFreeCoins: false,
                 todayUsedCoins: 0,
-                lastActiveDate: new Date().toISOString().split('T')[0]
+                lastActiveDate: new Date().toISOString().split('T')[0],
+                status: 'pending'
             };
 
             try {
@@ -1071,8 +1155,19 @@
             currentUser = newStudent;
             saveData();
             updateAuthUI();
-            alert("ලියාපදිංචිය සාර්ථකයි! නොමිලේ Coins 75ක් හිමිවිය.");
-            resetToHome();
+            // Show pending approval screen instead of home/dashboard
+            showPendingScreen();
+        }
+
+        function showPendingScreen() {
+            hideAllSections();
+            document.getElementById('welcomeHero').classList.add('hidden');
+            document.getElementById('modeSelector').classList.add('hidden');
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('pendingSection').classList.remove('hidden');
+            const emailEl = document.getElementById('pendingEmailDisplay');
+            if (emailEl && currentUser) emailEl.textContent = currentUser.email;
         }
 
         async function handleLogin(e) {
@@ -1109,6 +1204,23 @@
                     body: JSON.stringify({ email, password: pass })
                 });
 
+                if (res.status === 403) {
+                    // Pending approval - show waiting screen
+                    const data = await res.json();
+                    if (data.error === 'pending') {
+                        // Load student info from local cache for display
+                        let pendingStudent = registeredStudents.find(s => s.email === email);
+                        if (!pendingStudent) {
+                            pendingStudent = { name: 'Student', email, password: pass, role: 'user', plan: 'Free', coins: 0, hasClaimedFreeCoins: false, todayUsedCoins: 0, status: 'pending', lastActiveDate: new Date().toISOString().split('T')[0] };
+                        }
+                        currentUser = pendingStudent;
+                        saveData();
+                        updateAuthUI();
+                        showPendingScreen();
+                        return;
+                    }
+                }
+
                 if (res.ok) {
                     const data = await res.json();
                     if (data.student) {
@@ -1132,6 +1244,15 @@
 
             if (student.password !== pass) {
                 alert("ඔබ ඇතුළත් කළ මුරපදය (Password) වැරදියි!");
+                return;
+            }
+
+            // Local fallback pending check
+            if (student.status === 'pending') {
+                currentUser = student;
+                saveData();
+                updateAuthUI();
+                showPendingScreen();
                 return;
             }
 
@@ -1399,6 +1520,7 @@
             document.getElementById('adminSection').classList.add('hidden');
             document.getElementById('dashboardSection').classList.add('hidden');
             document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('pendingSection').classList.add('hidden');
             hideAllSections();
         }
 
@@ -1466,6 +1588,7 @@
             document.getElementById('noDataAlert').classList.add('hidden');
             document.getElementById('authSection').classList.add('hidden');
             document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('pendingSection').classList.add('hidden');
         }
 
         /* MCQ ENGINE */
@@ -1896,7 +2019,7 @@
 
             if (registeredStudents.length === 0) {
                 tbody.innerHTML = `
-                    <tr><td colspan="7" class="p-8 text-center text-slate-400 text-sm font-sinhala">
+                    <tr><td colspan="9" class="p-8 text-center text-slate-400 text-sm font-sinhala">
                         <i class="fa-solid fa-users-slash text-2xl mb-2 block text-slate-600"></i>
                         ලියාපදිංචි ශිෂ්‍යයින් නොමැත.
                     </td></tr>`;
@@ -1906,7 +2029,13 @@
             registeredStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `student-row-${student.email ? student.email.replace(/[@.]/g, '_') : index}`;
-                tr.className = "border-b border-slate-800/80 hover:bg-slate-900/50 transition-colors duration-200";
+                const isPending = student.status === 'pending';
+                tr.className = `border-b border-slate-800/80 hover:bg-slate-900/50 transition-colors duration-200 ${isPending ? 'bg-amber-950/20' : ''}`;
+
+                const statusBadge = isPending
+                    ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1"><i class="fa-solid fa-hourglass-half text-[9px]"></i>Pending</span>`
+                    : `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1"><i class="fa-solid fa-circle-check text-[9px]"></i>Active</span>`;
+
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-amber-400">
                         <div class="flex items-center space-x-2">
@@ -1919,7 +2048,9 @@
                     </td>
                     <td class="p-3 font-bold text-slate-100">${student.name || '-'}</td>
                     <td class="p-3 text-slate-400 text-xs">${student.email}</td>
-                    <td class="p-3 font-mono text-xs text-yellow-300/80">${student.password || 'N/A'}</td>
+                    <td class="p-3 text-slate-300 text-xs font-bold">${student.grade ? student.grade + ' ශ්‍රේණිය' : '-'}</td>
+                    <td class="p-3 text-slate-300 text-xs font-mono">${student.phone || '-'}</td>
+                    <td class="p-3">${statusBadge}</td>
                     <td class="p-3">
                         <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${
                             student.plan === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
@@ -1932,10 +2063,11 @@
                         <span class="text-xs text-slate-500 font-normal ml-1">coins</span>
                     </td>
                     <td class="p-3">
-                        <div class="flex items-center space-x-1.5">
-                            <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-lg border border-blue-500/40 hover:bg-blue-500 hover:text-white font-bold text-[11px] transition active-press">
-                                <i class="fa-solid fa-key mr-1"></i>Pass
-                            </button>
+                        <div class="flex items-center space-x-1.5 flex-wrap gap-1">
+                            ${isPending ? `
+                            <button onclick="adminApproveStudent(${index})" class="bg-emerald-600/20 text-emerald-300 px-2 py-1 rounded-lg border border-emerald-500/40 hover:bg-emerald-600 hover:text-white font-bold text-[11px] transition active-press">
+                                <i class="fa-solid fa-circle-check mr-1"></i>Approve
+                            </button>` : ''}
                             <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition active-press">
                                 <i class="fa-solid fa-coins mr-1"></i>Coins
                             </button>
@@ -1947,6 +2079,39 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        async function adminApproveStudent(studentIndex) {
+            const student = registeredStudents[studentIndex];
+            if (!student) return;
+            if (!confirm(`${student.name} (${student.email}) ගේ ලියාපදිංචිය Approve කරමද?\nApprove කිරීමෙන් ඔවුන්ට නොමිලේ Coins 75ක් ලබා ලොග් වීමට හැකිවේ.`)) return;
+
+            student.status = 'active';
+            student.coins = (student.coins || 0) + 75;
+            student.hasClaimedFreeCoins = true;
+            saveData();
+            renderAdminStudentsList();
+
+            try {
+                await fetch(`/api/students/${student.studentId || student.email}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'active', coins: student.coins, hasClaimedFreeCoins: true })
+                });
+
+                // Notify the student via socket that their account is approved
+                emitStudentApproved(student.email, student.coins, student.plan || 'Free');
+
+                showToast(`✅ ${student.name} ගේ ලියාපදිංචිය සාර්ථකව Approve කරන ලදී!`, 'success');
+            } catch (err) {
+                console.error('Admin approve student error:', err);
+            }
+        }
+
+        // Emit approval event via server (real-time notify the student)
+        function emitStudentApproved(email, coins, plan) {
+            // This is done via the PUT /api/students/:id which triggers student:updated event
+            // The socket event is already emitted from the server side
         }
 
         function copyToClipboard(text) {
@@ -2645,11 +2810,24 @@
                 if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
                 if (currentUser.email !== data.email) return;
 
+                const wasPending = currentUser.status === 'pending';
+
                 currentUser.coins = data.coins;
                 currentUser.plan = data.plan;
                 if (data.todayUsedCoins !== undefined) currentUser.todayUsedCoins = data.todayUsedCoins;
+                if (data.status) currentUser.status = data.status;
                 saveData();
                 updateAuthUI();
+
+                // If student was pending and now active, redirect to home
+                if (wasPending && data.status === 'active') {
+                    document.getElementById('pendingSection').classList.add('hidden');
+                    showToast(`🎉 ඔබේ ගිණුම Admin විසින් Approve කරන ලදී! Coins ${data.coins} ලැබිණි. ලොග් වන්න!`, 'success');
+                    setTimeout(() => {
+                        resetToHome();
+                    }, 2000);
+                    return;
+                }
 
                 const dashSection = document.getElementById('dashboardSection');
                 if (dashSection && !dashSection.classList.contains('hidden')) {
@@ -2660,6 +2838,21 @@
                 }
 
                 showToast(`✅ Admin ඔබේ ගිණුම යාවත්කාලීන කළා! Coins: ${data.coins}, Plan: ${data.plan}`, 'success');
+            });
+
+            // 🔴 Auto-logout when Admin removes a student
+            socket.on('student:removed', (data) => {
+                if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
+                if (currentUser.email !== data.email) return;
+
+                showToast('🚫 ඔබේ ගිණුම Admin විසින් ඉවත් කරන ලදී. ඔබව ස්වයංක්‍රීයව Logout කෙරේ...', 'error');
+                setTimeout(() => {
+                    currentUser = null;
+                    saveData();
+                    updateAuthUI();
+                    resetToHome();
+                    alert('ඔබේ ගිණුම Admin විසින් Remove කරන ලදී. ඔබ ලොග් අවුට් කෙරිණි. ඔබට නැවත ලියාපදිංචි විය හැක.');
+                }, 2500);
             });
 
             socket.on('approval:updated', (data) => {

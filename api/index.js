@@ -117,10 +117,13 @@ const StudentSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   plan: { type: String, default: 'Free' },
-  coins: { type: Number, default: 75 },
-  hasClaimedFreeCoins: { type: Boolean, default: true },
+  coins: { type: Number, default: 0 },
+  hasClaimedFreeCoins: { type: Boolean, default: false },
   todayUsedCoins: { type: Number, default: 0 },
-  lastActiveDate: { type: String }
+  lastActiveDate: { type: String },
+  grade: { type: String },
+  phone: { type: String },
+  status: { type: String, default: 'pending' }
 }, { timestamps: true });
 
 const ApprovalSchema = new mongoose.Schema({
@@ -746,7 +749,7 @@ const memoryStore = loadFallbackData();
 // POST /api/students/register
 router.post('/students/register', async (req, res) => {
   try {
-    const { name, email, password, studentId } = req.body;
+    const { name, email, password, studentId, grade, phone } = req.body;
     const cleanEmail = (email || '').trim().toLowerCase();
 
     if (!cleanEmail || !password) {
@@ -768,10 +771,13 @@ router.post('/students/register', async (req, res) => {
         password,
         role: 'user',
         plan: 'Free',
-        coins: 75,
-        hasClaimedFreeCoins: true,
+        coins: 0,
+        hasClaimedFreeCoins: false,
         todayUsedCoins: 0,
-        lastActiveDate: new Date().toISOString().split('T')[0]
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        status: 'pending',
+        grade: grade || '',
+        phone: phone || ''
       });
 
       await newStudent.save();
@@ -789,10 +795,13 @@ router.post('/students/register', async (req, res) => {
         password,
         role: 'user',
         plan: 'Free',
-        coins: 75,
-        hasClaimedFreeCoins: true,
+        coins: 0,
+        hasClaimedFreeCoins: false,
         todayUsedCoins: 0,
         lastActiveDate: new Date().toISOString().split('T')[0],
+        status: 'pending',
+        grade: grade || '',
+        phone: phone || '',
         createdAt: new Date()
       };
       memoryStore.students.unshift(createdStudent);
@@ -853,6 +862,11 @@ router.post('/students/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
+    // Check if student account is pending admin approval
+    if (student.status === 'pending') {
+      return res.status(403).json({ error: 'pending', message: 'ඔබගේ ගිණුම තවමත් Admin අනුමතය (Approval) ලැබීමට ඇත. Admin OK කිරීමෙන් පසු ඔබට ලොග් වීමට හැකිවේ. කරුණාකර රැඳී සිටින්න.' });
+    }
+
     res.json({ student });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -906,6 +920,7 @@ router.put('/students/:id', async (req, res) => {
         email: updated.email,
         coins: updated.coins,
         plan: updated.plan,
+        status: updated.status,
         todayUsedCoins: updated.todayUsedCoins
       });
     }
@@ -934,11 +949,24 @@ router.delete('/students', async (req, res) => {
 router.delete('/students/:id', async (req, res) => {
   try {
     const targetId = decodeURIComponent(req.params.id);
+
+    // Find the student's email before deleting (for socket notification)
+    let removedEmail = null;
     if (mongoose.connection.readyState === 1) {
+      const found = await Student.findOne({ $or: [{ studentId: targetId }, { email: targetId }] });
+      if (found) removedEmail = found.email;
       await Student.deleteOne({ $or: [{ studentId: targetId }, { email: targetId }] });
     }
+
+    const fallbackStudent = memoryStore.students.find(s => s.studentId === targetId || s.email === targetId);
+    if (!removedEmail && fallbackStudent) removedEmail = fallbackStudent.email;
     memoryStore.students = memoryStore.students.filter(s => s.studentId !== targetId && s.email !== targetId);
     saveFallbackData(memoryStore);
+
+    // 🔴 Real-time: Force logout the removed student
+    if (removedEmail) {
+      emitEvent(req, 'student:removed', { email: removedEmail });
+    }
 
     res.json({ success: true, message: 'Student deleted successfully' });
   } catch (error) {
@@ -1039,6 +1067,14 @@ router.put('/approvals/:id', async (req, res) => {
         if (student) {
           student.plan = approval.plan;
           student.coins = (student.coins || 0) + Number(approval.coins);
+          // Activate student account and grant free coins if not yet claimed
+          if (student.status === 'pending') {
+            student.status = 'active';
+            if (!student.hasClaimedFreeCoins) {
+              student.coins += 75;
+              student.hasClaimedFreeCoins = true;
+            }
+          }
           await student.save();
           updatedStudent = student;
         }
@@ -1053,6 +1089,14 @@ router.put('/approvals/:id', async (req, res) => {
         if (student) {
           student.plan = approval.plan;
           student.coins = (student.coins || 0) + Number(approval.coins);
+          // Activate student account and grant free coins if not yet claimed
+          if (student.status === 'pending') {
+            student.status = 'active';
+            if (!student.hasClaimedFreeCoins) {
+              student.coins += 75;
+              student.hasClaimedFreeCoins = true;
+            }
+          }
           updatedStudent = student;
         }
       }
