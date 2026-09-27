@@ -893,6 +893,27 @@ router.get('/students', async (req, res) => {
   }
 });
 
+// GET /api/students/:email: Get a single student by email
+router.get('/students/:email', async (req, res) => {
+  try {
+    const targetEmail = req.params.email.toLowerCase();
+    let student = null;
+    if (mongoose.connection.readyState === 1) {
+      student = await Student.findOne({ email: targetEmail });
+    }
+    if (!student) {
+      student = (memoryStore.students || []).find(s => s.email && s.email.toLowerCase() === targetEmail);
+    }
+    if (student) {
+      res.json(student);
+    } else {
+      res.status(404).json({ error: 'Student not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // PUT /api/students/:id: Update student coins, password, etc.
 router.put('/students/:id', async (req, res) => {
   try {

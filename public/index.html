@@ -956,9 +956,20 @@
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     fetchAndRenderStudents();
                     fetchAndRenderApprovals();
+                } else if (currentUser && currentUser.email) {
+                    // Fetch latest profile for normal student (sync coins, plan, status)
+                    const resUser = await fetch(`/api/students/${encodeURIComponent(currentUser.email)}`);
+                    if (resUser.ok) {
+                        const updatedUser = await resUser.json();
+                        if (updatedUser && updatedUser.email) {
+                            currentUser = { ...currentUser, ...updatedUser };
+                            saveData();
+                            updateAuthUI();
+                        }
+                    }
                 }
             } catch (err) {
-                console.log('Admin sync notice: using cached local data');
+                console.log('Sync notice: using cached local data');
             }
         }
 
@@ -2863,7 +2874,7 @@
 
             socket.on('student:updated', (data) => {
                 if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
-                if (currentUser.email !== data.email) return;
+                if (currentUser.email.toLowerCase() !== (data.email || '').toLowerCase()) return;
 
                 const wasPending = currentUser.status === 'pending';
                 const oldCoins = currentUser.coins;
@@ -2898,7 +2909,7 @@
             // 🔴 Auto-logout when Admin removes a student
             socket.on('student:removed', (data) => {
                 if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
-                if (currentUser.email !== data.email) return;
+                if (currentUser.email.toLowerCase() !== (data.email || '').toLowerCase()) return;
 
                 showToast('🚫 ඔබේ ගිණුම Admin විසින් ඉවත් කරන ලදී. ඔබව ස්වයංක්‍රීයව Logout කෙරේ...', 'error');
                 setTimeout(() => {
