@@ -118,33 +118,33 @@
 
     <!-- HEADER NAVIGATION -->
     <header class="glass-header sticky top-0 z-40 shadow-2xl transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetToHome()">
-                    <div class="relative">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-2xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 border border-amber-300/40">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20">
+                <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group" onclick="resetToHome()">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-xl sm:text-2xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 border border-amber-300/40">
                             <i class="fa-solid fa-landmark text-slate-950"></i>
                         </div>
                     </div>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-black font-english-brand gradient-text leading-tight tracking-wider">HISTORY REVISION HUB</h1>
-                        <p class="text-[13px] text-amber-300/90 font-medium hidden sm:block tracking-wide font-sinhala-display">6 - 11 ශ්‍රේණි අධ්‍යාපනික LMS පද්ධතිය</p>
+                        <h1 class="text-base sm:text-2xl md:text-3xl font-black font-english-brand gradient-text leading-tight tracking-wider">HISTORY REVISION HUB</h1>
+                        <p class="text-[11px] sm:text-[13px] text-amber-300/90 font-medium hidden sm:block tracking-wide font-sinhala-display">6 - 11 ශ්‍රේණි අධ්‍යාපනික LMS පද්ධතිය</p>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
-                    <div id="userCoinBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold items-center gap-2">
+                <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                    <div id="userCoinBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold items-center gap-1.5 sm:gap-2">
                         <i class="fa-solid fa-coins text-amber-400"></i>
                         <span id="headerCoinCount">0</span>
                     </div>
-                    <div id="authNavButtons"></div>
+                    <div id="authNavButtons" class="flex items-center space-x-1.5 sm:space-x-2"></div>
                 </div>
             </div>
         </div>
 
         <!-- Grade Selector Navigation Tabs -->
-        <div class="bg-slate-950/80 border-t border-amber-500/20 px-4 py-2">
-            <div class="max-w-7xl mx-auto flex items-center justify-start sm:justify-center space-x-2 overflow-x-auto no-scrollbar" id="gradeTabs"></div>
+        <div class="bg-slate-950/80 border-t border-amber-500/20 px-2 sm:px-4 py-2">
+            <div class="max-w-7xl mx-auto flex items-center justify-start sm:justify-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5" id="gradeTabs"></div>
         </div>
     </header>
 
@@ -614,8 +614,8 @@
     </main>
 
     <!-- PAYMENT / CLAIM CODE MODAL -->
-    <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 font-sinhala">
-        <div class="glass-card rounded-3xl p-6 max-w-md w-full border border-amber-500/40 space-y-4">
+    <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 font-sinhala">
+        <div class="glass-card rounded-3xl p-5 sm:p-6 max-w-md w-full max-h-[92vh] overflow-y-auto border border-amber-500/40 space-y-4">
             <h3 class="text-lg font-bold text-amber-100" id="payModalTitle">පැකේජය සක්‍රීය කරන්න</h3>
             <p class="text-xs text-slate-300">මුදල් ගෙවා ලබා ගත් Payment ID එක ඇතුලත් කරන්න:</p>
             <input type="text" id="paymentIdInput" placeholder="Payment ID එක මෙතන ගහන්න..." class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-amber-100 text-xs font-bold">
@@ -627,19 +627,19 @@
     </div>
 
     <!-- OUT OF COINS POPUP MODAL -->
-    <div id="outOfCoinsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 font-sinhala animate__animated animate__fadeIn">
-        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-rose-500/40 text-center space-y-5 shadow-2xl relative">
-            <div class="w-16 h-16 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto border border-rose-500/40 text-rose-400 text-3xl">
+    <div id="outOfCoinsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 font-sinhala animate__animated animate__fadeIn">
+        <div class="glass-card rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[92vh] overflow-y-auto border border-rose-500/40 text-center space-y-4 sm:space-y-5 shadow-2xl relative">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto border border-rose-500/40 text-rose-400 text-2xl sm:text-3xl">
                 <i class="fa-solid fa-coins animate-bounce"></i>
             </div>
             
-            <h3 class="text-2xl font-black text-amber-100 font-sinhala-fancy">ඔබගේ Coins ප්‍රමාණය අවසන් වී ඇත!</h3>
+            <h3 class="text-xl sm:text-2xl font-black text-amber-100 font-sinhala-fancy">ඔබගේ Coins ප්‍රමාණය අවසන් වී ඇත!</h3>
             
             <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 තවදුරටත් ප්‍රශ්න පත්‍ර කිරීමට, කරුණාකර අලුත් පැකේජයක් සක්‍රිය කර ගන්න.
             </p>
 
-            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300">
+            <div class="bg-slate-950/90 p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300">
                 <p class="font-bold text-amber-400 text-center mb-2">බැංකු තැන්පතු විස්තර (Bank Details)</p>
                 <p><span class="text-amber-300 font-bold">Bank:</span> Bank of Ceylon (BOC)</p>
                 <p><span class="text-amber-300 font-bold">Branch:</span> Kebithigollawa (621)</p>
@@ -648,7 +648,7 @@
             </div>
 
             <div class="flex flex-col gap-2 pt-2">
-                <button onclick="goToDashboardFromModal()" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition hover:scale-[1.02]">
+                <button onclick="goToDashboardFromModal()" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition hover:scale-[1.02] text-xs sm:text-sm">
                     <i class="fa-solid fa-crown mr-1"></i> අලුත් පැකේජ් බලන්න (Dashboard)
                 </button>
                 <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl shadow transition flex items-center justify-center space-x-2 text-xs">
@@ -1144,7 +1144,7 @@
                 const btn = document.createElement('button');
                 btn.id = `grade-tab-${g}`;
                 btn.onclick = () => selectGrade(g.toString());
-                btn.className = `px-5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition border border-amber-500/20 text-amber-200 font-sinhala`;
+                btn.className = `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition border border-amber-500/20 text-amber-200 font-sinhala`;
                 btn.innerText = `${g} ශ්‍රේණිය`;
                 tabsContainer.appendChild(btn);
             }
@@ -1156,8 +1156,8 @@
             for (let g = 6; g <= 11; g++) {
                 const tab = document.getElementById(`grade-tab-${g}`);
                 if (tab) tab.className = (g.toString() === grade) ? 
-                    `px-5 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg border border-amber-300 font-sinhala` : 
-                    `px-5 py-2 rounded-xl text-xs font-bold border border-amber-500/20 text-amber-200 hover:bg-amber-500/10 font-sinhala`;
+                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg border border-amber-300 font-sinhala` : 
+                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-amber-500/20 text-amber-200 hover:bg-amber-500/10 font-sinhala`;
             }
 
             document.getElementById('welcomeHero').classList.add('hidden');
