@@ -148,9 +148,112 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 z-10 relative">
+    <main class="flex-1 max-w-[1500px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 z-10 relative">
 
-        <!-- WELCOME HERO SECTION -->
+        <!-- 2-COLUMN LMS DASHBOARD GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- ==================== LEFT COLUMN: LMS SIDEBAR (4 cols on lg, 3 cols on xl) ==================== -->
+            <aside class="lg:col-span-4 xl:col-span-3 space-y-6">
+
+                <!-- 1. STUDENT PROFILE & COINS CARD -->
+                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md border border-yellow-200/40">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <h4 id="sidebarUserName" class="text-xs sm:text-sm font-bold text-amber-100 truncate">ආයුබෝවන්!</h4>
+                                <p id="sidebarUserEmail" class="text-[11px] text-slate-400 truncate">ලොගින් වී නොමැත</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coins & Plan Status -->
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="bg-slate-950/80 p-2.5 rounded-2xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">වත්මන් Plan</p>
+                            <p id="sidebarPlanName" class="text-xs font-black text-amber-300 mt-0.5 truncate">Free</p>
+                        </div>
+                        <div class="bg-slate-950/80 p-2.5 rounded-2xl border border-slate-800">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">ඉතිරි Coins</p>
+                            <p id="sidebarCoinsCount" class="text-xs font-black text-emerald-400 mt-0.5 truncate">0 Coins</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openDashboard()" class="w-full bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                        <span>Membership Dashboard</span>
+                    </button>
+                </div>
+
+                <!-- 2. LESSON NAVIGATION SIDEBAR -->
+                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-3 shadow-xl">
+                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-700/60">
+                        <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center">
+                            <i class="fa-solid fa-book-open mr-2"></i> පාඩම් මාලාව (Lessons)
+                        </h4>
+                        <span id="sidebarActiveGradeBadge" class="bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg border border-amber-500/30">6 ශ්‍රේණිය</span>
+                    </div>
+
+                    <!-- Interactive Lesson Cards List -->
+                    <div id="sidebarLessonList" class="space-y-2 max-h-[380px] overflow-y-auto pr-1 no-scrollbar">
+                        <div class="p-3 text-center text-slate-400 text-xs">පාඩමක් තෝරන්න</div>
+                    </div>
+                </div>
+
+                <!-- 3. STUDY MODE SELECTOR CARD -->
+                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-3 shadow-xl">
+                    <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center pb-2.5 border-b border-slate-700/60">
+                        <i class="fa-solid fa-layer-group mr-2"></i> අධ්‍යයන මාදිලිය (Study Mode)
+                    </h4>
+                    <div class="space-y-2">
+                        <button onclick="switchMode('mcq')" id="sidebar-btn-mcq" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200">
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-dot text-amber-400"></i>
+                                <span>MCQ Quiz (බහුවරණ)</span>
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-amber-400"></i>
+                        </button>
+                        <button onclick="switchMode('short')" id="sidebar-btn-short" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900">
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-clone text-amber-400"></i>
+                                <span>කෙටි ප්‍රශ්න (Short Q&A)</span>
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                        </button>
+                        <button onclick="switchMode('essay')" id="sidebar-btn-essay" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900">
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-align-left text-amber-400"></i>
+                                <span>රචනා ප්‍රශ්න (Essay Q&A)</span>
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. BANK & WHATSAPP SUPPORT CARD -->
+                <div class="glass-card rounded-3xl p-5 border border-emerald-500/30 bg-emerald-950/10 space-y-3 shadow-xl">
+                    <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>සහාය ලබා ගැනීමට (Help):</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        Coins සක්‍රීය කරගැනීමට හෝ ඕනෑම ගැටලුවකට WhatsApp හරහා අප හා සම්බන්ධ වන්න.
+                    </p>
+                    <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 rounded-xl transition shadow flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>WhatsApp 070 389 6029</span>
+                    </a>
+                </div>
+
+            </aside>
+
+            <!-- ==================== RIGHT COLUMN: MAIN WORKSPACE (8 cols on lg, 9 cols on xl) ==================== -->
+            <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+
+                <!-- WELCOME HERO SECTION -->
         <div id="welcomeHero" class="glass-card rounded-3xl p-6 sm:p-12 shadow-2xl border border-amber-500/40 mb-8 relative overflow-hidden animate__animated animate__fadeIn">
             <div class="relative z-10 text-center max-w-3xl mx-auto space-y-6">
                 <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest shadow-lg">
@@ -611,6 +714,9 @@
             <p class="text-slate-400 text-xs">මෙම පාඩම සඳහා ප්‍රශ්න ඇතුළත් කර නොමැත.</p>
         </div>
 
+            </div> <!-- Close right workspace column (lg:col-span-8 xl:col-span-9) -->
+        </div> <!-- Close 2-column grid container -->
+
     </main>
 
     <!-- PAYMENT / CLAIM CODE MODAL -->
@@ -796,7 +902,17 @@
             const container = document.getElementById('authNavButtons');
             const coinBadge = document.getElementById('userCoinBadge');
 
+            const sbName = document.getElementById('sidebarUserName');
+            const sbEmail = document.getElementById('sidebarUserEmail');
+            const sbPlan = document.getElementById('sidebarPlanName');
+            const sbCoins = document.getElementById('sidebarCoinsCount');
+
             if (currentUser) {
+                if (sbName) sbName.innerText = currentUser.name || currentUser.email;
+                if (sbEmail) sbEmail.innerText = currentUser.email;
+                if (sbPlan) sbPlan.innerText = currentUser.plan || 'Free';
+                if (sbCoins) sbCoins.innerText = currentUser.role === 'admin' ? 'Unlimited' : (currentUser.coins + ' Coins');
+
                 coinBadge.classList.remove('hidden');
                 coinBadge.classList.add('flex');
                 
@@ -831,6 +947,11 @@
                     </button>
                 `;
             } else {
+                if (sbName) sbName.innerText = "ආයුබෝවන්!";
+                if (sbEmail) sbEmail.innerText = "ලොගින් වී නොමැත";
+                if (sbPlan) sbPlan.innerText = "Free";
+                if (sbCoins) sbCoins.innerText = "0 Coins";
+
                 coinBadge.classList.add('hidden');
                 coinBadge.classList.remove('flex');
                 container.innerHTML = `
@@ -1166,33 +1287,78 @@
             document.getElementById('authSection').classList.add('hidden');
             document.getElementById('modeSelector').classList.remove('hidden');
             document.getElementById('activeGradeBadge').innerText = `${grade} ශ්‍රේණිය`;
+            
+            const sbBadge = document.getElementById('sidebarActiveGradeBadge');
+            if (sbBadge) sbBadge.innerText = `${grade} ශ්‍රේණිය`;
 
             loadLessonsForGrade();
         }
 
         function loadLessonsForGrade() {
             const lessonSelect = document.getElementById('lessonSelect');
-            lessonSelect.innerHTML = '';
+            const sidebarLessonList = document.getElementById('sidebarLessonList');
+            if (lessonSelect) lessonSelect.innerHTML = '';
+            if (sidebarLessonList) sidebarLessonList.innerHTML = '';
 
             const lessons = historyData[currentGrade] || [];
             if (lessons.length === 0) {
-                lessonSelect.innerHTML = '<option value="-1">පාඩම් නොමැත</option>';
+                if (lessonSelect) lessonSelect.innerHTML = '<option value="-1">පාඩම් නොමැත</option>';
+                if (sidebarLessonList) sidebarLessonList.innerHTML = '<div class="p-3 text-center text-slate-400 text-xs font-sinhala">පාඩම් නොමැත</div>';
                 currentLessonIndex = -1;
             } else {
                 lessons.forEach((l, idx) => {
-                    const opt = document.createElement('option');
-                    opt.value = idx;
-                    opt.innerText = l.lessonTitle;
-                    lessonSelect.appendChild(opt);
+                    if (lessonSelect) {
+                        const opt = document.createElement('option');
+                        opt.value = idx;
+                        opt.innerText = l.lessonTitle;
+                        lessonSelect.appendChild(opt);
+                    }
+                    if (sidebarLessonList) {
+                        const card = document.createElement('button');
+                        card.onclick = () => selectSidebarLesson(idx);
+                        card.id = `sidebar-lesson-item-${idx}`;
+                        card.className = (idx === currentLessonIndex) ?
+                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/50 bg-gradient-to-r from-amber-600/30 via-amber-500/20 to-amber-500/10 text-amber-200 shadow" :
+                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 hover:border-slate-700";
+                        card.innerHTML = `
+                            <span class="truncate pr-2 font-sinhala">${l.lessonTitle}</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] ${idx === currentLessonIndex ? 'text-amber-400' : 'text-slate-600'} flex-shrink-0"></i>
+                        `;
+                        sidebarLessonList.appendChild(card);
+                    }
                 });
                 currentLessonIndex = 0;
+                updateSidebarLessonHighlight();
             }
             switchMode(currentMode);
+        }
+
+        function selectSidebarLesson(idx) {
+            currentLessonIndex = idx;
+            const select = document.getElementById('lessonSelect');
+            if (select) select.value = idx;
+            updateSidebarLessonHighlight();
+            switchMode(currentMode);
+        }
+
+        function updateSidebarLessonHighlight() {
+            const lessons = historyData[currentGrade] || [];
+            lessons.forEach((_, idx) => {
+                const item = document.getElementById(`sidebar-lesson-item-${idx}`);
+                if (item) {
+                    item.className = (idx === currentLessonIndex) ?
+                        "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/50 bg-gradient-to-r from-amber-600/30 via-amber-500/20 to-amber-500/10 text-amber-200 shadow" :
+                        "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 hover:border-slate-700";
+                    const icon = item.querySelector('i');
+                    if (icon) icon.className = `fa-solid fa-chevron-right text-[10px] ${idx === currentLessonIndex ? 'text-amber-400' : 'text-slate-600'} flex-shrink-0`;
+                }
+            });
         }
 
         function onLessonChange() {
             const select = document.getElementById('lessonSelect');
             currentLessonIndex = parseInt(select.value);
+            updateSidebarLessonHighlight();
             switchMode(currentMode);
         }
 
@@ -1222,9 +1388,20 @@
             currentMode = mode;
             ['mcq', 'short', 'essay'].forEach(m => {
                 const btn = document.getElementById(`btn-mode-${m}`);
-                btn.className = (m === mode) ? 
-                    "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow font-sinhala" : 
-                    "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 font-sinhala";
+                if (btn) {
+                    btn.className = (m === mode) ? 
+                        "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow font-sinhala" : 
+                        "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 font-sinhala";
+                }
+
+                const sbBtn = document.getElementById(`sidebar-btn-${m}`);
+                if (sbBtn) {
+                    sbBtn.className = (m === mode) ?
+                        "w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 shadow" :
+                        "w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900";
+                    const sbChevron = sbBtn.querySelector('.fa-chevron-right');
+                    if (sbChevron) sbChevron.className = `fa-solid fa-chevron-right text-[10px] ${m === mode ? 'text-amber-400' : 'text-slate-500'}`;
+                }
             });
 
             hideAllSections();
