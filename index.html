@@ -2,7 +2,7 @@
 <html lang="si" class="h-full bg-slate-950 select-none">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>History Revision Hub - ශ්‍රී ලාංකේය ඉතිහාසය LMS</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +31,7 @@
                             700: '#92400e',
                             800: '#78350f',
                             900: '#451a03',
-                            dark: '#0f0a05',
+                            dark: '#080c14',
                             gold: '#fbbf24',
                             bronze: '#b45309'
                         }
@@ -54,6 +54,7 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            box-sizing: border-box;
         }
 
         input, textarea, select {
@@ -65,11 +66,12 @@
 
         body { 
             font-family: 'Noto Sans Sinhala', 'Noto Serif Sinhala', sans-serif; 
-            background-color: #0b0f19; 
+            background-color: #080c14; 
             color: #f8fafc;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.15), transparent 70%),
-                radial-gradient(circle at 80% 80%, rgba(180, 83, 9, 0.08), transparent 50%);
+                radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.18), transparent 65%),
+                radial-gradient(circle at 85% 85%, rgba(180, 83, 9, 0.12), transparent 50%),
+                radial-gradient(circle at 15% 50%, rgba(15, 23, 42, 0.8), transparent 70%);
             background-attachment: fixed;
             line-height: 1.6;
         }
@@ -82,58 +84,69 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #090d16; }
-        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080c14; }
+        ::-webkit-scrollbar-thumb { background: #b45309; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 
         .perspective-1000 { perspective: 1000px; }
-        .transform-style-3d { transform-style: preserve-3d; }
+        .transform-style-3d { transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
+        .rotate-y-180 { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
 
         .glass-card {
-            background: rgba(18, 24, 38, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            background: rgba(15, 21, 35, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.22);
+            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.75);
         }
         
         .glass-header {
-            background: rgba(11, 15, 25, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(8, 12, 20, 0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.25);
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #fffbeb 0%, #fde68a 30%, #f59e0b 70%, #b45309 100%);
+            background: linear-gradient(135deg, #fffbeb 0%, #fde68a 30%, #f59e0b 70%, #d97706 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* Touch interaction polish */
+        .active-press {
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+        .active-press:active {
+            transform: scale(0.97);
+        }
     </style>
 </head>
-<body class="min-h-full flex flex-col relative overflow-x-hidden" oncontextmenu="return false;">
+<body class="min-h-full flex flex-col relative overflow-x-hidden pb-16 lg:pb-0" oncontextmenu="return false;">
 
     <!-- HEADER NAVIGATION -->
     <header class="glass-header sticky top-0 z-40 shadow-2xl transition-all duration-300">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 sm:h-20">
-                <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group" onclick="resetToHome()">
+            <div class="flex items-center justify-between h-16 sm:h-20 gap-2">
+                
+                <!-- Logo & Branding -->
+                <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group flex-shrink" onclick="resetToHome()">
                     <div class="relative flex-shrink-0">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-xl sm:text-2xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 border border-amber-300/40">
+                        <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-lg sm:text-2xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 border border-amber-300/40">
                             <i class="fa-solid fa-landmark text-slate-950"></i>
                         </div>
                     </div>
-                    <div>
-                        <h1 class="text-base sm:text-2xl md:text-3xl font-black font-english-brand gradient-text leading-tight tracking-wider">HISTORY REVISION HUB</h1>
-                        <p class="text-[11px] sm:text-[13px] text-amber-300/90 font-medium hidden sm:block tracking-wide font-sinhala-display">6 - 11 ශ්‍රේණි අධ්‍යාපනික LMS පද්ධතිය</p>
+                    <div class="min-w-0">
+                        <h1 class="text-xs sm:text-xl md:text-2xl font-black font-english-brand gradient-text leading-tight tracking-wider truncate">HISTORY REVISION HUB</h1>
+                        <p class="text-[10px] sm:text-[12px] text-amber-300/90 font-medium hidden sm:block tracking-wide font-sinhala-display truncate">6 - 11 ශ්‍රේණි අධ්‍යාපනික LMS පද්ධතිය</p>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-                    <div id="userCoinBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold items-center gap-1.5 sm:gap-2">
+                <!-- Right Nav Badges & Auth Buttons -->
+                <div class="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0">
+                    <div id="userCoinBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold items-center gap-1.5">
                         <i class="fa-solid fa-coins text-amber-400"></i>
                         <span id="headerCoinCount">0</span>
                     </div>
@@ -142,28 +155,40 @@
             </div>
         </div>
 
-        <!-- Grade Selector Navigation Tabs -->
-        <div class="bg-slate-950/80 border-t border-amber-500/20 px-2 sm:px-4 py-2">
-            <div class="max-w-7xl mx-auto flex items-center justify-start sm:justify-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5" id="gradeTabs"></div>
+        <!-- Grade Selector Navigation Tabs with Mobile Scroll Hint -->
+        <div class="bg-slate-950/90 border-t border-amber-500/20 px-2 sm:px-4 py-2 relative">
+            <div class="max-w-7xl mx-auto flex items-center justify-start sm:justify-center space-x-1.5 sm:space-x-2.5 overflow-x-auto no-scrollbar py-0.5" id="gradeTabs"></div>
         </div>
     </header>
 
-    <main class="flex-1 max-w-[1500px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 z-10 relative">
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-[1500px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 z-10 relative">
+
+        <!-- Mobile Sidebar Expand/Collapse Toggle Button (Visible only on mobile/tablet screens < lg) -->
+        <div class="lg:hidden mb-4">
+            <button id="mobileSidebarToggleBtn" onclick="toggleMobileSidebar()" class="w-full bg-slate-900/95 border border-amber-500/40 text-amber-300 font-bold text-xs py-3 px-4 rounded-2xl flex items-center justify-between shadow-lg font-sinhala transition hover:bg-slate-800 active:scale-[0.99]">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-bars-staggered text-amber-400"></i>
+                    <span id="mobileSidebarToggleText">පාඩම් මාලාව සහ ශිෂ්‍ය පීඨය (Sidebar පෙන්වන්න)</span>
+                </span>
+                <i id="mobileSidebarChevron" class="fa-solid fa-chevron-down text-amber-400 transition-transform duration-300 text-xs"></i>
+            </button>
+        </div>
 
         <!-- 2-COLUMN LMS DASHBOARD GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- ==================== LEFT COLUMN: LMS SIDEBAR (4 cols on lg, 3 cols on xl) ==================== -->
-            <aside class="lg:col-span-4 xl:col-span-3 space-y-6">
+            <!-- ==================== LMS SIDEBAR (Collapsible on Mobile, 4 cols on lg, 3 cols on xl) ==================== -->
+            <aside id="lmsSidebar" class="hidden lg:block lg:col-span-4 xl:col-span-3 space-y-6 transition-all duration-300">
 
                 <!-- 1. STUDENT PROFILE & COINS CARD -->
-                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-4 shadow-xl">
+                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-4 shadow-xl">
                     <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md border border-yellow-200/40">
+                        <div class="flex items-center space-x-3 min-w-0">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md border border-yellow-200/40 flex-shrink-0">
                                 <i class="fa-solid fa-user-graduate"></i>
                             </div>
-                            <div class="overflow-hidden">
+                            <div class="overflow-hidden min-w-0">
                                 <h4 id="sidebarUserName" class="text-xs sm:text-sm font-bold text-amber-100 truncate">ආයුබෝවන්!</h4>
                                 <p id="sidebarUserEmail" class="text-[11px] text-slate-400 truncate">ලොගින් වී නොමැත</p>
                             </div>
@@ -182,14 +207,14 @@
                         </div>
                     </div>
 
-                    <button onclick="openDashboard()" class="w-full bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2">
+                    <button onclick="openDashboard()" class="w-full bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 active-press">
                         <i class="fa-solid fa-crown text-amber-400"></i>
                         <span>Membership Dashboard</span>
                     </button>
                 </div>
 
                 <!-- 2. LESSON NAVIGATION SIDEBAR -->
-                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-3 shadow-xl">
+                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-3 shadow-xl">
                     <div class="flex items-center justify-between pb-2.5 border-b border-slate-700/60">
                         <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center">
                             <i class="fa-solid fa-book-open mr-2"></i> පාඩම් මාලාව (Lessons)
@@ -199,31 +224,31 @@
 
                     <!-- Interactive Lesson Cards List -->
                     <div id="sidebarLessonList" class="space-y-2 max-h-[380px] overflow-y-auto pr-1 no-scrollbar">
-                        <div class="p-3 text-center text-slate-400 text-xs">පාඩමක් තෝරන්න</div>
+                        <div class="p-3 text-center text-slate-400 text-xs font-sinhala">පාඩමක් තෝරන්න</div>
                     </div>
                 </div>
 
                 <!-- 3. STUDY MODE SELECTOR CARD -->
-                <div class="glass-card rounded-3xl p-5 border border-amber-500/30 space-y-3 shadow-xl">
+                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-500/30 space-y-3 shadow-xl">
                     <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center pb-2.5 border-b border-slate-700/60">
                         <i class="fa-solid fa-layer-group mr-2"></i> අධ්‍යයන මාදිලිය (Study Mode)
                     </h4>
                     <div class="space-y-2">
-                        <button onclick="switchMode('mcq')" id="sidebar-btn-mcq" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200">
+                        <button onclick="switchMode('mcq')" id="sidebar-btn-mcq" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/40 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 active-press">
                             <span class="flex items-center space-x-2">
                                 <i class="fa-solid fa-circle-dot text-amber-400"></i>
                                 <span>MCQ Quiz (බහුවරණ)</span>
                             </span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-amber-400"></i>
                         </button>
-                        <button onclick="switchMode('short')" id="sidebar-btn-short" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900">
+                        <button onclick="switchMode('short')" id="sidebar-btn-short" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
                             <span class="flex items-center space-x-2">
                                 <i class="fa-solid fa-clone text-amber-400"></i>
                                 <span>කෙටි ප්‍රශ්න (Short Q&A)</span>
                             </span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
                         </button>
-                        <button onclick="switchMode('essay')" id="sidebar-btn-essay" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900">
+                        <button onclick="switchMode('essay')" id="sidebar-btn-essay" class="w-full p-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 active-press">
                             <span class="flex items-center space-x-2">
                                 <i class="fa-solid fa-align-left text-amber-400"></i>
                                 <span>රචනා ප්‍රශ්න (Essay Q&A)</span>
@@ -234,15 +259,15 @@
                 </div>
 
                 <!-- 4. BANK & WHATSAPP SUPPORT CARD -->
-                <div class="glass-card rounded-3xl p-5 border border-emerald-500/30 bg-emerald-950/10 space-y-3 shadow-xl">
+                <div class="glass-card rounded-3xl p-4 sm:p-5 border border-emerald-500/30 bg-emerald-950/10 space-y-3 shadow-xl">
                     <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold">
                         <i class="fa-brands fa-whatsapp text-base"></i>
                         <span>සහාය ලබා ගැනීමට (Help):</span>
                     </div>
-                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                    <p class="text-[11px] text-slate-300 leading-relaxed font-sinhala">
                         Coins සක්‍රීය කරගැනීමට හෝ ඕනෑම ගැටලුවකට WhatsApp හරහා අප හා සම්බන්ධ වන්න.
                     </p>
-                    <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 rounded-xl transition shadow flex items-center justify-center space-x-2">
+                    <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 rounded-xl transition shadow flex items-center justify-center space-x-2 active-press">
                         <i class="fa-brands fa-whatsapp text-base"></i>
                         <span>WhatsApp 070 389 6029</span>
                     </a>
@@ -250,491 +275,523 @@
 
             </aside>
 
-            <!-- ==================== RIGHT COLUMN: MAIN WORKSPACE (8 cols on lg, 9 cols on xl) ==================== -->
+            <!-- ==================== MAIN WORKSPACE (8 cols on lg, 9 cols on xl) ==================== -->
             <div class="lg:col-span-8 xl:col-span-9 space-y-6">
 
                 <!-- WELCOME HERO SECTION -->
-        <div id="welcomeHero" class="glass-card rounded-3xl p-6 sm:p-12 shadow-2xl border border-amber-500/40 mb-8 relative overflow-hidden animate__animated animate__fadeIn">
-            <div class="relative z-10 text-center max-w-3xl mx-auto space-y-6">
-                <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest shadow-lg">
-                    <i class="fa-solid fa-graduation-cap text-amber-400 text-sm"></i>
-                    <span class="font-english-brand tracking-wider">SRI LANKAN HISTORY LMS</span>
-                </div>
-                <h2 class="text-3xl sm:text-5xl font-black text-amber-100 leading-tight font-sinhala-fancy">
-                    ඉතිහාසය විෂයට <span class="gradient-text">විශිෂ්ට සාමාර්ථයක්</span> ලබා ගනිමු!
-                </h2>
-                <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-sinhala">
-                    6 - 11 ශ්‍රේණි සඳහා පාඩමෙන් පාඩමට වෙන්කළ MCQ, කෙටි ප්‍රශ්න සහ රචනා ප්‍රශ්න පිළිවෙළින් අංකනය කර අධ්‍යයනය කරන්න.
-                </p>
-            </div>
-        </div>
-
-        <!-- MODE & LESSON SELECTOR BAR -->
-        <div id="modeSelector" class="hidden mb-8 space-y-4 font-sinhala">
-            <div class="glass-card p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 border border-amber-500/30">
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <span id="activeGradeBadge" class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-slate-950 text-base font-extrabold px-4 py-1.5 rounded-xl shadow border border-yellow-200/40">
-                        6 ශ්‍රේණිය
-                    </span>
-                    
-                    <!-- Lesson Selector Dropdown -->
-                    <div class="flex items-center space-x-2 flex-1 md:flex-none">
-                        <label class="text-xs font-bold text-amber-300"><i class="fa-solid fa-book-open mr-1"></i> පාඩම:</label>
-                        <select id="lessonSelect" onchange="onLessonChange()" class="p-2.5 rounded-xl text-xs font-bold border border-amber-500/40 bg-slate-900 text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 w-full md:w-auto">
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Mode Switch Tabs -->
-                <div class="flex bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto">
-                    <button onclick="switchMode('mcq')" id="btn-mode-mcq" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-circle-dot"></i> <span>MCQ Quiz</span>
-                    </button>
-                    <button onclick="switchMode('short')" id="btn-mode-short" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-clone"></i> <span>කෙටි ප්‍රශ්න</span>
-                    </button>
-                    <button onclick="switchMode('essay')" id="btn-mode-essay" class="mode-btn flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-align-left"></i> <span>රචනා ප්‍රශ්න</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MCQ SECTION -->
-        <section id="mcqSection" class="hidden animate__animated animate__fadeIn">
-            <div id="mcqContainer" class="max-w-3xl mx-auto glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 font-sinhala">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-6">
-                    <div class="flex items-center space-x-3">
-                        <span id="mcqProgressText" class="text-xs font-extrabold uppercase tracking-wider text-slate-950 bg-amber-400 px-3 py-1 rounded-full shadow">
-                            ප්‍රශ්න 1/5
-                        </span>
-                        <div class="w-32 bg-slate-900 h-2 rounded-full overflow-hidden border border-amber-500/20">
-                            <div id="mcqProgressBar" class="bg-gradient-to-r from-amber-600 to-yellow-400 h-full w-0 transition-all duration-300"></div>
+                <div id="welcomeHero" class="glass-card rounded-3xl p-6 sm:p-10 shadow-2xl border border-amber-500/40 mb-6 relative overflow-hidden animate__animated animate__fadeIn">
+                    <div class="relative z-10 text-center max-w-3xl mx-auto space-y-5">
+                        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest shadow-lg">
+                            <i class="fa-solid fa-graduation-cap text-amber-400 text-xs sm:text-sm"></i>
+                            <span class="font-english-brand tracking-wider">SRI LANKAN HISTORY LMS</span>
                         </div>
-                    </div>
-                    <div id="mcqScoreBadge" class="text-xs font-extrabold text-amber-200 bg-slate-900 px-3.5 py-1.5 rounded-full border border-amber-500/30 flex items-center">
-                        <i class="fa-solid fa-star text-amber-400 mr-1.5"></i> ලකුණු: <span id="mcqCurrentScore" class="text-amber-400 ml-1">0</span>
-                    </div>
-                </div>
-
-                <h3 id="mcqQuestionText" class="text-xl sm:text-2xl font-bold text-amber-100 mb-6 leading-relaxed font-sinhala-fancy">--</h3>
-                <div id="mcqOptions" class="space-y-3 mb-6"></div>
-
-                <div id="mcqExplanation" class="hidden bg-amber-500/10 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-200 mb-6 animate__animated animate__fadeIn">
-                    <p class="font-bold flex items-center mb-1 text-amber-400"><i class="fa-solid fa-lightbulb mr-2"></i> පැහැදිලි කිරීම:</p>
-                    <p id="mcqExplanationText">--</p>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-slate-700/60">
-                    <button id="mcqNextBtn" onclick="nextMcqQuestion()" disabled class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition duration-200 flex items-center space-x-2 shadow-lg">
-                        <span>ඊළඟ ප්‍රශ්නය</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div id="mcqResultsCard" class="hidden max-w-xl mx-auto glass-card rounded-3xl p-8 shadow-2xl border border-amber-500/30 text-center animate__animated animate__zoomIn font-sinhala">
-                <i class="fa-solid fa-trophy text-5xl text-amber-400 mb-4"></i>
-                <h3 class="text-3xl font-extrabold text-amber-100 mb-1 font-sinhala-fancy">ප්‍රශ්නාවලිය අවසන්!</h3>
-                <div class="bg-slate-950/90 rounded-2xl p-6 border border-amber-500/30 my-6">
-                    <span id="finalScoreDisplay" class="text-5xl font-black gradient-text">0/0</span>
-                </div>
-                <button onclick="initMcqQuiz()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-xl">
-                    <i class="fa-solid fa-rotate-right mr-2"></i> නැවත උත්සාහ කරන්න
-                </button>
-            </div>
-        </section>
-
-        <!-- SHORT QUESTIONS SECTION -->
-        <section id="shortSection" class="hidden animate__animated animate__fadeIn">
-            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6" id="shortContainer"></div>
-        </section>
-
-        <!-- ESSAY QUESTIONS SECTION -->
-        <section id="essaySection" class="hidden animate__animated animate__fadeIn">
-            <div class="max-w-4xl mx-auto space-y-6" id="essayContainer"></div>
-        </section>
-
-        <!-- LOGIN / REGISTER MODAL SECTION -->
-        <section id="authSection" class="hidden max-w-md mx-auto animate__animated animate__fadeIn font-sinhala">
-            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30">
-                <div class="flex justify-center border-b border-slate-700/60 pb-4 mb-6">
-                    <button onclick="toggleAuthMode('login')" id="tabLogin" class="text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2">ලොගින් වන්න</button>
-                    <button onclick="toggleAuthMode('register')" id="tabRegister" class="text-lg font-bold text-slate-400 px-4 pb-2">ලියාපදිංචි වන්න</button>
-                </div>
-
-                <!-- LOGIN FORM -->
-                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
-                        <input type="email" id="loginEmail" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
-                        <input type="password" id="loginPassword" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg">
-                        ඇතුළු වන්න (Login)
-                    </button>
-                </form>
-
-                <!-- REGISTER FORM -->
-                <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">සම්පූර්ණ නම (Full Name)</label>
-                        <input type="text" id="regName" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
-                        <input type="email" id="regEmail" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
-                        <input type="password" id="regPassword" required class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-sm font-bold focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg">
-                        ලියාපදිංචි වන්න (Register)
-                    </button>
-                </form>
-            </div>
-        </section>
-
-        <!-- USER MEMBERSHIP DASHBOARD SECTION -->
-        <section id="dashboardSection" class="hidden max-w-5xl mx-auto space-y-8 animate__animated animate__fadeIn font-sinhala">
-            <!-- Active Plan & Coins Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
-                    <p class="text-xs font-bold text-slate-400">වත්මන් පැකේජය (Active Plan)</p>
-                    <h3 id="dashPlanName" class="text-2xl font-black gradient-text mt-1">Free Plan</h3>
-                    <p class="text-xs text-amber-300/80 mt-2" id="dashPlanDesc">නොමිලේ ලැබෙන Coins භාවිත කරන්න.</p>
-                </div>
-
-                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
-                    <p class="text-xs font-bold text-slate-400">ඉතිරි Coins (Remaining Coins)</p>
-                    <div class="flex items-center space-x-3 mt-1">
-                        <i class="fa-solid fa-coins text-3xl text-amber-400"></i>
-                        <h3 id="dashCoins" class="text-3xl font-black text-amber-100">75</h3>
-                    </div>
-                    <p class="text-xs text-emerald-400 mt-2">1 MCQ / Short Quest = 1 Coin</p>
-                </div>
-
-                <div class="glass-card rounded-3xl p-6 border border-amber-500/30">
-                    <p class="text-xs font-bold text-slate-400">අද දවසේ Analytics (Today Usage)</p>
-                    <div class="space-y-1 mt-2">
-                        <p class="text-xs text-slate-300">භාවිත කළ Coins: <span id="dashTodayUsed" class="font-bold text-amber-400">0</span></p>
-                        <p class="text-xs text-slate-300">ඉතිරි Coins: <span id="dashTodayRemaining" class="font-bold text-emerald-400">75</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAYMENT INSTRUCTIONS CARD -->
-            <div class="glass-card rounded-3xl p-6 border border-amber-500/40 bg-slate-900/90 relative overflow-hidden">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="space-y-3 flex-1">
-                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>බැංකු ගෙවීම් උපදෙස් (Bank Deposit)</span>
-                        </div>
-                        <h4 class="text-lg font-bold text-amber-100">Coins සක්‍රීය කරගැනීමට අදාළ පැකේජයේ මුදල පහත බැංකු ගිණුමට තැන්පත් කරන්න:</h4>
-                        
-                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
-                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Bank Name:</span> Bank of Ceylon (BOC)</p>
-                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Branch:</span> Kebithigollawa Branch (621)</p>
-                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Number:</span> <span class="font-mono text-amber-200 font-bold text-sm">0009651439</span></p>
-                            <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Holder:</span> MR H D N HEMAPALA</p>
-                        </div>
-
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            ගෙවීම සිදු කිරීමෙන් පසු Admin ගෙන් ලැබුණු Payment ID එක පහත "පැකේජ් සක්‍රිය කරන්න" ක්ලික් කර ඇතුළත් කරන්න.
-                        </p>
-                    </div>
-
-                    <div class="w-full md:w-auto text-center flex flex-col items-center justify-center">
-                        <div class="bg-amber-500/20 border border-amber-500/40 p-3 rounded-2xl mb-3 text-center max-w-xs">
-                            <p class="text-xs font-bold text-amber-200 leading-snug">
-                                <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i>
-                                මුදල් ගෙවු රිසිට් පත අනිවාර්යයෙන් ම මේ WhatsApp එකට යවා ඔබගේ Payment ID එක ලබා ගන්න.
-                            </p>
-                        </div>
-
-                        <a href="https://wa.me/94703896029" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-6 py-3.5 rounded-2xl transition shadow-xl w-full md:w-auto">
-                            <i class="fa-brands fa-whatsapp text-xl"></i>
-                            <span>WhatsApp වෙත යවන්න</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upgrade Packages Grid -->
-            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-amber-500/30">
-                <h3 class="text-xl font-bold text-amber-100 mb-6 flex items-center">
-                    <i class="fa-solid fa-crown text-amber-400 mr-2"></i> Membership Packages සක්‍රීය කරගන්න
-                </h3>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- FREE -->
-                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-extrabold text-amber-400 uppercase">Free Package</span>
-                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 0</h4>
-                            <p class="text-xs text-slate-300">75 Coins ලැබෙනු ඇත. (එක් Email එකකට වරක් පමණි)</p>
-                        </div>
-                        <button onclick="claimFreeCoins()" class="mt-4 w-full bg-slate-800 hover:bg-slate-700 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition">පැකේජ් සක්‍රිය කරන්න</button>
-                    </div>
-
-                    <!-- LKR 100 -->
-                    <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-extrabold text-amber-400 uppercase">Bronze Package</span>
-                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 100</h4>
-                            <p class="text-xs text-slate-300">300 Coins ලැබෙනු ඇත.</p>
-                        </div>
-                        <button onclick="openPaymentModal('Bronze', 300)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
-                    </div>
-
-                    <!-- LKR 200 -->
-                    <div class="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
-                        <div>
-                            <span class="text-xs font-extrabold text-amber-400 uppercase">Silver Package</span>
-                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 200</h4>
-                            <p class="text-xs text-slate-300">750 Coins ලැබෙනු ඇත.</p>
-                        </div>
-                        <button onclick="openPaymentModal('Silver', 750)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
-                    </div>
-
-                    <!-- LKR 300 -->
-                    <div class="bg-slate-900/90 border border-amber-400 rounded-2xl p-5 flex flex-col justify-between relative shadow-lg shadow-amber-500/10">
-                        <div class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">POPULAR</div>
-                        <div>
-                            <span class="text-xs font-extrabold text-amber-400 uppercase">Gold Package</span>
-                            <h4 class="text-2xl font-black text-amber-100 my-2">LKR 300</h4>
-                            <p class="text-xs text-slate-300">2000 Coins ලැබෙනු ඇත.</p>
-                        </div>
-                        <button onclick="openPaymentModal('Gold', 2000)" class="mt-4 w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow">පැකේජ් සක්‍රිය කරන්න</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ADMIN DASHBOARD -->
-        <section id="adminSection" class="hidden animate__animated animate__fadeIn font-sinhala">
-            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 mb-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700/60 pb-6 mb-6 gap-4">
-                    <div>
-                        <h2 class="text-2xl font-black gradient-text flex items-center font-sinhala-fancy">
-                            <i class="fa-solid fa-user-shield text-amber-400 mr-3"></i> Admin Panel (පරිපාලක පීඨය)
+                        <h2 class="text-2xl sm:text-4xl md:text-5xl font-black text-amber-100 leading-tight font-sinhala-fancy">
+                            ඉතිහාසය විෂයට <span class="gradient-text">විශිෂ්ට සාමාර්ථයක්</span> ලබා ගනිමු!
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">ශිෂ්‍යයින් කළමනාකරණය, අවසර දීම් (Approvals), ප්‍රශ්න සංස්කරණය සහ Bulk Import මෙතැනින් සිදු කරන්න.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="exportDataJSON()" class="bg-slate-900 hover:bg-slate-800 text-amber-200 text-xs font-bold px-3 py-2 rounded-xl border border-amber-500/30 transition">
-                            <i class="fa-solid fa-download mr-1"></i> Export Data (JSON)
-                        </button>
-                        <label class="bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-2 rounded-xl transition cursor-pointer shadow">
-                            <i class="fa-solid fa-upload mr-1"></i> Import JSON
-                            <input type="file" accept=".json" class="hidden" onchange="importDataJSON(event)">
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Admin Tabs -->
-                <div class="flex space-x-3 border-b border-slate-700/60 mb-6 overflow-x-auto no-scrollbar">
-                    <button onclick="switchAdminTab('students')" id="adminTab-students" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap">
-                        <i class="fa-solid fa-users mr-1"></i> Students (ශිෂ්‍යයින්)
-                    </button>
-                    <button onclick="switchAdminTab('approvals')" id="adminTab-approvals" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
-                        <i class="fa-solid fa-check-circle mr-1"></i> Approvals (අවසරදීම්)
-                    </button>
-                    <button onclick="switchAdminTab('manageLessons')" id="adminTab-manageLessons" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
-                        <i class="fa-solid fa-book mr-1"></i> පාඩම් මාතෘකා
-                    </button>
-                    <button onclick="switchAdminTab('bulkImport')" id="adminTab-bulkImport" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
-                        <i class="fa-solid fa-file-import mr-1"></i> Bulk Import
-                    </button>
-                    <button onclick="switchAdminTab('manageQuestions')" id="adminTab-manageQuestions" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
-                        <i class="fa-solid fa-list-check mr-1"></i> ප්‍රශ්න කළමනාකරණය
-                    </button>
-                </div>
-
-                <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
-                <div id="adminView-students" class="space-y-4">
-                    <!-- Toolbar: count + refresh -->
-                    <div class="flex items-center justify-between">
-                        <p class="text-xs text-slate-400 font-sinhala">
-                            <i class="fa-solid fa-users mr-1 text-amber-400"></i>
-                            ලියාපදිංචි ශිෂ්‍යයින්:
-                            <span id="studentCount" class="font-bold text-amber-300 ml-1">—</span>
+                        <p class="text-slate-300 text-xs sm:text-base leading-relaxed font-sinhala max-w-2xl mx-auto">
+                            6 - 11 ශ්‍රේණි සඳහා පාඩමෙන් පාඩමට වෙන්කළ MCQ, කෙටි ප්‍රශ්න සහ රචනා ප්‍රශ්න පිළිවෙළින් අධ්‍යයනය කරන්න.
                         </p>
-                        <button onclick="fetchAndRenderStudents()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
-                            <i class="fa-solid fa-rotate-right"></i> Refresh
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-slate-300 border-collapse">
-                            <thead>
-                                <tr class="border-b border-slate-700 text-amber-400">
-                                    <th class="p-3">Student ID</th>
-                                    <th class="p-3">Name</th>
-                                    <th class="p-3">Email</th>
-                                    <th class="p-3">Password</th>
-                                    <th class="p-3">Plan</th>
-                                    <th class="p-3">Coins</th>
-                                    <th class="p-3">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentsTableBody"></tbody>
-                        </table>
+                        <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+                            <button onclick="selectGrade('6')" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition active-press font-sinhala flex items-center gap-2">
+                                <i class="fa-solid fa-play text-xs"></i>
+                                <span>6 ශ්‍රේණියෙන් පටන් ගනිමු</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ADMIN TAB: APPROVALS -->
-                <div id="adminView-approvals" class="hidden space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-bold text-amber-300 font-sinhala">
-                            <i class="fa-solid fa-clock mr-1"></i>
-                            Pending Approvals:
-                            <span id="approvalCount" class="text-amber-400 ml-1">—</span>
-                        </h3>
-                        <button onclick="fetchAndRenderApprovals()" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
-                            <i class="fa-solid fa-rotate-right"></i> Refresh
-                        </button>
-                    </div>
-                    <div id="approvalsContainer" class="space-y-3"></div>
-                </div>
-
-                <!-- ADMIN TAB: MANAGE LESSONS -->
-                <div id="adminView-manageLessons" class="hidden space-y-6">
-                    <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
-                                <select id="lessonMgrGradeSelect" onchange="renderAdminLessonsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                                    <option value="6">6 ශ්‍රේණිය</option>
-                                    <option value="7">7 ශ්‍රේණිය</option>
-                                    <option value="8">8 ශ්‍රේණිය</option>
-                                    <option value="9">9 ශ්‍රේණිය</option>
-                                    <option value="10">10 ශ්‍රේණිය</option>
-                                    <option value="11">11 ශ්‍රේණිය</option>
+                <!-- MODE & LESSON SELECTOR BAR -->
+                <div id="modeSelector" class="hidden mb-6 space-y-4 font-sinhala">
+                    <div class="glass-card p-3.5 sm:p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 border border-amber-500/30">
+                        
+                        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                            <span id="activeGradeBadge" class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-slate-950 text-xs sm:text-sm font-extrabold px-3.5 py-1.5 rounded-xl shadow border border-yellow-200/40 whitespace-nowrap">
+                                6 ශ්‍රේණිය
+                            </span>
+                            
+                            <!-- Lesson Selector Dropdown -->
+                            <div class="flex items-center space-x-2 flex-1 min-w-[200px]">
+                                <label class="text-xs font-bold text-amber-300 whitespace-nowrap hidden sm:inline"><i class="fa-solid fa-book-open mr-1"></i> පාඩම:</label>
+                                <select id="lessonSelect" onchange="onLessonChange()" class="p-2 sm:p-2.5 rounded-xl text-xs font-bold border border-amber-500/40 bg-slate-900 text-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-400 w-full truncate">
                                 </select>
                             </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-300 mb-1">නව පාඩම් මාතෘකාවක් එකතු කරන්න</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="newLessonTitleInput" placeholder="උදා: 2 පාඩම - මුල් මානව ජනාවාස" class="flex-1 p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                                    <button onclick="addNewLessonTitle()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow">
-                                        <i class="fa-solid fa-plus mr-1"></i> එකතු කරන්න
-                                    </button>
+                        </div>
+
+                        <!-- Mode Switch Tabs -->
+                        <div class="flex bg-slate-950/90 p-1 sm:p-1.5 rounded-xl border border-slate-800 w-full md:w-auto overflow-x-auto no-scrollbar gap-1">
+                            <button onclick="switchMode('mcq')" id="btn-mode-mcq" class="mode-btn flex-1 md:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-circle-dot text-[10px]"></i> <span>MCQ Quiz</span>
+                            </button>
+                            <button onclick="switchMode('short')" id="btn-mode-short" class="mode-btn flex-1 md:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-clone text-[10px]"></i> <span>කෙටි ප්‍රශ්න</span>
+                            </button>
+                            <button onclick="switchMode('essay')" id="btn-mode-essay" class="mode-btn flex-1 md:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition duration-200 flex items-center justify-center space-x-1.5 whitespace-nowrap active-press">
+                                <i class="fa-solid fa-align-left text-[10px]"></i> <span>රචනා ප්‍රශ්න</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MCQ SECTION -->
+                <section id="mcqSection" class="hidden animate__animated animate__fadeIn">
+                    <div id="mcqContainer" class="max-w-3xl mx-auto glass-card rounded-3xl p-4 sm:p-8 shadow-2xl border border-amber-500/30 font-sinhala">
+                        <div class="flex items-center justify-between pb-3.5 border-b border-slate-700/60 mb-5 gap-2 flex-wrap sm:flex-nowrap">
+                            <div class="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-[180px]">
+                                <span id="mcqProgressText" class="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-950 bg-amber-400 px-2.5 py-1 rounded-full shadow whitespace-nowrap">
+                                    ප්‍රශ්න 1/5
+                                </span>
+                                <div class="w-20 sm:w-32 flex-1 max-w-[120px] bg-slate-900 h-2 sm:h-2.5 rounded-full overflow-hidden border border-amber-500/20">
+                                    <div id="mcqProgressBar" class="bg-gradient-to-r from-amber-600 to-yellow-400 h-full w-0 transition-all duration-300"></div>
                                 </div>
                             </div>
+                            <div id="mcqScoreBadge" class="text-[11px] sm:text-xs font-extrabold text-amber-200 bg-slate-900 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-amber-500/30 flex items-center whitespace-nowrap">
+                                <i class="fa-solid fa-star text-amber-400 mr-1.5 text-xs"></i> ලකුණු: <span id="mcqCurrentScore" class="text-amber-400 ml-1 font-bold">0</span>
+                            </div>
+                        </div>
+
+                        <h3 id="mcqQuestionText" class="text-base sm:text-2xl font-bold text-amber-100 mb-5 leading-relaxed font-sinhala-fancy">--</h3>
+                        
+                        <div id="mcqOptions" class="space-y-2.5 mb-6"></div>
+
+                        <div id="mcqExplanation" class="hidden bg-amber-500/10 border-l-4 border-amber-500 p-3.5 sm:p-4 rounded-r-xl text-xs sm:text-sm text-amber-200 mb-6 animate__animated animate__fadeIn">
+                            <p class="font-bold flex items-center mb-1 text-amber-400"><i class="fa-solid fa-lightbulb mr-2"></i> පැහැදිලි කිරීම:</p>
+                            <p id="mcqExplanationText">--</p>
+                        </div>
+
+                        <div class="flex justify-end pt-3 border-t border-slate-700/60">
+                            <button id="mcqNextBtn" onclick="nextMcqQuestion()" disabled class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition duration-200 flex items-center space-x-2 shadow-lg active-press">
+                                <span>ඊළඟ ප්‍රශ්නය</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div id="adminLessonsContainer" class="space-y-3"></div>
-                </div>
-
-                <!-- ADMIN TAB: BULK TEXT FORMAT IMPORT -->
-                <div id="adminView-bulkImport" class="hidden space-y-6">
-                    <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය (Grade)</label>
-                                <select id="importGrade" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                                    <option value="6">6 ශ්‍රේණිය</option>
-                                    <option value="7">7 ශ්‍රේණිය</option>
-                                    <option value="8">8 ශ්‍රේණිය</option>
-                                    <option value="9">9 ශ්‍රේණිය</option>
-                                    <option value="10">10 ශ්‍රේණිය</option>
-                                    <option value="11">11 ශ්‍රේණිය</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">පාඩමේ නම (Lesson Title)</label>
-                                <input type="text" id="importLessonTitle" placeholder="උදා: 1 පාඩම - අපේ මූලාශ්‍ර" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">ප්‍රශ්න වර්ගය (Type)</label>
-                                <select id="importType" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                                    <option value="mcq">MCQ Questions</option>
-                                    <option value="short">Short Questions</option>
-                                    <option value="essay">Essay Questions</option>
-                                </select>
-                            </div>
+                    <div id="mcqResultsCard" class="hidden max-w-xl mx-auto glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 text-center animate__animated animate__zoomIn font-sinhala">
+                        <i class="fa-solid fa-trophy text-4xl sm:text-5xl text-amber-400 mb-3 animate-bounce"></i>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-amber-100 mb-1 font-sinhala-fancy">ප්‍රශ්නාවලිය අවසන්!</h3>
+                        <div class="bg-slate-950/90 rounded-2xl p-5 border border-amber-500/30 my-5">
+                            <span id="finalScoreDisplay" class="text-4xl sm:text-5xl font-black gradient-text">0/0</span>
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-amber-300 mb-1">ඔබේ Format එක අනුව Text Paste කරන්න:</label>
-                            <textarea id="bulkTextInput" rows="10" class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-xs text-amber-100 font-mono focus:ring-2 focus:ring-amber-500" placeholder="1. ප්‍රශ්නය&#10;1) පිළිතුර 1 | 2) පිළිතුර 2 | 3) පිළිතුර 3 | 4) පිළිතුර 4&#10;Correct: 2&#10;Explanation: පැහැදිලි කිරීම"></textarea>
-                        </div>
-
-                        <button onclick="processBulkImport()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-6 py-3 rounded-xl transition shadow-lg">
-                            <i class="fa-solid fa-plus-circle mr-2"></i> ප්‍රශ්න පද්ධතියට ඇතුළත් කරන්න (Process Import)
+                        <button onclick="initMcqQuiz()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm py-3 sm:py-3.5 rounded-xl shadow-xl active-press">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> නැවත උත්සාහ කරන්න
                         </button>
                     </div>
-                </div>
+                </section>
 
-                <!-- ADMIN TAB: MANAGE QUESTIONS -->
-                <div id="adminView-manageQuestions" class="hidden space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
-                            <select id="manageGradeSelect" onchange="loadManageQuestions()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                                <option value="6">6 ශ්‍රේණිය</option>
-                                <option value="7">7 ශ්‍රේණිය</option>
-                                <option value="8">8 ශ්‍රේණිය</option>
-                                <option value="9">9 ශ්‍රේණිය</option>
-                                <option value="10">10 ශ්‍රේණිය</option>
-                                <option value="11">11 ශ්‍රේණිය</option>
-                            </select>
+                <!-- SHORT QUESTIONS SECTION -->
+                <section id="shortSection" class="hidden animate__animated animate__fadeIn">
+                    <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6" id="shortContainer"></div>
+                </section>
+
+                <!-- ESSAY QUESTIONS SECTION -->
+                <section id="essaySection" class="hidden animate__animated animate__fadeIn">
+                    <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6" id="essayContainer"></div>
+                </section>
+
+                <!-- LOGIN / REGISTER MODAL SECTION -->
+                <section id="authSection" class="hidden max-w-md mx-auto animate__animated animate__fadeIn font-sinhala">
+                    <div class="glass-card rounded-3xl p-5 sm:p-8 shadow-2xl border border-amber-500/30">
+                        <div class="flex justify-center border-b border-slate-700/60 pb-3.5 mb-5">
+                            <button onclick="toggleAuthMode('login')" id="tabLogin" class="text-base sm:text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2">ලොගින් වන්න</button>
+                            <button onclick="toggleAuthMode('register')" id="tabRegister" class="text-base sm:text-lg font-bold text-slate-400 px-4 pb-2">ලියාපදිංචි වන්න</button>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 mb-1">පාඩම තෝරන්න</label>
-                            <select id="manageLessonSelect" onchange="renderManageQuestionsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
-                            </select>
+
+                        <!-- LOGIN FORM -->
+                        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
+                                <input type="email" id="loginEmail" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
+                                <input type="password" id="loginPassword" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm py-3 rounded-xl shadow-lg active-press">
+                                ඇතුළු වන්න (Login)
+                            </button>
+                        </form>
+
+                        <!-- REGISTER FORM -->
+                        <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">සම්පූර්ණ නම (Full Name)</label>
+                                <input type="text" id="regName" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">විද්‍යුත් තැපෑල (Email)</label>
+                                <input type="email" id="regEmail" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">මුරපදය (Password)</label>
+                                <input type="password" id="regPassword" required class="w-full p-2.5 sm:p-3 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm py-3 rounded-xl shadow-lg active-press">
+                                ලියාපදිංචි වන්න (Register)
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- USER MEMBERSHIP DASHBOARD SECTION -->
+                <section id="dashboardSection" class="hidden max-w-5xl mx-auto space-y-6 sm:space-y-8 animate__animated animate__fadeIn font-sinhala">
+                    <!-- Active Plan & Coins Overview -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="glass-card rounded-3xl p-5 border border-amber-500/30">
+                            <p class="text-xs font-bold text-slate-400">වත්මන් පැකේජය (Active Plan)</p>
+                            <h3 id="dashPlanName" class="text-xl sm:text-2xl font-black gradient-text mt-1">Free Plan</h3>
+                            <p class="text-xs text-amber-300/80 mt-1.5" id="dashPlanDesc">නොමිලේ ලැබෙන Coins භාවිත කරන්න.</p>
+                        </div>
+
+                        <div class="glass-card rounded-3xl p-5 border border-amber-500/30">
+                            <p class="text-xs font-bold text-slate-400">ඉතිරි Coins (Remaining Coins)</p>
+                            <div class="flex items-center space-x-3 mt-1">
+                                <i class="fa-solid fa-coins text-2xl sm:text-3xl text-amber-400"></i>
+                                <h3 id="dashCoins" class="text-2xl sm:text-3xl font-black text-amber-100">75</h3>
+                            </div>
+                            <p class="text-xs text-emerald-400 mt-1.5">1 MCQ / Short Quest = 1 Coin</p>
+                        </div>
+
+                        <div class="glass-card rounded-3xl p-5 border border-amber-500/30 sm:col-span-2 md:col-span-1">
+                            <p class="text-xs font-bold text-slate-400">අද දවසේ Analytics (Today Usage)</p>
+                            <div class="space-y-1 mt-2">
+                                <p class="text-xs text-slate-300">භාවිත කළ Coins: <span id="dashTodayUsed" class="font-bold text-amber-400">0</span></p>
+                                <p class="text-xs text-slate-300">ඉතිරි Coins: <span id="dashTodayRemaining" class="font-bold text-emerald-400">75</span></p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap justify-between items-center bg-slate-900/90 p-3 rounded-xl border border-slate-800 gap-2">
-                        <label class="flex items-center space-x-2 text-xs font-bold text-amber-200 cursor-pointer">
-                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllQuestions(this)" class="w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
-                            <span>සියල්ල තෝරන්න (Select All)</span>
-                        </label>
-                        <button onclick="deleteSelectedQuestions()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition shadow flex items-center">
-                            <i class="fa-solid fa-trash-can mr-2"></i> තෝරාගත් ප්‍රශ්න ඩිලිට් කරන්න (Delete Selected)
-                        </button>
+                    <!-- PAYMENT INSTRUCTIONS CARD -->
+                    <div class="glass-card rounded-3xl p-5 sm:p-6 border border-amber-500/40 bg-slate-900/90 relative overflow-hidden">
+                        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
+                            <div class="space-y-3 flex-1">
+                                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                    <span>බැංකු ගෙවීම් උපදෙස් (Bank Deposit)</span>
+                                </div>
+                                <h4 class="text-base sm:text-lg font-bold text-amber-100 leading-snug">Coins සක්‍රීය කරගැනීමට අදාළ පැකේජයේ මුදල පහත බැංකු ගිණුමට තැන්පත් කරන්න:</h4>
+                                
+                                <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                                    <p class="text-slate-300"><span class="text-amber-400 font-bold">Bank Name:</span> Bank of Ceylon (BOC)</p>
+                                    <p class="text-slate-300"><span class="text-amber-400 font-bold">Branch:</span> Kebithigollawa Branch (621)</p>
+                                    <div class="flex items-center justify-between bg-slate-900 p-2 rounded-xl border border-amber-500/20">
+                                        <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Number:</span> <span class="font-mono text-amber-200 font-bold text-sm">0009651439</span></p>
+                                        <button onclick="copyToClipboard('0009651439')" class="text-xs text-amber-400 hover:text-amber-300 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 transition">
+                                            <i class="fa-regular fa-copy mr-1"></i>Copy
+                                        </button>
+                                    </div>
+                                    <p class="text-slate-300"><span class="text-amber-400 font-bold">Account Holder:</span> MR H D N HEMAPALA</p>
+                                </div>
+
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    ගෙවීම සිදු කිරීමෙන් පසු Admin ගෙන් ලැබුණු Payment ID එක පහත "පැකේජ් සක්‍රිය කරන්න" ක්ලික් කර ඇතුළත් කරන්න.
+                                </p>
+                            </div>
+
+                            <div class="w-full md:w-auto text-center flex flex-col items-center justify-center">
+                                <div class="bg-amber-500/20 border border-amber-500/40 p-3.5 rounded-2xl mb-3 text-center max-w-xs">
+                                    <p class="text-xs font-bold text-amber-200 leading-snug">
+                                        <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i>
+                                        මුදල් ගෙවු රිසිට් පත අනිවාර්යයෙන් ම මේ WhatsApp එකට යවා ඔබගේ Payment ID එක ලබා ගන්න.
+                                    </p>
+                                </div>
+
+                                <a href="https://wa.me/94703896029" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-6 py-3.5 rounded-2xl transition shadow-xl w-full active-press">
+                                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                                    <span>WhatsApp වෙත යවන්න</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="manageQuestionsList" class="space-y-4"></div>
-                </div>
-            </div>
-        </section>
+                    <!-- Upgrade Packages Grid -->
+                    <div class="glass-card rounded-3xl p-5 sm:p-8 border border-amber-500/30">
+                        <h3 class="text-lg sm:text-xl font-bold text-amber-100 mb-6 flex items-center">
+                            <i class="fa-solid fa-crown text-amber-400 mr-2"></i> Membership Packages සක්‍රීය කරගන්න
+                        </h3>
 
-        <div id="noDataAlert" class="hidden max-w-xl mx-auto glass-card rounded-2xl p-8 shadow-2xl text-center border border-amber-500/20 font-sinhala">
-            <i class="fa-solid fa-folder-open text-4xl text-amber-400 mb-3 animate-bounce"></i>
-            <h3 class="text-xl font-bold text-amber-100 mb-1 font-sinhala-fancy">තොරතුරු හමු නොවීය</h3>
-            <p class="text-slate-400 text-xs">මෙම පාඩම සඳහා ප්‍රශ්න ඇතුළත් කර නොමැත.</p>
-        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- FREE -->
+                            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-extrabold text-amber-400 uppercase">Free Package</span>
+                                    <h4 class="text-2xl font-black text-amber-100 my-2">LKR 0</h4>
+                                    <p class="text-xs text-slate-300">75 Coins ලැබෙනු ඇත. (එක් Email එකකට වරක් පමණි)</p>
+                                </div>
+                                <button onclick="claimFreeCoins()" class="mt-4 w-full bg-slate-800 hover:bg-slate-700 text-amber-200 text-xs font-bold py-2.5 rounded-xl transition active-press">පැකේජ් සක්‍රිය කරන්න</button>
+                            </div>
+
+                            <!-- LKR 100 -->
+                            <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-extrabold text-amber-400 uppercase">Bronze Package</span>
+                                    <h4 class="text-2xl font-black text-amber-100 my-2">LKR 100</h4>
+                                    <p class="text-xs text-slate-300">300 Coins ලැබෙනු ඇත.</p>
+                                </div>
+                                <button onclick="openPaymentModal('Bronze', 300)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow active-press">පැකේජ් සක්‍රිය කරන්න</button>
+                            </div>
+
+                            <!-- LKR 200 -->
+                            <div class="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden">
+                                <div>
+                                    <span class="text-xs font-extrabold text-amber-400 uppercase">Silver Package</span>
+                                    <h4 class="text-2xl font-black text-amber-100 my-2">LKR 200</h4>
+                                    <p class="text-xs text-slate-300">750 Coins ලැබෙනු ඇත.</p>
+                                </div>
+                                <button onclick="openPaymentModal('Silver', 750)" class="mt-4 w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow active-press">පැකේජ් සක්‍රිය කරන්න</button>
+                            </div>
+
+                            <!-- LKR 300 -->
+                            <div class="bg-slate-900/90 border border-amber-400 rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative shadow-lg shadow-amber-500/10">
+                                <div class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">POPULAR</div>
+                                <div>
+                                    <span class="text-xs font-extrabold text-amber-400 uppercase">Gold Package</span>
+                                    <h4 class="text-2xl font-black text-amber-100 my-2">LKR 300</h4>
+                                    <p class="text-xs text-slate-300">2000 Coins ලැබෙනු ඇත.</p>
+                                </div>
+                                <button onclick="openPaymentModal('Gold', 2000)" class="mt-4 w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 text-xs font-extrabold py-2.5 rounded-xl transition shadow active-press">පැකේජ් සක්‍රිය කරන්න</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ADMIN DASHBOARD -->
+                <section id="adminSection" class="hidden animate__animated animate__fadeIn font-sinhala">
+                    <div class="glass-card rounded-3xl p-4 sm:p-8 shadow-2xl border border-amber-500/30 mb-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-700/60 pb-5 mb-5 gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-black gradient-text flex items-center font-sinhala-fancy">
+                                    <i class="fa-solid fa-user-shield text-amber-400 mr-2.5"></i> Admin Panel (පරිපාලක පීඨය)
+                                </h2>
+                                <p class="text-xs text-slate-400 mt-1">ශිෂ්‍යයින් කළමනාකරණය, අවසර දීම් (Approvals), ප්‍රශ්න සංස්කරණය සහ Bulk Import මෙතැනින් සිදු කරන්න.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                                <button onclick="exportDataJSON()" class="flex-1 md:flex-none bg-slate-900 hover:bg-slate-800 text-amber-200 text-xs font-bold px-3 py-2 rounded-xl border border-amber-500/30 transition">
+                                    <i class="fa-solid fa-download mr-1"></i> Export JSON
+                                </button>
+                                <label class="flex-1 md:flex-none text-center bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-extrabold px-3 py-2 rounded-xl transition cursor-pointer shadow">
+                                    <i class="fa-solid fa-upload mr-1"></i> Import JSON
+                                    <input type="file" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Admin Tabs -->
+                        <div class="flex space-x-3 border-b border-slate-700/60 mb-5 overflow-x-auto no-scrollbar">
+                            <button onclick="switchAdminTab('students')" id="adminTab-students" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-amber-400 text-amber-300 whitespace-nowrap">
+                                <i class="fa-solid fa-users mr-1"></i> Students (ශිෂ්‍යයින්)
+                            </button>
+                            <button onclick="switchAdminTab('approvals')" id="adminTab-approvals" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                                <i class="fa-solid fa-check-circle mr-1"></i> Approvals (අවසරදීම්)
+                            </button>
+                            <button onclick="switchAdminTab('manageLessons')" id="adminTab-manageLessons" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                                <i class="fa-solid fa-book mr-1"></i> පාඩම් මාතෘකා
+                            </button>
+                            <button onclick="switchAdminTab('bulkImport')" id="adminTab-bulkImport" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                                <i class="fa-solid fa-file-import mr-1"></i> Bulk Import
+                            </button>
+                            <button onclick="switchAdminTab('manageQuestions')" id="adminTab-manageQuestions" class="pb-3 border-b-2 font-bold text-xs sm:text-sm border-transparent text-slate-400 whitespace-nowrap">
+                                <i class="fa-solid fa-list-check mr-1"></i> ප්‍රශ්න කළමනාකරණය
+                            </button>
+                        </div>
+
+                        <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
+                        <div id="adminView-students" class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs text-slate-400 font-sinhala">
+                                    <i class="fa-solid fa-users mr-1 text-amber-400"></i>
+                                    ලියාපදිංචි ශිෂ්‍යයින්:
+                                    <span id="studentCount" class="font-bold text-amber-300 ml-1">—</span>
+                                </p>
+                                <button onclick="fetchAndRenderStudents()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/50">
+                                <table class="w-full text-left text-xs text-slate-300 border-collapse min-w-[700px]">
+                                    <thead>
+                                        <tr class="border-b border-slate-700/80 text-amber-400 bg-slate-900/80">
+                                            <th class="p-3">Student ID</th>
+                                            <th class="p-3">Name</th>
+                                            <th class="p-3">Email</th>
+                                            <th class="p-3">Password</th>
+                                            <th class="p-3">Plan</th>
+                                            <th class="p-3">Coins</th>
+                                            <th class="p-3">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN TAB: APPROVALS -->
+                        <div id="adminView-approvals" class="hidden space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-amber-300 font-sinhala">
+                                    <i class="fa-solid fa-clock mr-1"></i>
+                                    Pending Approvals:
+                                    <span id="approvalCount" class="text-amber-400 ml-1">—</span>
+                                </h3>
+                                <button onclick="fetchAndRenderApprovals()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
+                                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="approvalsContainer" class="space-y-3"></div>
+                        </div>
+
+                        <!-- ADMIN TAB: MANAGE LESSONS -->
+                        <div id="adminView-manageLessons" class="hidden space-y-6">
+                            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
+                                        <select id="lessonMgrGradeSelect" onchange="renderAdminLessonsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                            <option value="6">6 ශ්‍රේණිය</option>
+                                            <option value="7">7 ශ්‍රේණිය</option>
+                                            <option value="8">8 ශ්‍රේණිය</option>
+                                            <option value="9">9 ශ්‍රේණිය</option>
+                                            <option value="10">10 ශ්‍රේණිය</option>
+                                            <option value="11">11 ශ්‍රේණිය</option>
+                                        </select>
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs font-bold text-slate-300 mb-1">නව පාඩම් මාතෘකාවක් එකතු කරන්න</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="newLessonTitleInput" placeholder="උදා: 2 පාඩම - මුල් මානව ජනාවාස" class="flex-1 p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                            <button onclick="addNewLessonTitle()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs shadow active-press whitespace-nowrap">
+                                                <i class="fa-solid fa-plus mr-1"></i> එකතු කරන්න
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="adminLessonsContainer" class="space-y-3"></div>
+                        </div>
+
+                        <!-- ADMIN TAB: BULK TEXT FORMAT IMPORT -->
+                        <div id="adminView-bulkImport" class="hidden space-y-6">
+                            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය (Grade)</label>
+                                        <select id="importGrade" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                            <option value="6">6 ශ්‍රේණිය</option>
+                                            <option value="7">7 ශ්‍රේණිය</option>
+                                            <option value="8">8 ශ්‍රේණිය</option>
+                                            <option value="9">9 ශ්‍රේණිය</option>
+                                            <option value="10">10 ශ්‍රේණිය</option>
+                                            <option value="11">11 ශ්‍රේණිය</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-300 mb-1">පාඩමේ නම (Lesson Title)</label>
+                                        <input type="text" id="importLessonTitle" placeholder="උදා: 1 පාඩම - අපේ මූලාශ්‍ර" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-300 mb-1">ප්‍රශ්න වර්ගය (Type)</label>
+                                        <select id="importType" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                            <option value="mcq">MCQ Questions</option>
+                                            <option value="short">Short Questions</option>
+                                            <option value="essay">Essay Questions</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-amber-300 mb-1">ඔබේ Format එක අනුව Text Paste කරන්න:</label>
+                                    <textarea id="bulkTextInput" rows="10" class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-xs text-amber-100 font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="1. ප්‍රශ්නය&#10;1) පිළිතුර 1 | 2) පිළිතුර 2 | 3) පිළිතුර 3 | 4) පිළිතුර 4&#10;Correct: 2&#10;Explanation: පැහැදිලි කිරීම"></textarea>
+                                </div>
+
+                                <button onclick="processBulkImport()" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold px-6 py-3 rounded-xl transition shadow-lg active-press">
+                                    <i class="fa-solid fa-plus-circle mr-2"></i> ප්‍රශ්න පද්ධතියට ඇතුළත් කරන්න (Process Import)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN TAB: MANAGE QUESTIONS -->
+                        <div id="adminView-manageQuestions" class="hidden space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">ශ්‍රේණිය තෝරන්න</label>
+                                    <select id="manageGradeSelect" onchange="loadManageQuestions()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                        <option value="6">6 ශ්‍රේණිය</option>
+                                        <option value="7">7 ශ්‍රේණිය</option>
+                                        <option value="8">8 ශ්‍රේණිය</option>
+                                        <option value="9">9 ශ්‍රේණිය</option>
+                                        <option value="10">10 ශ්‍රේණිය</option>
+                                        <option value="11">11 ශ්‍රේණිය</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">පාඩම තෝරන්න</label>
+                                    <select id="manageLessonSelect" onchange="renderManageQuestionsList()" class="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-amber-100 text-xs font-bold">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap justify-between items-center bg-slate-900/90 p-3 rounded-xl border border-slate-800 gap-2">
+                                <label class="flex items-center space-x-2 text-xs font-bold text-amber-200 cursor-pointer">
+                                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllQuestions(this)" class="w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                                    <span>සියල්ල තෝරන්න (Select All)</span>
+                                </label>
+                                <button onclick="deleteSelectedQuestions()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold px-4 py-2 rounded-xl transition shadow flex items-center active-press">
+                                    <i class="fa-solid fa-trash-can mr-2"></i> තෝරාගත් ප්‍රශ්න ඩිලිට් කරන්න (Delete Selected)
+                                </button>
+                            </div>
+
+                            <div id="manageQuestionsList" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="noDataAlert" class="hidden max-w-xl mx-auto glass-card rounded-2xl p-8 shadow-2xl text-center border border-amber-500/20 font-sinhala">
+                    <i class="fa-solid fa-folder-open text-4xl text-amber-400 mb-3 animate-bounce"></i>
+                    <h3 class="text-xl font-bold text-amber-100 mb-1 font-sinhala-fancy">තොරතුරු හමු නොවීය</h3>
+                    <p class="text-slate-400 text-xs">මෙම පාඩම සඳහා ප්‍රශ්න ඇතුළත් කර නොමැත.</p>
+                </div>
 
             </div> <!-- Close right workspace column (lg:col-span-8 xl:col-span-9) -->
         </div> <!-- Close 2-column grid container -->
 
     </main>
 
+    <!-- MOBILE FIXED BOTTOM NAVIGATION BAR -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-amber-500/30 backdrop-blur-xl px-2 py-1.5 shadow-2xl flex items-center justify-around font-sinhala">
+        <button onclick="resetToHome()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
+            <i class="fa-solid fa-house text-base"></i>
+            <span class="text-[10px] font-bold mt-0.5">මුලට</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
+            <i class="fa-solid fa-book-open text-base"></i>
+            <span class="text-[10px] font-bold mt-0.5">පාඩම්</span>
+        </button>
+        <button onclick="openDashboard()" class="flex flex-col items-center justify-center p-1.5 text-amber-300 hover:text-amber-200 transition">
+            <i class="fa-solid fa-crown text-base"></i>
+            <span class="text-[10px] font-bold mt-0.5">Dashboard</span>
+        </button>
+        <a href="https://wa.me/94703896029" target="_blank" class="flex flex-col items-center justify-center p-1.5 text-emerald-400 hover:text-emerald-300 transition">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+            <span class="text-[10px] font-bold mt-0.5">Help</span>
+        </a>
+    </nav>
+
     <!-- PAYMENT / CLAIM CODE MODAL -->
     <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 font-sinhala">
-        <div class="glass-card rounded-3xl p-5 sm:p-6 max-w-md w-full max-h-[92vh] overflow-y-auto border border-amber-500/40 space-y-4">
-            <h3 class="text-lg font-bold text-amber-100" id="payModalTitle">පැකේජය සක්‍රීය කරන්න</h3>
+        <div class="glass-card rounded-3xl p-5 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto border border-amber-500/40 space-y-4 shadow-2xl">
+            <h3 class="text-base sm:text-lg font-bold text-amber-100" id="payModalTitle">පැකේජය සක්‍රීය කරන්න</h3>
             <p class="text-xs text-slate-300">මුදල් ගෙවා ලබා ගත් Payment ID එක ඇතුලත් කරන්න:</p>
-            <input type="text" id="paymentIdInput" placeholder="Payment ID එක මෙතන ගහන්න..." class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-amber-100 text-xs font-bold">
+            <input type="text" id="paymentIdInput" placeholder="Payment ID එක මෙතන ගහන්න..." class="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-amber-100 text-xs font-bold focus:ring-2 focus:ring-amber-400 focus:outline-none">
             <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closePaymentModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">අවලංගු කරන්න</button>
-                <button onclick="submitPaymentClaim()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs">Send</button>
+                <button onclick="closePaymentModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold active-press">අවලංගු කරන්න</button>
+                <button onclick="submitPaymentClaim()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs shadow active-press">Send</button>
             </div>
         </div>
     </div>
 
     <!-- OUT OF COINS POPUP MODAL -->
     <div id="outOfCoinsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 font-sinhala animate__animated animate__fadeIn">
-        <div class="glass-card rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[92vh] overflow-y-auto border border-rose-500/40 text-center space-y-4 sm:space-y-5 shadow-2xl relative">
+        <div class="glass-card rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto border border-rose-500/40 text-center space-y-4 sm:space-y-5 shadow-2xl relative">
             <div class="w-14 h-14 sm:w-16 sm:h-16 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto border border-rose-500/40 text-rose-400 text-2xl sm:text-3xl">
                 <i class="fa-solid fa-coins animate-bounce"></i>
             </div>
@@ -754,10 +811,10 @@
             </div>
 
             <div class="flex flex-col gap-2 pt-2">
-                <button onclick="goToDashboardFromModal()" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition hover:scale-[1.02] text-xs sm:text-sm">
+                <button onclick="goToDashboardFromModal()" class="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition hover:scale-[1.02] text-xs sm:text-sm active-press">
                     <i class="fa-solid fa-crown mr-1"></i> අලුත් පැකේජ් බලන්න (Dashboard)
                 </button>
-                <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl shadow transition flex items-center justify-center space-x-2 text-xs">
+                <a href="https://wa.me/94703896029" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 rounded-xl shadow transition flex items-center justify-center space-x-2 text-xs active-press">
                     <i class="fa-brands fa-whatsapp text-base"></i>
                     <span>WhatsApp හරහා රිසිට්පත යවන්න</span>
                 </a>
@@ -827,6 +884,21 @@
             syncWithDatabase();
             if (typeof startAdminPolling === 'function') startAdminPolling();
         };
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('lmsSidebar');
+            const chevron = document.getElementById('mobileSidebarChevron');
+            const text = document.getElementById('mobileSidebarToggleText');
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                if (text) text.innerText = 'පාඩම් මාලාව සඟවන්න';
+            } else {
+                sidebar.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+                if (text) text.innerText = 'පාඩම් මාලාව සහ ශිෂ්‍ය පීඨය (Sidebar පෙන්වන්න)';
+            }
+        }
 
         async function syncWithDatabase() {
             try {
@@ -927,13 +999,13 @@
 
                 if (currentUser.role === 'admin') {
                     adminBtn = `
-                        <button onclick="openAdminDashboard()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-2 rounded-xl transition shadow font-sinhala">
-                            <i class="fa-solid fa-user-shield mr-1"></i> Admin Panel
+                        <button onclick="openAdminDashboard()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs px-3 py-1.5 sm:py-2 rounded-xl transition shadow font-sinhala active-press">
+                            <i class="fa-solid fa-user-shield mr-1"></i> Admin
                         </button>
                     `;
                 } else {
                     dashboardBtn = `
-                        <button onclick="openDashboard()" class="bg-slate-900 border border-amber-500/30 text-amber-200 text-xs font-bold px-3 py-2 rounded-xl hover:bg-slate-800 transition font-sinhala">
+                        <button onclick="openDashboard()" class="bg-slate-900 border border-amber-500/30 text-amber-200 text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl hover:bg-slate-800 transition font-sinhala active-press">
                             <i class="fa-solid fa-crown text-amber-400 mr-1"></i> Dashboard
                         </button>
                     `;
@@ -942,7 +1014,7 @@
                 container.innerHTML = `
                     ${adminBtn}
                     ${dashboardBtn}
-                    <button onclick="logoutUser()" class="bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600 hover:text-white text-xs font-bold px-3 py-2 rounded-xl transition font-sinhala">
+                    <button onclick="logoutUser()" class="bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600 hover:text-white text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition font-sinhala active-press">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 `;
@@ -955,7 +1027,7 @@
                 coinBadge.classList.add('hidden');
                 coinBadge.classList.remove('flex');
                 container.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl transition shadow font-sinhala">
+                    <button onclick="openAuthModal('login')" class="bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-extrabold text-xs px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl transition shadow font-sinhala active-press">
                         <i class="fa-solid fa-user mr-1"></i> ලොගින් වන්න
                     </button>
                 `;
@@ -975,13 +1047,13 @@
             if (mode === 'login') {
                 document.getElementById('loginForm').classList.remove('hidden');
                 document.getElementById('registerForm').classList.add('hidden');
-                document.getElementById('tabLogin').className = "text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
-                document.getElementById('tabRegister').className = "text-lg font-bold text-slate-400 px-4 pb-2";
+                document.getElementById('tabLogin').className = "text-base sm:text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
+                document.getElementById('tabRegister').className = "text-base sm:text-lg font-bold text-slate-400 px-4 pb-2";
             } else {
                 document.getElementById('loginForm').classList.add('hidden');
                 document.getElementById('registerForm').classList.remove('hidden');
-                document.getElementById('tabRegister').className = "text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
-                document.getElementById('tabLogin').className = "text-lg font-bold text-slate-400 px-4 pb-2";
+                document.getElementById('tabRegister').className = "text-base sm:text-lg font-bold text-amber-400 border-b-2 border-amber-400 px-4 pb-2";
+                document.getElementById('tabLogin').className = "text-base sm:text-lg font-bold text-slate-400 px-4 pb-2";
             }
         }
 
@@ -1097,7 +1169,6 @@
 
             // Fallback to local storage if API didn't succeed
             let student = registeredStudents.find(s => s.email === email);
-            
             if (!student) {
                 alert("මෙම Email එකෙන් ශිෂ්‍යයෙකු ලියාපදිංචි වී නොමැත. කරුණාකර පළමුව ලියාපදිංචි වන්න.");
                 return;
@@ -1265,7 +1336,7 @@
                 const btn = document.createElement('button');
                 btn.id = `grade-tab-${g}`;
                 btn.onclick = () => selectGrade(g.toString());
-                btn.className = `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition border border-amber-500/20 text-amber-200 font-sinhala`;
+                btn.className = `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition border border-amber-500/20 text-amber-200 font-sinhala active-press`;
                 btn.innerText = `${g} ශ්‍රේණිය`;
                 tabsContainer.appendChild(btn);
             }
@@ -1277,8 +1348,8 @@
             for (let g = 6; g <= 11; g++) {
                 const tab = document.getElementById(`grade-tab-${g}`);
                 if (tab) tab.className = (g.toString() === grade) ? 
-                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg border border-amber-300 font-sinhala` : 
-                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-amber-500/20 text-amber-200 hover:bg-amber-500/10 font-sinhala`;
+                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg border border-amber-300 font-sinhala scale-[1.02]` : 
+                    `flex-shrink-0 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-amber-500/20 text-amber-200 hover:bg-amber-500/10 font-sinhala active-press`;
             }
 
             document.getElementById('welcomeHero').classList.add('hidden');
@@ -1318,8 +1389,8 @@
                         card.onclick = () => selectSidebarLesson(idx);
                         card.id = `sidebar-lesson-item-${idx}`;
                         card.className = (idx === currentLessonIndex) ?
-                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/50 bg-gradient-to-r from-amber-600/30 via-amber-500/20 to-amber-500/10 text-amber-200 shadow" :
-                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 hover:border-slate-700";
+                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-amber-500/50 bg-gradient-to-r from-amber-600/30 via-amber-500/20 to-amber-500/10 text-amber-200 shadow active-press" :
+                            "w-full text-left p-3 rounded-2xl text-xs font-bold transition flex items-center justify-between border border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-900 hover:border-slate-700 active-press";
                         card.innerHTML = `
                             <span class="truncate pr-2 font-sinhala">${l.lessonTitle}</span>
                             <i class="fa-solid fa-chevron-right text-[10px] ${idx === currentLessonIndex ? 'text-amber-400' : 'text-slate-600'} flex-shrink-0"></i>
@@ -1339,6 +1410,14 @@
             if (select) select.value = idx;
             updateSidebarLessonHighlight();
             switchMode(currentMode);
+
+            // Auto collapse mobile sidebar on mobile screens for cleaner flow
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('lmsSidebar');
+                if (sidebar && !sidebar.classList.contains('hidden')) {
+                    toggleMobileSidebar();
+                }
+            }
         }
 
         function updateSidebarLessonHighlight() {
@@ -1390,8 +1469,8 @@
                 const btn = document.getElementById(`btn-mode-${m}`);
                 if (btn) {
                     btn.className = (m === mode) ? 
-                        "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow font-sinhala" : 
-                        "mode-btn flex-1 px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 font-sinhala";
+                        "mode-btn flex-1 px-3 sm:px-5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow font-sinhala" : 
+                        "mode-btn flex-1 px-3 sm:px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 font-sinhala";
                 }
 
                 const sbBtn = document.getElementById(`sidebar-btn-${m}`);
@@ -1447,8 +1526,10 @@
             const mcqList = historyData[currentGrade][currentLessonIndex].mcq;
             const item = mcqList[currentMcqIndex];
 
-            document.getElementById('mcqProgressBar').style.width = `${((currentMcqIndex + 1) / mcqList.length) * 100}%`;
+            const progressPct = Math.round(((currentMcqIndex + 1) / mcqList.length) * 100);
+            document.getElementById('mcqProgressBar').style.width = `${progressPct}%`;
             document.getElementById('mcqProgressText').innerText = `ප්‍රශ්න ${currentMcqIndex + 1}/${mcqList.length}`;
+            document.getElementById('mcqCurrentScore').innerText = mcqScore;
             
             const cleanQuestion = item.question.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
             document.getElementById('mcqQuestionText').innerText = `${currentMcqIndex + 1}. ${cleanQuestion}`;
@@ -1460,10 +1541,15 @@
 
             item.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = `w-full text-left p-4 rounded-2xl border border-slate-700/80 bg-slate-900/80 hover:border-amber-500/50 text-xs sm:text-sm text-slate-200 flex items-center justify-between transition duration-200 font-sinhala`;
+                btn.className = `w-full text-left p-3.5 sm:p-4 rounded-2xl border border-slate-800 bg-slate-900/90 hover:border-amber-500/60 hover:bg-slate-900 text-xs sm:text-sm text-slate-200 flex items-start space-x-3 transition duration-200 font-sinhala active-press group shadow-sm`;
                 btn.onclick = () => selectMcqOption(idx);
                 btn.id = `opt-${idx}`;
-                btn.innerHTML = `<span>${idx + 1}) ${opt}</span>`;
+                
+                const optionNumBadge = ['1', '2', '3', '4'][idx] || (idx + 1);
+                btn.innerHTML = `
+                    <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 font-extrabold flex items-center justify-center text-xs flex-shrink-0 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">${optionNumBadge}</span>
+                    <span class="flex-1 pt-0.5 leading-relaxed">${opt}</span>
+                `;
                 optionsContainer.appendChild(btn);
             });
         }
@@ -1472,13 +1558,25 @@
             if (!consumeCoin()) return;
 
             const item = historyData[currentGrade][currentLessonIndex].mcq[currentMcqIndex];
+            
+            // Disable option click after selecting
+            const optionsContainer = document.getElementById('mcqOptions');
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(b => b.onclick = null);
+
             if (idx === item.answer) {
                 mcqScore++;
-                document.getElementById(`opt-${idx}`).classList.add('border-emerald-500', 'bg-emerald-500/20');
+                document.getElementById('mcqCurrentScore').innerText = mcqScore;
+                const btn = document.getElementById(`opt-${idx}`);
+                if (btn) btn.className = "w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-950/40 text-xs sm:text-sm text-emerald-100 flex items-start space-x-3 font-sinhala shadow-lg animate__animated animate__pulse";
             } else {
-                document.getElementById(`opt-${idx}`).classList.add('border-rose-500', 'bg-rose-500/20');
-                document.getElementById(`opt-${item.answer}`).classList.add('border-emerald-500', 'bg-emerald-500/20');
+                const wrongBtn = document.getElementById(`opt-${idx}`);
+                if (wrongBtn) wrongBtn.className = "w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-rose-500 bg-rose-950/40 text-xs sm:text-sm text-rose-100 flex items-start space-x-3 font-sinhala shadow-lg animate__animated animate__shakeX";
+                
+                const correctBtn = document.getElementById(`opt-${item.answer}`);
+                if (correctBtn) correctBtn.className = "w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-950/40 text-xs sm:text-sm text-emerald-100 flex items-start space-x-3 font-sinhala shadow-lg";
             }
+
             if (item.explanation) {
                 document.getElementById('mcqExplanationText').innerText = item.explanation;
                 document.getElementById('mcqExplanation').classList.remove('hidden');
@@ -1506,18 +1604,22 @@
             list.forEach((item, index) => {
                 const cleanQuestion = item.question.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
                 const card = document.createElement('div');
-                card.className = "perspective-1000 h-64 cursor-pointer font-sinhala";
+                card.className = "perspective-1000 min-h-[240px] sm:h-64 cursor-pointer font-sinhala";
                 card.innerHTML = `
                     <div id="flashcard-${index}" onclick="handleShortCardClick(this)" class="relative w-full h-full duration-500 transform-style-3d rounded-3xl shadow-xl">
-                        <div class="absolute inset-0 backface-hidden p-6 flex flex-col justify-between items-center bg-slate-900/95 rounded-3xl border border-amber-500/30 glass-card">
-                            <span class="bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[11px] font-bold px-3 py-1 rounded-full">ප්‍රශ්නය ${index + 1}</span>
-                            <p class="text-lg sm:text-xl font-bold text-amber-100 font-sinhala-fancy text-center my-auto leading-relaxed">${cleanQuestion}</p>
-                            <span class="text-[11px] text-amber-400 font-medium"><i class="fa-solid fa-rotate mr-1"></i> පිළිතුර බලන්න Click කරන්න (1 Coin)</span>
+                        <div class="absolute inset-0 backface-hidden p-5 sm:p-6 flex flex-col justify-between items-center bg-slate-900/95 rounded-3xl border border-amber-500/30 glass-card">
+                            <span class="bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-question text-amber-400"></i> ප්‍රශ්නය ${index + 1}
+                            </span>
+                            <p class="text-base sm:text-xl font-bold text-amber-100 font-sinhala-fancy text-center my-auto leading-relaxed px-2">${cleanQuestion}</p>
+                            <span class="text-[11px] text-amber-400 font-bold bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/20"><i class="fa-solid fa-rotate mr-1"></i> පිළිතුර බලන්න Click කරන්න (1 Coin)</span>
                         </div>
-                        <div class="absolute inset-0 backface-hidden rotate-y-180 p-6 flex flex-col justify-between items-center bg-slate-800 rounded-3xl border border-amber-400 glass-card">
-                            <span class="bg-amber-400 text-slate-950 text-[11px] font-extrabold px-3 py-1 rounded-full">පිළිතුර ${index + 1}</span>
-                            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed font-sinhala text-center my-auto">${item.answer}</p>
-                            <span class="text-[11px] text-slate-400"><i class="fa-solid fa-rotate mr-1"></i> හැරවීමට Click කරන්න</span>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 p-5 sm:p-6 flex flex-col justify-between items-center bg-slate-900/95 rounded-3xl border-2 border-amber-400 glass-card">
+                            <span class="bg-amber-400 text-slate-950 text-[11px] font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check"></i> පිළිතුර ${index + 1}
+                            </span>
+                            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed font-sinhala text-center my-auto px-2">${item.answer}</p>
+                            <span class="text-[11px] text-slate-400 font-medium"><i class="fa-solid fa-rotate mr-1"></i> හැරවීමට Click කරන්න</span>
                         </div>
                     </div>
                 `;
@@ -1541,13 +1643,14 @@
             list.forEach((item, index) => {
                 const cleanTitle = item.title.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-3xl p-6 shadow-xl border border-amber-500/30 space-y-4 font-sinhala";
+                card.className = "glass-card rounded-3xl p-5 sm:p-7 shadow-xl border border-amber-500/30 space-y-4 font-sinhala";
                 card.innerHTML = `
-                    <div class="flex items-start space-x-3">
-                        <h4 class="text-xl font-bold text-amber-100 font-sinhala-fancy">${index + 1}. ${cleanTitle}</h4>
+                    <div class="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
+                        <h4 class="text-lg sm:text-xl font-bold text-amber-100 font-sinhala-fancy leading-snug">${index + 1}. ${cleanTitle}</h4>
+                        <span class="bg-amber-500/10 text-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-xl border border-amber-500/30 whitespace-nowrap flex-shrink-0">රචනා</span>
                     </div>
-                    <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
-                        <p class="text-slate-200 text-sm sm:text-base leading-relaxed font-sinhala whitespace-pre-line">${item.answer}</p>
+                    <div class="bg-slate-950/80 p-4 sm:p-5 rounded-2xl border border-slate-800/80">
+                        <p class="text-slate-200 text-xs sm:text-sm leading-relaxed font-sinhala whitespace-pre-line">${item.answer}</p>
                     </div>
                 `;
                 container.appendChild(card);
@@ -1584,12 +1687,10 @@
             if (tab === 'manageQuestions') loadManageQuestions();
         }
 
-        // ✅ Always fetch fresh students from DB then render
         async function fetchAndRenderStudents() {
             const tbody = document.getElementById('studentsTableBody');
-            // Show loading spinner
             tbody.innerHTML = `
-                <tr><td colspan="7" class="p-8 text-center text-amber-400/70 text-sm">
+                <tr><td colspan="7" class="p-8 text-center text-amber-400/70 text-sm font-sinhala">
                     <i class="fa-solid fa-spinner fa-spin mr-2"></i>Students load කරමින්...
                 </td></tr>`;
 
@@ -1611,7 +1712,6 @@
             const tbody = document.getElementById('studentsTableBody');
             tbody.innerHTML = '';
 
-            // Update live count badge
             const countEl = document.getElementById('studentCount');
             if (countEl) countEl.textContent = registeredStudents.length;
 
@@ -1627,7 +1727,7 @@
             registeredStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
                 tr.id = `student-row-${student.email ? student.email.replace(/[@.]/g, '_') : index}`;
-                tr.className = "border-b border-slate-800 hover:bg-slate-900/50 transition-colors duration-200";
+                tr.className = "border-b border-slate-800/80 hover:bg-slate-900/50 transition-colors duration-200";
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-amber-400">
                         <div class="flex items-center space-x-2">
@@ -1642,7 +1742,7 @@
                     <td class="p-3 text-slate-400 text-xs">${student.email}</td>
                     <td class="p-3 font-mono text-xs text-yellow-300/80">${student.password || 'N/A'}</td>
                     <td class="p-3">
-                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${
                             student.plan === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
                             student.plan === 'Silver' ? 'bg-slate-400/20 text-slate-300 border border-slate-500/40' :
                             student.plan === 'Bronze' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40' :
@@ -1653,14 +1753,14 @@
                         <span class="text-xs text-slate-500 font-normal ml-1">coins</span>
                     </td>
                     <td class="p-3">
-                        <div class="flex items-center space-x-2">
-                            <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1.5 rounded-lg border border-blue-500/40 hover:bg-blue-500 hover:text-white font-bold text-[11px] transition">
+                        <div class="flex items-center space-x-1.5">
+                            <button onclick="adminEditPassword(${index})" class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-lg border border-blue-500/40 hover:bg-blue-500 hover:text-white font-bold text-[11px] transition active-press">
                                 <i class="fa-solid fa-key mr-1"></i>Pass
                             </button>
-                            <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1.5 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition">
+                            <button onclick="adminEditCoins(${index})" class="bg-amber-500/20 text-amber-300 px-2 py-1 rounded-lg border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition active-press">
                                 <i class="fa-solid fa-coins mr-1"></i>Coins
                             </button>
-                            <button onclick="adminDeleteStudent(${index})" class="bg-rose-500/20 text-rose-300 px-2 py-1.5 rounded-lg border border-rose-500/40 hover:bg-rose-500 hover:text-white font-bold text-[11px] transition" title="ශිෂ්‍යයා ඉවත් කරන්න">
+                            <button onclick="adminDeleteStudent(${index})" class="bg-rose-500/20 text-rose-300 px-2 py-1 rounded-lg border border-rose-500/40 hover:bg-rose-500 hover:text-white font-bold text-[11px] transition active-press" title="ශිෂ්‍යයා ඉවත් කරන්න">
                                 <i class="fa-solid fa-trash mr-1"></i>Del
                             </button>
                         </div>
@@ -1672,7 +1772,7 @@
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert(`Student ID (${text}) සාර්ථකව Copy විය!`);
+                showToast(`📋 (${text}) සාර්ථකව Copy විය!`, 'success');
             }).catch(err => {
                 alert('Copy කිරීමට නොහැකි විය: ' + err);
             });
@@ -1738,11 +1838,10 @@
             }
         }
 
-        // ✅ Always fetch fresh approvals from DB then render
         async function fetchAndRenderApprovals() {
             const container = document.getElementById('approvalsContainer');
             container.innerHTML = `
-                <div class="text-center py-8 text-amber-400/70 text-sm">
+                <div class="text-center py-8 text-amber-400/70 text-sm font-sinhala">
                     <i class="fa-solid fa-spinner fa-spin mr-2"></i>Approvals load කරමින්...
                 </div>`;
 
@@ -1766,18 +1865,17 @@
 
             const pending = approvalRequests.filter(r => r.status === 'pending');
 
-            // Update count badge
             const countEl = document.getElementById('approvalCount');
             if (countEl) countEl.textContent = pending.length;
 
             if (pending.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">අවසර දීමට ඉල්ලීම් කිසිවක් නැත.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-sinhala">අවසර දීමට ඉල්ලීම් කිසිවක් නැත.</p>`;
                 return;
             }
 
             pending.forEach((req) => {
                 const item = document.createElement('div');
-                item.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 font-sinhala";
+                item.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 font-sinhala shadow";
                 item.innerHTML = `
                     <div>
                         <p class="text-xs text-amber-400 font-bold">Student: ${req.studentName} (${req.studentEmail})</p>
@@ -1786,10 +1884,10 @@
                         <p class="text-[10px] text-slate-500">${req.date}</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="approveRequest('${req.requestId}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2 rounded-xl text-xs transition">
+                        <button onclick="approveRequest('${req.requestId}')" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2 rounded-xl text-xs transition active-press">
                             Approve (අවසර දෙන්න)
                         </button>
-                        <button onclick="rejectRequest('${req.requestId}')" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs transition">
+                        <button onclick="rejectRequest('${req.requestId}')" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs transition active-press">
                             Reject
                         </button>
                     </div>
@@ -1847,21 +1945,21 @@
 
             const lessons = historyData[grade] || [];
             if (lessons.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">මෙම ශ්‍රේණිය සඳහා පාඩම් මාතෘකා නැත.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center font-sinhala">මෙම ශ්‍රේණිය සඳහා පාඩම් මාතෘකා නැත.</p>`;
                 return;
             }
 
             lessons.forEach((l, idx) => {
                 const item = document.createElement('div');
-                item.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 font-sinhala";
+                item.className = "bg-slate-900/90 p-3.5 sm:p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 font-sinhala";
                 item.innerHTML = `
                     <input type="text" id="lessonTitleInput_${grade}_${idx}" value="${l.lessonTitle}" class="w-full sm:flex-1 p-2 bg-slate-950 border border-slate-700 rounded-xl text-amber-100 text-xs font-bold">
                     <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                        <button onclick="updateLessonTitle('${grade}', ${idx})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition">
-                            <i class="fa-solid fa-pen-to-square mr-1"></i> වෙනස් කරන්න (Edit)
+                        <button onclick="updateLessonTitle('${grade}', ${idx})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition active-press">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                         </button>
-                        <button onclick="deleteLessonTitle('${grade}', ${idx})" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition">
-                            <i class="fa-solid fa-trash-can mr-1"></i> මකන්න (Delete)
+                        <button onclick="deleteLessonTitle('${grade}', ${idx})" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs transition active-press">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Delete
                         </button>
                     </div>
                 `;
@@ -2034,14 +2132,14 @@
             document.getElementById('selectAllCheckbox').checked = false;
 
             if (isNaN(lessonIdx) || lessonIdx < 0 || !historyData[grade] || !historyData[grade][lessonIdx]) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">කළමනාකරණය කිරීමට ප්‍රශ්න හමු නොවුණි.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6 font-sinhala">කළමනාකරණය කිරීමට ප්‍රශ්න හමු නොවුණි.</p>`;
                 return;
             }
 
             const lesson = historyData[grade][lessonIdx];
 
             if (lesson.mcq && lesson.mcq.length > 0) {
-                let html = `<h4 class="text-sm font-bold text-amber-300 mb-2 border-b border-slate-800 pb-1">MCQ ප්‍රශ්න (${lesson.mcq.length})</h4>`;
+                let html = `<h4 class="text-sm font-bold text-amber-300 mb-2 border-b border-slate-800 pb-1 font-sinhala">MCQ ප්‍රශ්න (${lesson.mcq.length})</h4>`;
                 lesson.mcq.forEach((q, i) => {
                     html += `
                         <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
@@ -2049,7 +2147,7 @@
                                 <input type="checkbox" data-type="mcq" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
                                 <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.question}</div>
                             </label>
-                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'mcq', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'mcq', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition active-press">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -2059,7 +2157,7 @@
             }
 
             if (lesson.short && lesson.short.length > 0) {
-                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1">කෙටි ප්‍රශ්න (${lesson.short.length})</h4>`;
+                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1 font-sinhala">කෙටි ප්‍රශ්න (${lesson.short.length})</h4>`;
                 lesson.short.forEach((q, i) => {
                     html += `
                         <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
@@ -2067,7 +2165,7 @@
                                 <input type="checkbox" data-type="short" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
                                 <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.question}</div>
                             </label>
-                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'short', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'short', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition active-press">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -2077,7 +2175,7 @@
             }
 
             if (lesson.essay && lesson.essay.length > 0) {
-                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1">රචනා ප්‍රශ්න (${lesson.essay.length})</h4>`;
+                let html = `<h4 class="text-sm font-bold text-amber-300 mt-4 mb-2 border-b border-slate-800 pb-1 font-sinhala">රචනා ප්‍රශ්න (${lesson.essay.length})</h4>`;
                 lesson.essay.forEach((q, i) => {
                     html += `
                         <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center gap-3 font-sinhala">
@@ -2085,7 +2183,7 @@
                                 <input type="checkbox" data-type="essay" data-index="${i}" class="q-checkbox w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
                                 <div><span class="font-bold text-amber-400">${i + 1}.</span> ${q.title}</div>
                             </label>
-                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'essay', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                            <button onclick="deleteQuestion('${grade}', ${lessonIdx}, 'essay', ${i})" class="bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded-lg text-xs font-bold transition active-press">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -2174,16 +2272,16 @@
 
         function showToast(message, type = 'info') {
             const colors = {
-                info:    'bg-slate-800 border-amber-500/50 text-amber-200',
-                success: 'bg-emerald-900/90 border-emerald-500/60 text-emerald-200',
-                warning: 'bg-amber-900/90 border-amber-500/60 text-amber-200',
-                error:   'bg-rose-900/90 border-rose-500/60 text-rose-200'
+                info:    'bg-slate-900/95 border-amber-500/50 text-amber-200',
+                success: 'bg-emerald-950/95 border-emerald-500/60 text-emerald-200',
+                warning: 'bg-amber-950/95 border-amber-500/60 text-amber-200',
+                error:   'bg-rose-950/95 border-rose-500/60 text-rose-200'
             };
             const icons = { info: 'fa-bell', success: 'fa-circle-check', warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark' };
 
             const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl border shadow-2xl text-sm font-bold font-sinhala transition-all duration-500 animate__animated animate__fadeInUp ${colors[type] || colors.info}`;
-            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-lg"></i><span>${message}</span>`;
+            toast.className = `fixed bottom-20 lg:bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-2xl border shadow-2xl text-xs sm:text-sm font-bold font-sinhala transition-all duration-500 animate__animated animate__fadeInUp ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-base"></i><span>${message}</span>`;
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
@@ -2191,25 +2289,22 @@
             }, 4000);
         }
 
-        // Tracking sets to prevent repetitive notifications
         const seenStudentKeys = new Set();
         const seenApprovalKeys = new Set();
         let isInitialSyncFinished = false;
 
-        // Initialize Socket.IO connection
         let socket = null;
         try {
             socket = io();
 
             socket.on('connect', () => {
-                console.log('🔌 Real-time connected:', socket.id);
+                console.log('Real-time connected:', socket.id);
             });
 
             socket.on('disconnect', () => {
-                console.log('❌ Real-time disconnected');
+                console.log('Real-time disconnected');
             });
 
-            // ── EVENT: New student registered ──────────────────────────────
             socket.on('student:registered', (data) => {
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     const key = data.studentId || data.email;
@@ -2221,7 +2316,6 @@
                 }
             });
 
-            // ── EVENT: Student data updated by admin ───────────────────────
             socket.on('student:updated', (data) => {
                 if (!currentUser || currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL) return;
                 if (currentUser.email !== data.email) return;
@@ -2243,7 +2337,6 @@
                 showToast(`✅ Admin ඔබේ ගිණුම යාවත්කාලීන කළා! Coins: ${data.coins}, Plan: ${data.plan}`, 'success');
             });
 
-            // ── EVENT: Payment approval status changed by admin ────────────
             socket.on('approval:updated', (data) => {
                 if (currentUser && (currentUser.role === 'admin' || currentUser.email === ADMIN_EMAIL)) {
                     fetchAndRenderApprovals();
@@ -2271,7 +2364,6 @@
                 }
             });
 
-            // ── EVENT: New payment claim submitted by student ──────────────
             socket.on('approval:new', (data) => {
                 if (!currentUser || (currentUser.role !== 'admin' && currentUser.email !== ADMIN_EMAIL)) return;
 
@@ -2284,10 +2376,9 @@
             });
 
         } catch (err) {
-            console.log('Socket.IO not available (possibly serverless mode):', err.message);
+            console.log('Socket.IO not available:', err.message);
         }
 
-        // ── AUTO-POLLING & REAL-TIME FALLBACK FOR ADMIN ─────────────────────
         let adminPollingInterval = null;
 
         function startAdminPolling() {
@@ -2367,7 +2458,7 @@
                         if (adminSection && !adminSection.classList.contains('hidden')) {
                             const approvalsView = document.getElementById('adminView-approvals');
                             if (approvalsView && !approvalsView.classList.contains('hidden')) {
-                                renderAdminApprovalsList();
+                                renderAdminApprovals();
                             }
                         }
                     }
