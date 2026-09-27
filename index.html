@@ -1850,11 +1850,11 @@
 
         function importDataJSON(event) {
             const fileReader = new FileReader();
-            fileReader.onload = function (e) {
+            fileReader.onload = async function (e) {
                 try {
                     historyData = JSON.parse(e.target.result);
                     saveData();
-                    syncHistoryDataToAPI();
+                    await syncHistoryDataToAPI();
                     alert("Data සාර්ථකව Import කරන ලදී!");
                     location.reload();
                 } catch (err) {
