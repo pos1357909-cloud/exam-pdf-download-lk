@@ -928,22 +928,23 @@ router.delete('/students/:id', async (req, res) => {
 // POST /api/students/consume-coin
 router.post('/students/consume-coin', async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, amount } = req.body;
+    const coinsToDeduct = Math.max(1, parseInt(amount) || 1);
     if (!email) return res.status(400).json({ error: 'Email required' });
 
     let student = null;
     if (mongoose.connection.readyState === 1) {
       student = await Student.findOne({ email: email.toLowerCase() });
       if (student && student.coins > 0) {
-        student.coins -= 1;
-        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        student.coins = Math.max(0, student.coins - coinsToDeduct);
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + coinsToDeduct;
         await student.save();
       }
     } else {
       student = memoryStore.students.find(s => s.email === email.toLowerCase());
       if (student && student.coins > 0) {
-        student.coins -= 1;
-        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        student.coins = Math.max(0, student.coins - coinsToDeduct);
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + coinsToDeduct;
         saveFallbackData(memoryStore);
       }
     }
