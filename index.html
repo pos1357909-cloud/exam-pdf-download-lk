@@ -251,13 +251,6 @@
                             </div>
                         </div>
 
-                        <!-- TEACHER REACTION POPUP BOX -->
-                        <div id="teacherReactionBox" class="hidden mb-5 p-4 sm:p-5 rounded-2xl text-center transition-all duration-300 font-sinhala shadow-2xl">
-                            <div id="teacherReactionIcon" class="flex items-center justify-center space-x-3 mb-2"></div>
-                            <h4 id="teacherReactionTitle" class="text-base sm:text-lg font-black font-sinhala-fancy mb-1"></h4>
-                            <p id="teacherReactionSub" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
-                        </div>
-
                         <h3 id="mcqQuestionText" class="text-base sm:text-2xl font-bold text-amber-100 mb-5 leading-relaxed font-sinhala-fancy">--</h3>
                         
                         <div id="mcqOptions" class="space-y-2.5 mb-6"></div>
@@ -520,15 +513,20 @@
 
                         <!-- ADMIN TAB: STUDENTS MANAGEMENT -->
                         <div id="adminView-students" class="space-y-4">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
                                 <p class="text-xs text-slate-400 font-sinhala">
                                     <i class="fa-solid fa-users mr-1 text-amber-400"></i>
                                     ලියාපදිංචි ශිෂ්‍යයින්:
                                     <span id="studentCount" class="font-bold text-amber-300 ml-1">—</span>
                                 </p>
-                                <button onclick="fetchAndRenderStudents()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition">
-                                    <i class="fa-solid fa-rotate-right"></i> Refresh
-                                </button>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="fetchAndRenderStudents()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-800 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition active-press">
+                                        <i class="fa-solid fa-rotate-right"></i> Refresh
+                                    </button>
+                                    <button onclick="adminDeleteAllStudents()" class="flex items-center gap-1.5 text-xs font-extrabold px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition active-press shadow">
+                                        <i class="fa-solid fa-trash-can"></i> සියලුම ශිෂ්‍යයින් මකන්න (Delete All)
+                                    </button>
+                                </div>
                             </div>
                             <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/50">
                                 <table class="w-full text-left text-xs text-slate-300 border-collapse min-w-[700px]">
@@ -1479,42 +1477,6 @@
             renderMcqQuestion();
         }
 
-        function showTeacherReaction(isCorrect) {
-            const box = document.getElementById('teacherReactionBox');
-            const iconContainer = document.getElementById('teacherReactionIcon');
-            const title = document.getElementById('teacherReactionTitle');
-            const sub = document.getElementById('teacherReactionSub');
-            if (!box) return;
-
-            box.classList.remove('hidden', 'border-emerald-500/80', 'bg-emerald-950/90', 'border-rose-500/80', 'bg-rose-950/90', 'animate__animated', 'animate__zoomIn', 'animate__headShake');
-
-            if (isCorrect) {
-                box.className = "mb-5 p-4 sm:p-5 rounded-2xl border-2 border-emerald-500/80 bg-emerald-950/90 text-center font-sinhala shadow-2xl animate__animated animate__zoomIn";
-                iconContainer.innerHTML = `
-                    <div class="relative inline-flex items-center justify-center">
-                        <i class="fa-solid fa-chalkboard-user text-5xl sm:text-6xl text-emerald-400 animate-bounce"></i>
-                        <i class="fa-solid fa-star text-amber-400 text-3xl sm:text-4xl absolute -top-3 -right-4 animate-spin"></i>
-                    </div>
-                    <span class="text-4xl ml-2">🌟</span>
-                `;
-                title.className = "text-base sm:text-xl font-black text-amber-300 font-sinhala-fancy mb-1";
-                title.innerHTML = `ඉතා විශිෂ්ටයි! 🎓 රන් තරුවක් තිළිණ විය!`;
-                sub.innerText = "ගුරුතුමා ඉතා සතුටින් ඔබට ප්‍රශංසා කර රන් තරුවක් ලබා දෙයි! ඊළඟ ප්‍රශ්නයට යන්න.";
-            } else {
-                box.className = "mb-5 p-4 sm:p-5 rounded-2xl border-2 border-rose-500/80 bg-rose-950/90 text-center font-sinhala shadow-2xl animate__animated animate__headShake";
-                iconContainer.innerHTML = `
-                    <div class="relative inline-flex items-center justify-center">
-                        <i class="fa-solid fa-person-chalkboard text-5xl sm:text-6xl text-rose-500 animate__animated animate__shakeX"></i>
-                        <i class="fa-solid fa-ruler-vertical text-amber-400 text-3xl sm:text-4xl absolute -top-3 -right-4 animate-bounce"></i>
-                    </div>
-                    <span class="text-4xl ml-2">😠</span>
-                `;
-                title.className = "text-base sm:text-xl font-black text-rose-300 font-sinhala-fancy mb-1";
-                title.innerHTML = `අපොයි වැරදියි! 📏 (ගුරුතුමා සැරයෙන් සැරයටිය වනයි)`;
-                sub.innerText = "ගුරුතුමා තරහින් සැරයටිය වනමින් අවවාද කරයි! නිවැරදි පිළිතුර හොඳින් අධ්‍යයනය කර මතක තබා ගන්න!";
-            }
-        }
-
         function renderMcqQuestion() {
             const mcqList = historyData[currentGrade][currentLessonIndex].mcq;
             const item = mcqList[currentMcqIndex];
@@ -1526,9 +1488,6 @@
             
             const cleanQuestion = item.question.replace(/^(?:\d+[\.\)]|\#)\s*/i, '');
             document.getElementById('mcqQuestionText').innerText = `${currentMcqIndex + 1}. ${cleanQuestion}`;
-
-            const rxBox = document.getElementById('teacherReactionBox');
-            if (rxBox) rxBox.classList.add('hidden');
 
             const optionsContainer = document.getElementById('mcqOptions');
             optionsContainer.innerHTML = '';
@@ -1559,10 +1518,7 @@
             const allBtns = optionsContainer.querySelectorAll('button');
             allBtns.forEach(b => b.onclick = null);
 
-            const isCorrect = (idx === item.answer);
-            showTeacherReaction(isCorrect);
-
-            if (isCorrect) {
+            if (idx === item.answer) {
                 mcqScore++;
                 document.getElementById('mcqCurrentScore').innerText = mcqScore;
                 const btn = document.getElementById(`opt-${idx}`);
@@ -2055,6 +2011,30 @@
                     showToast('🗑️ ශිෂ්‍යයා සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී!', 'success');
                 } catch (err) {
                     console.error('Delete student error:', err);
+                }
+            }
+        }
+
+        async function adminDeleteAllStudents() {
+            if (!registeredStudents || registeredStudents.length === 0) {
+                alert("පද්ධතියේ දැනට ලියාපදිංචි ශිෂ්‍යයින් කිසිවෙකු නැත.");
+                return;
+            }
+
+            if (confirm(`අවධානයයි! පද්ධතියේ ලියාපදිංචි වී ඇති සියලුම ශිෂ්‍යයින් (${registeredStudents.length}) මුළුමනින්ම මකා දැමීමට ඔබ තහවුරු කරනවාද?`)) {
+                registeredStudents = [];
+                localStorage.removeItem('hrh_students_list_v1');
+                renderAdminStudentsList();
+
+                try {
+                    await fetch('/api/students', { method: 'DELETE' });
+                    if (typeof showToast === 'function') {
+                        showToast('🗑️ සියලුම ශිෂ්‍යයින් සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී!', 'success');
+                    } else {
+                        alert('🗑️ සියලුම ශිෂ්‍යයින් සාර්ථකව පද්ධතියෙන් ඉවත් කරන ලදී!');
+                    }
+                } catch (err) {
+                    console.error('Delete all students error:', err);
                 }
             }
         }

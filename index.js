@@ -638,6 +638,47 @@ router.get('/history-data', async (req, res) => {
         ],
         essay: [
           { id: "essay_1", title: "ලංකාවේ ලිඛිත මූලාශ්‍රවල වැදගත්කම පැහැදිලි කරන්න.", answer: "අතීත රාජාවලිය සහ ශාසනික තොරතුරු නිවැරදිව තේරුම් ගැනීමට ලිඛිත මූලාශ්‍ර උපකාරී වේ." }
+        ],
+        shortNotes: [
+          {
+            id: "sn_1",
+            title: "1. ඉතිහාස මූලාශ්‍රවල ප්‍රධාන වර්ගීකරණය",
+            content: "අතීතය පිළිබඳ තොරතුරු ලබාදෙන සාක්ෂි ඉතිහාස මූලාශ්‍ර ලෙස හැඳින්වේ.\n• සාහිත්‍ය මූලාශ්‍ර (ලිඛිත හා මුඛ පරම්පරාගත තොරතුරු)\n• පුරාවිද්‍යා මූලාශ්‍ර (භෞතික අවශේෂ, සෙල්ලිපි, කාසි, ගොඩනැගිලි)"
+          },
+          {
+            id: "sn_2",
+            title: "2. සාහිත්‍ය මූලාශ්‍රවල වැදගත්කම",
+            content: "දේශීය සාහිත්‍ය මූලාශ්‍ර (මහාවංශය, දීපවංශය, පූජාවලිය) සහ විදේශීය සාහිත්‍ය මූලාශ්‍ර (ෆාහියන් හිමියන්ගේ වාර්තා) මගින් අතීත රාජාවලිය හඳුනාගත හැක."
+          }
+        ],
+        mindMap: [
+          {
+            id: "mm_1",
+            topic: "අපේ ඉතිහාස මූලාශ්‍ර",
+            nodes: [
+              {
+                title: "සාහිත්‍ය මූලාශ්‍ර",
+                details: ["දේශීය (මහාවංශය, දීපවංශය)", "විදේශීය (චීන, ඉන්දියානු වාර්තා)"]
+              },
+              {
+                title: "පුරාවිද්‍යා මූලාශ්‍ර",
+                details: ["ශිලා ලේඛන (සෙල්ලිපි)", "කාසි සහ මුද්‍රා", "නටබුන් හා ගොඩනැගිලි"]
+              },
+              {
+                title: "ජනශ්‍රැති",
+                details: ["ජනකථා, ජනකවි", "මුඛ පරම්පරාගත කථා"]
+              }
+            ]
+          }
+        ],
+        pdf: [
+          {
+            id: "pdf_1",
+            title: "6 ශ්‍රේණිය - 1 පාඩම සම්පූර්ණ සාරාංශය සහ ප්‍රශ්න පත්‍රය PDF",
+            pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+            fileSize: "2.4 MB PDF Document",
+            description: "1 පාඩමට අදාළ සියලුම MCQ, කෙටි ප්‍රශ්න, රචනා ප්‍රශ්න සහ පිළිතුරු සහිත PDF ගොනුව."
+          }
         ]
       }
     ]
@@ -868,6 +909,21 @@ router.put('/students/:id', async (req, res) => {
   }
 });
 
+// DELETE /api/students: Delete ALL registered students
+router.delete('/students', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await Student.deleteMany({});
+    }
+    memoryStore.students = [];
+    saveFallbackData(memoryStore);
+
+    res.json({ success: true, message: 'All registered students deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // DELETE /api/students/:id: Delete student by ID or email
 router.delete('/students/:id', async (req, res) => {
   try {
@@ -887,22 +943,23 @@ router.delete('/students/:id', async (req, res) => {
 // POST /api/students/consume-coin
 router.post('/students/consume-coin', async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, amount } = req.body;
+    const coinsToDeduct = Math.max(1, parseInt(amount) || 1);
     if (!email) return res.status(400).json({ error: 'Email required' });
 
     let student = null;
     if (mongoose.connection.readyState === 1) {
       student = await Student.findOne({ email: email.toLowerCase() });
       if (student && student.coins > 0) {
-        student.coins -= 1;
-        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        student.coins = Math.max(0, student.coins - coinsToDeduct);
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + coinsToDeduct;
         await student.save();
       }
     } else {
       student = memoryStore.students.find(s => s.email === email.toLowerCase());
       if (student && student.coins > 0) {
-        student.coins -= 1;
-        student.todayUsedCoins = (student.todayUsedCoins || 0) + 1;
+        student.coins = Math.max(0, student.coins - coinsToDeduct);
+        student.todayUsedCoins = (student.todayUsedCoins || 0) + coinsToDeduct;
         saveFallbackData(memoryStore);
       }
     }
